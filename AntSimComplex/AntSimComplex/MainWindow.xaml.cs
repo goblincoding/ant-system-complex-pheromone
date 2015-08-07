@@ -24,5 +24,9 @@ namespace AntSimComplex
         {
             InitializeComponent();
         }
+
+        private void MenuOpen_Click(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }
