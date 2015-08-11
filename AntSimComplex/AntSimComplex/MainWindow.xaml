@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:AntSimComplex"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="960" WindowStartupLocation="CenterScreen">
-    <Grid>
+    <Grid x:Name="PrimaryGrid">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -16,6 +17,17 @@
                 <MenuItem x:Name="MenuOpen" Header="_Open" Click="MenuOpen_Click" />
             </MenuItem>
         </Menu>
-        <Canvas Grid.Row="1" />
+        <Grid x:Name="ToolsGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label Content="Problem" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
+            <ComboBox Name="TSPCombo" Grid.Row="0" Grid.Column="2" />
+        </Grid>
+        <Canvas Grid.Row="2" />
     </Grid>
 </Window>
