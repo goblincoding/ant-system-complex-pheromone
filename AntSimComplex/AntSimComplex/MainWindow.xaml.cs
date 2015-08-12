@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TspLibNet;
+using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplex
 {
@@ -29,23 +30,16 @@ namespace AntSimComplex
             InitializeComponent();
         }
 
-        private void CreateTspLib()
-        {
-            // Load all symmetric TSP instances.
-            _tspLib = new TspLib95(_tspLibPath);
-            _tspLib.LoadAllTSP();
-        }
-
-        private void PopulateComboBoxes()
-        {
-            TSPCombo.ItemsSource = from p in _tspLib.TSPItems()
-                                   where p.Problem.NodeProvider.CountNodes() <= 100
-                                   select p.Problem.Name;
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Initialise();
+        }
+
+        private void Initialise()
+        {
+            BrowseTSPLIBPath();
+            CreateTspLib();
+            PopulateComboBoxes();
         }
 
         private void BrowseTSPLIBPath()
@@ -68,24 +62,37 @@ namespace AntSimComplex
                 {
                     MessageBox.Show(this, "Path to TSPLIB95 is invalid.", "Error!");
                 }
-            } while (String.IsNullOrWhiteSpace(_tspLibPath) ||
-                   !tspPathExists);
+            } while (String.IsNullOrWhiteSpace(_tspLibPath) || !tspPathExists);
 
             Registry.SetValue(_libPathRegistryKey, "", _tspLibPath);
         }
 
-        private void Initialise()
+        private void CreateTspLib()
         {
-            BrowseTSPLIBPath();
-            CreateTspLib();
-            PopulateComboBoxes();
+            // Load all symmetric TSP instances.
+            _tspLib = new TspLib95(_tspLibPath);
+            _tspLib.LoadAllTSP();
         }
 
-        private void TSPCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void PopulateComboBoxes()
         {
-            var ratio = canvas.Width / canvas.Height;
+            TSPCombo.ItemsSource = from p in _tspLib.TSPItems()
+                                   where p.Problem.NodeProvider.CountNodes() <= 100
+                                   select p.Problem.Name;
+        }
+
+        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var ratio = canvas.ActualWidth / canvas.ActualHeight;
             var item = _tspLib.GetItemByName(TSPCombo.SelectedItem.ToString(), ProblemType.TSP);
             var nodes = item.Problem.NodeProvider.GetNodes();
+
+            foreach (var node in nodes)
+            {
+                var node2D = node as Node2D;
+                var x = node2D.X;
+                var y = node2D.Y;
+            }
 
             List<Point> points = new List<Point>() { };
 
@@ -122,16 +129,6 @@ namespace AntSimComplex
 
             //Canvas.SetLeft(ellipse, desiredCenterX - (canvas.Width / 2));
             //Canvas.SetTop(ellipse, desiredCenterY - (canvas.Height / 2));
-        }
-
-        private Ellipse CreateEllipse(double width, double height, double desiredCenterX, double desiredCenterY)
-        {
-            Ellipse ellipse = new Ellipse { Width = width, Height = height };
-            double left = desiredCenterX - (width / 2);
-            double top = desiredCenterY - (height / 2);
-
-            ellipse.Margin = new Thickness(left, top, 0, 0);
-            return ellipse;
         }
     }
 }
