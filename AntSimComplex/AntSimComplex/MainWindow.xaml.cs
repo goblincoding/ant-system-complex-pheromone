@@ -77,9 +77,5 @@ namespace AntSimComplex
             CreateTspLib();
             PopulateComboBoxes();
         }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-        }
     }
 }
