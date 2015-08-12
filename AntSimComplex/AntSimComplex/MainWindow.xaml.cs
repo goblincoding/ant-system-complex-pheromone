@@ -1,9 +1,13 @@
 ﻿using AntSimComplex.Dialogs;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using TspLibNet;
 
 namespace AntSimComplex
@@ -13,6 +17,7 @@ namespace AntSimComplex
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const int _circleWidth = 10;
         private const string _packageRelPath = @"..\..\..\packages";
         private const string _libPathRegistryKey = @"HKEY_CURRENT_USER\Software\AntSim\TSPLIB95Path";
 
@@ -36,8 +41,6 @@ namespace AntSimComplex
             TSPCombo.ItemsSource = from p in _tspLib.TSPItems()
                                    where p.Problem.NodeProvider.CountNodes() <= 100
                                    select p.Problem.Name;
-
-            TSPCombo.SelectedIndex = 0;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -76,6 +79,59 @@ namespace AntSimComplex
             BrowseTSPLIBPath();
             CreateTspLib();
             PopulateComboBoxes();
+        }
+
+        private void TSPCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var ratio = canvas.Width / canvas.Height;
+            var item = _tspLib.GetItemByName(TSPCombo.SelectedItem.ToString(), ProblemType.TSP);
+            var nodes = item.Problem.NodeProvider.GetNodes();
+
+            List<Point> points = new List<Point>() { };
+
+            for (int j = 0; j < 10; j++)
+            {
+                for (int k = 0; k < 12; k++)
+                {
+                    points.Add(new Point(j * 10, k * 12));
+                }
+            }
+
+            Ellipse[] ellipsePoints = new Ellipse[120];
+
+            for (int j = 0; j < 120; j++)
+            {
+                ellipsePoints[j] = new Ellipse() { Width = _circleWidth, Height = _circleWidth, Fill = Brushes.Black };
+                canvas.Children.Add(ellipsePoints[j]);
+            }
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                Canvas.SetLeft(ellipsePoints[i], points[i].X - ellipsePoints[i].Width / 2);
+                Canvas.SetTop(ellipsePoints[i], points[i].Y - ellipsePoints[i].Height / 2);
+            }
+
+            //var desiredCenterX = canvas.Width / 2;
+            //var desiredCenterY = canvas.Height / 2;
+            //var ellipse = CreateEllipse(40, 40, desiredCenterX, desiredCenterY);
+            //var solidColorBrush = new SolidColorBrush();
+            //solidColorBrush.Color = Color.FromArgb(255, 255, 255, 0);
+            //ellipse.Fill = solidColorBrush;
+            //ellipse.StrokeThickness = 2;
+            //ellipse.Stroke = Brushes.Black;
+
+            //Canvas.SetLeft(ellipse, desiredCenterX - (canvas.Width / 2));
+            //Canvas.SetTop(ellipse, desiredCenterY - (canvas.Height / 2));
+        }
+
+        private Ellipse CreateEllipse(double width, double height, double desiredCenterX, double desiredCenterY)
+        {
+            Ellipse ellipse = new Ellipse { Width = width, Height = height };
+            double left = desiredCenterX - (width / 2);
+            double top = desiredCenterY - (height / 2);
+
+            ellipse.Margin = new Thickness(left, top, 0, 0);
+            return ellipse;
         }
     }
 }
