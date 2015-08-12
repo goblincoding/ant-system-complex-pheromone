@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         <Menu x:Name="menu" Grid.Row="0" IsMainMenu="True" DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem x:Name="MenuOpen" Header="_Open" Click="MenuOpen_Click" />
+                <MenuItem x:Name="MenuOpen" Header="_Open" />
             </MenuItem>
         </Menu>
         <Grid x:Name="ToolsGrid" Grid.Row="1">

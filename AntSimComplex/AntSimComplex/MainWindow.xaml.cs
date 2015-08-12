@@ -24,10 +24,6 @@ namespace AntSimComplex
             InitializeComponent();
         }
 
-        private void MenuOpen_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void CreateTspLib()
         {
             // Load all symmetric TSP instances.
