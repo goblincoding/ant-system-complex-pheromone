@@ -68,6 +68,7 @@
     <Compile Include="UserControls\DirectoryBrowserControl.xaml.cs">
       <DependentUpon>DirectoryBrowserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CustomEventArgs.cs" />
     <Page Include="Dialogs\DirectoryBrowserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

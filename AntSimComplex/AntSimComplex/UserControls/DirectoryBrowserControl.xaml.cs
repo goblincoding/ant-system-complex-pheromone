@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AntSimComplex.Utilities;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace AntSimComplex.UserControls
 {
@@ -20,7 +10,7 @@ namespace AntSimComplex.UserControls
     /// </summary>
     public partial class DirectoryBrowserControl : UserControl
     {
-        public event EventHandler<string> DirectoryAccepted = delegate { };
+        public event EventHandler<StringEventArgs> DirectoryAccepted = delegate { };
 
         public string DirectoryPath
         {
@@ -44,7 +34,7 @@ namespace AntSimComplex.UserControls
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            DirectoryAccepted(this, DirectoryPath);
+            DirectoryAccepted(this, new StringEventArgs(DirectoryPath));
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
