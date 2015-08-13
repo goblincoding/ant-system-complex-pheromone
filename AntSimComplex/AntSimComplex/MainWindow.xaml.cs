@@ -1,4 +1,5 @@
 ﻿using AntSimComplex.Dialogs;
+using AntSimComplex.Utilities;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace AntSimComplex
 
         private string _tspLibPath;
         private TspLib95 _tspLib;
+        private TspLibProcessor _tspLibProcessor;
 
         public MainWindow()
         {
@@ -38,8 +40,12 @@ namespace AntSimComplex
         private void Initialise()
         {
             BrowseTSPLIBPath();
-            CreateTspLib();
-            PopulateComboBoxes();
+
+            // Load all symmetric TSP instances.
+            _tspLib = new TspLib95(_tspLibPath);
+            _tspLib.LoadAllTSP();
+            _tspLibProcessor = new TspLibProcessor(_tspLib);
+            TSPCombo.ItemsSource = _tspLibProcessor.ProblemNames;
         }
 
         private void BrowseTSPLIBPath()
@@ -65,20 +71,6 @@ namespace AntSimComplex
             } while (String.IsNullOrWhiteSpace(_tspLibPath) || !tspPathExists);
 
             Registry.SetValue(_libPathRegistryKey, "", _tspLibPath);
-        }
-
-        private void CreateTspLib()
-        {
-            // Load all symmetric TSP instances.
-            _tspLib = new TspLib95(_tspLibPath);
-            _tspLib.LoadAllTSP();
-        }
-
-        private void PopulateComboBoxes()
-        {
-            TSPCombo.ItemsSource = from p in _tspLib.TSPItems()
-                                   where p.Problem.NodeProvider.CountNodes() <= 100
-                                   select p.Problem.Name;
         }
 
         private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
