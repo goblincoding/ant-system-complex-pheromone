@@ -27,6 +27,9 @@ namespace AntSimComplex
         private TspLib95 _tspLib;
         private TspLibProcessor _tspLibProcessor;
 
+        private Matrix _worldToCanvasMatrix;
+        private Matrix _canvasToWorldMatrix;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -75,52 +78,66 @@ namespace AntSimComplex
 
         private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var ratio = canvas.ActualWidth / canvas.ActualHeight;
-            var item = _tspLib.GetItemByName(TSPCombo.SelectedItem.ToString(), ProblemType.TSP);
-            var nodes = item.Problem.NodeProvider.GetNodes();
+            var problemName = TSPCombo.SelectedItem.ToString();
+            var worldMinX = _tspLibProcessor.GetMinX(problemName);
+            var worldMinY = _tspLibProcessor.GetMinY(problemName);
+            var worldMaxX = _tspLibProcessor.GetMaxX(problemName);
+            var worldMaxY = _tspLibProcessor.GetMaxY(problemName);
 
-            foreach (var node in nodes)
+            const double margin = 20;
+            const double canvasMinX = margin;
+            const double canvasMinY = margin;
+            var canvasMaxX = canvas.ActualWidth - margin;
+            var canvasMaxY = canvas.ActualHeight - margin;
+
+            // Order of canvas Y min and max arguments are swapped due to canvas coordinate
+            // system (top-left is 0,0).  This "flips" the coordinate system along the Y
+            // axis by making the Y scale value negative so that we have bottom-left at 0,0.
+            PrepareTransformationMatrices(worldMinX, worldMaxX, worldMinY, worldMaxY,
+                                          canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
+
+            canvas.Children.Clear();
+
+            var nodes = _tspLibProcessor.GetNodes(problemName);
+            var points = from n in nodes
+                         select new Point { X = n.X, Y = n.Y };
+
+            foreach (var point in points)
             {
-                var node2D = node as Node2D;
-                var x = node2D.X;
-                var y = node2D.Y;
+                var ellipse = new Ellipse() { Width = _circleWidth, Height = _circleWidth, Fill = Brushes.Black };
+                ellipse.ToolTip = $"x: {point.X}, y: {point.Y}";
+                canvas.Children.Add(ellipse);
+                var transformed = TransformWorldToCanvas(point);
+                Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
+                Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
             }
+        }
 
-            List<Point> points = new List<Point>() { };
+        private void PrepareTransformationMatrices(
+            double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
+            double canvasMinX, double canvasMaxX, double canvasMinY, double canvasMaxY)
+        {
+            _worldToCanvasMatrix = Matrix.Identity;
+            _worldToCanvasMatrix.Translate(-worldMinX, -worldMinY);
 
-            for (int j = 0; j < 10; j++)
-            {
-                for (int k = 0; k < 12; k++)
-                {
-                    points.Add(new Point(j * 10, k * 12));
-                }
-            }
+            double xscale = (canvasMaxX - canvasMinX) / (worldMaxX - worldMinX);
+            double yscale = (canvasMaxY - canvasMinY) / (worldMaxY - worldMinY);
+            _worldToCanvasMatrix.Scale(xscale, yscale);
 
-            Ellipse[] ellipsePoints = new Ellipse[120];
+            _worldToCanvasMatrix.Translate(canvasMinX, canvasMinY);
 
-            for (int j = 0; j < 120; j++)
-            {
-                ellipsePoints[j] = new Ellipse() { Width = _circleWidth, Height = _circleWidth, Fill = Brushes.Black };
-                canvas.Children.Add(ellipsePoints[j]);
-            }
+            _canvasToWorldMatrix = _worldToCanvasMatrix;
+            _canvasToWorldMatrix.Invert();
+        }
 
-            for (int i = 0; i < points.Count; i++)
-            {
-                Canvas.SetLeft(ellipsePoints[i], points[i].X - ellipsePoints[i].Width / 2);
-                Canvas.SetTop(ellipsePoints[i], points[i].Y - ellipsePoints[i].Height / 2);
-            }
+        private Point TransformWorldToCanvas(Point point)
+        {
+            return _worldToCanvasMatrix.Transform(point);
+        }
 
-            //var desiredCenterX = canvas.Width / 2;
-            //var desiredCenterY = canvas.Height / 2;
-            //var ellipse = CreateEllipse(40, 40, desiredCenterX, desiredCenterY);
-            //var solidColorBrush = new SolidColorBrush();
-            //solidColorBrush.Color = Color.FromArgb(255, 255, 255, 0);
-            //ellipse.Fill = solidColorBrush;
-            //ellipse.StrokeThickness = 2;
-            //ellipse.Stroke = Brushes.Black;
-
-            //Canvas.SetLeft(ellipse, desiredCenterX - (canvas.Width / 2));
-            //Canvas.SetTop(ellipse, desiredCenterY - (canvas.Height / 2));
+        private Point TransformCanvasToWorld(Point point)
+        {
+            return _canvasToWorldMatrix.Transform(point);
         }
     }
 }
