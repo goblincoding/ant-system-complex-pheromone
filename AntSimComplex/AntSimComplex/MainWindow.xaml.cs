@@ -97,7 +97,12 @@ namespace AntSimComplex
                                           canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
 
             canvas.Children.Clear();
+            DrawNodes(problemName);
+            DrawOptimalTour(problemName);
+        }
 
+        private void DrawNodes(string problemName)
+        {
             var nodes = _tspLibProcessor.GetNodes(problemName);
             var points = from n in nodes
                          select new Point { X = n.X, Y = n.Y };
@@ -110,6 +115,30 @@ namespace AntSimComplex
                 var transformed = TransformWorldToCanvas(point);
                 Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
                 Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
+            }
+        }
+
+        private void DrawOptimalTour(string problemName)
+        {
+            var nodes = _tspLibProcessor.GetOptimalTourNodes(problemName);
+            var points = from n in nodes
+                         select new Point { X = n.X, Y = n.Y };
+
+            for (var i = 0; i < points.Count() - 1; ++i)
+            {
+                var point1 = TransformWorldToCanvas(points.ElementAt(i));
+                var point2 = TransformWorldToCanvas(points.ElementAt(i + 1));
+                var line = new Line()
+                {
+                    X1 = point1.X,
+                    Y1 = point1.Y,
+                    X2 = point2.X,
+                    Y2 = point2.Y,
+                    StrokeThickness = 1,
+                    Stroke = Brushes.Green
+                };
+
+                canvas.Children.Add(line);
             }
         }
 
