@@ -50,7 +50,7 @@
         </Border>
 
         <Border Grid.Row="2">
-            <Canvas Name="canvas" />
+            <Canvas Name="canvas" Background="LightGray" />
         </Border>
     </Grid>
 </Window>

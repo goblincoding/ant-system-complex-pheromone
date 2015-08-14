@@ -39,10 +39,15 @@ namespace AntSimComplex.Utilities
         public List<Node2D> GetOptimalTourNodes(string problemName)
         {
             var item = _tspLibItems.First(i => i.Problem.Name == problemName);
-            var nodes = (from n in item.OptimalTour?.Nodes
-                         select item.Problem.NodeProvider.GetNode(n) as Node2D).ToList();
-            nodes.RemoveAll(n => n == null);
-            return nodes;
+            if (item.OptimalTour != null)
+            {
+                var nodes = (from n in item.OptimalTour?.Nodes
+                             select item.Problem.NodeProvider.GetNode(n) as Node2D).ToList();
+                nodes.RemoveAll(n => n == null);
+                return nodes;
+            }
+
+            return new List<Node2D>();
         }
 
         public double GetMaxX(string problemName)

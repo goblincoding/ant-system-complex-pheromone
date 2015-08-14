@@ -135,7 +135,8 @@ namespace AntSimComplex
                     X2 = point2.X,
                     Y2 = point2.Y,
                     StrokeThickness = 1,
-                    Stroke = Brushes.Green
+                    Stroke = Brushes.Green,
+                    ToolTip = "Optimal tour"
                 };
 
                 canvas.Children.Add(line);
