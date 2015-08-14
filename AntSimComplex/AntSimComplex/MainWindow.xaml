@@ -27,6 +27,9 @@
                 <Setter Property="Margin" Value="5,0,5,2" />
                 <Setter Property="CornerRadius" Value="3" />
             </Style>
+            <Style TargetType="CheckBox">
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
         </Grid.Resources>
 
         <Menu x:Name="menu" Grid.Row="0" IsMainMenu="True" DockPanel.Dock="Top">
@@ -40,12 +43,18 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label Content="Select Symmetric TSP Problem" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
-                <ComboBox Name="TSPCombo" Grid.Row="0" Grid.Column="2" SelectionChanged="TSPCombo_SelectionChanged" />
+                <ComboBox Name="TSPCombo" Grid.Row="0" Grid.Column="1" SelectionChanged="TSPCombo_SelectionChanged" />
+                <CheckBox Name="ShowOptimal"
+                          Content="Show Optimal Tour (if available)"
+                          Grid.Row="2" Grid.Column="3"
+                          Checked="ShowOptimal_Checked"
+                          Unchecked="ShowOptimal_Unchecked" />
             </Grid>
         </Border>
 

@@ -23,6 +23,7 @@ namespace AntSimComplex
 
         private string _tspLibPath;
         private bool _initialised;
+        private bool _drawOptimal;
         private TspLib95 _tspLib;
         private TspLibProcessor _tspLibProcessor;
 
@@ -98,7 +99,11 @@ namespace AntSimComplex
 
             canvas.Children.Clear();
             DrawNodes(problemName);
-            DrawOptimalTour(problemName);
+
+            if (_drawOptimal)
+            {
+                DrawOptimalTour(problemName);
+            }
         }
 
         private void DrawNodes(string problemName)
@@ -177,6 +182,26 @@ namespace AntSimComplex
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (_initialised)
+            {
+                DrawTspLibItem();
+            }
+        }
+
+        private void ShowOptimal_Checked(object sender, RoutedEventArgs e)
+        {
+            _drawOptimal = true;
+
+            if (_initialised)
+            {
+                DrawTspLibItem();
+            }
+        }
+
+        private void ShowOptimal_Unchecked(object sender, RoutedEventArgs e)
+        {
+            _drawOptimal = false;
+
             if (_initialised)
             {
                 DrawTspLibItem();
