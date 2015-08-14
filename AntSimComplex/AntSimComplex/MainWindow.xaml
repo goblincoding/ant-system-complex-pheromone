@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AntSimComplex"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="960" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" >
+        Title="MainWindow" Height="700" Width="960" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
     <Grid x:Name="PrimaryGrid">
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -23,7 +23,7 @@
             </Style>
             <Style TargetType="Border">
                 <Setter Property="BorderBrush" Value="DarkGray" />
-                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="Margin" Value="5,0,5,2" />
                 <Setter Property="CornerRadius" Value="3" />
             </Style>
@@ -36,7 +36,7 @@
         </Menu>
 
         <Border Grid.Row="1">
-            <Grid x:Name="ToolsGrid" >
+            <Grid x:Name="ToolsGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -47,9 +47,9 @@
                 <Label Content="Select Symmetric TSP Problem" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
                 <ComboBox Name="TSPCombo" Grid.Row="0" Grid.Column="2" SelectionChanged="TSPCombo_SelectionChanged" />
             </Grid>
-        </Border>        
-        
-        <Border Grid.Row="2"  >
+        </Border>
+
+        <Border Grid.Row="2">
             <Canvas Name="canvas" />
         </Border>
     </Grid>

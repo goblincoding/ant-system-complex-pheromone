@@ -2,7 +2,6 @@
 using AntSimComplex.Utilities;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -10,7 +9,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TspLibNet;
-using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplex
 {
@@ -24,6 +22,7 @@ namespace AntSimComplex
         private const string _libPathRegistryKey = @"HKEY_CURRENT_USER\Software\AntSim\TSPLIB95Path";
 
         private string _tspLibPath;
+        private bool _initialised;
         private TspLib95 _tspLib;
         private TspLibProcessor _tspLibProcessor;
 
@@ -38,6 +37,7 @@ namespace AntSimComplex
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Initialise();
+            _initialised = true;
         }
 
         private void Initialise()
@@ -76,9 +76,9 @@ namespace AntSimComplex
             Registry.SetValue(_libPathRegistryKey, "", _tspLibPath);
         }
 
-        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DrawTspLibItem()
         {
-            var problemName = TSPCombo.SelectedItem.ToString();
+            var problemName = TSPCombo.SelectedItem?.ToString();
             var worldMinX = _tspLibProcessor.GetMinX(problemName);
             var worldMinY = _tspLibProcessor.GetMinY(problemName);
             var worldMaxX = _tspLibProcessor.GetMaxX(problemName);
@@ -167,6 +167,19 @@ namespace AntSimComplex
         private Point TransformCanvasToWorld(Point point)
         {
             return _canvasToWorldMatrix.Transform(point);
+        }
+
+        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DrawTspLibItem();
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_initialised)
+            {
+                DrawTspLibItem();
+            }
         }
     }
 }
