@@ -178,6 +178,9 @@ namespace AntSimComplex
         private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DrawTspLibItem();
+            var problemName = TSPCombo.SelectedItem?.ToString();
+            var param = _tspLibProcessor.GetProblemParameters(problemName);
+            Console.WriteLine(param.TauZero);
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

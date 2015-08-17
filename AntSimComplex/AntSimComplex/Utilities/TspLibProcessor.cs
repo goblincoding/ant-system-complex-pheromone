@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AntSystem;
+using System.Collections.Generic;
 using System.Linq;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
@@ -26,6 +27,12 @@ namespace AntSimComplex.Utilities
 
             ProblemNames = (from i in _tspLibItems
                             select i.Problem.Name).ToList();
+        }
+
+        public Parameters GetProblemParameters(string problemName)
+        {
+            var problem = _tspLibItems.First(i => i.Problem.Name == problemName).Problem;
+            return new Parameters(problem);
         }
 
         public List<Node2D> GetNodes(string problemName)

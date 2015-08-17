@@ -123,6 +123,12 @@
   <ItemGroup>
     <Resource Include="Notes.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AntSystem\AntSystem.csproj">
+      <Project>{c8dab661-49ea-44cf-8799-e18e70f4b103}</Project>
+      <Name>AntSystem</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
