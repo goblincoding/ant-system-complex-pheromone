@@ -104,7 +104,7 @@ namespace AntSimComplex
 
         private void DrawNodes(string problemName)
         {
-            var nodes = _tspLibProcessor.GetNodes(problemName);
+            var nodes = _tspLibProcessor.GetGraphNodes(problemName);
             var points = from n in nodes
                          select new Point { X = n.X, Y = n.Y };
 
