@@ -69,7 +69,7 @@
       <DependentUpon>DirectoryBrowserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utilities\CustomEventArgs.cs" />
-    <Compile Include="Utilities\TspLibProcessor.cs" />
+    <Compile Include="Utilities\SymmetricTSPInfoProvider.cs" />
     <Page Include="Dialogs\DirectoryBrowserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

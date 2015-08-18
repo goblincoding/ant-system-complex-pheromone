@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
@@ -17,7 +14,7 @@ namespace AntSystem
     /// </summary>
     public class Parameters
     {
-        private IProblem _tspProblem;
+        private readonly IProblem _tspProblem;
 
         /// <summary>
         /// Constructor
@@ -82,7 +79,7 @@ namespace AntSystem
                                  where n != selected
                                  select new { Nearest = n, Weight = w };
 
-                var tuple = weightList.Where(i => i.Weight.Equals(weightList.Min(t => t.Weight))).First();
+                var tuple = weightList.First(i => i.Weight.Equals(weightList.Min(t => t.Weight)));
                 visited.Add(tuple.Nearest);
                 tourLength += tuple.Weight;
 

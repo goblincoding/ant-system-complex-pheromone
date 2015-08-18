@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TspLibNet;
 
 namespace AntSimComplex
 {
@@ -21,14 +20,13 @@ namespace AntSimComplex
         private const string _packageRelPath = @"..\..\..\packages";
         private const string _libPathRegistryKey = @"HKEY_CURRENT_USER\Software\AntSim\TSPLIB95Path";
 
-        private string _tspLibPath;
         private bool _initialised;
         private bool _drawOptimal;
-        private TspLib95 _tspLib;
-        private TspLibProcessor _tspLibProcessor;
 
         private Matrix _worldToCanvasMatrix;
         private Matrix _canvasToWorldMatrix;
+
+        private SymmetricTSPInfoProvider _tspLibProcessor;
 
         public MainWindow()
         {
@@ -43,38 +41,36 @@ namespace AntSimComplex
 
         private void Initialise()
         {
-            BrowseTSPLIBPath();
+            var tspLibPath = BrowseTSPLIBPath();
 
             // Load all symmetric TSP instances.
-            _tspLib = new TspLib95(_tspLibPath);
-            _tspLib.LoadAllTSP();
-            _tspLibProcessor = new TspLibProcessor(_tspLib);
+            _tspLibProcessor = new SymmetricTSPInfoProvider(tspLibPath);
             TSPCombo.ItemsSource = _tspLibProcessor.ProblemNames;
         }
 
-        private void BrowseTSPLIBPath()
+        private string BrowseTSPLIBPath()
         {
-            _tspLibPath = (string)Registry.GetValue(_libPathRegistryKey, "", "");
-
-            var tspPathExists = Directory.Exists(_tspLibPath);
+            var tspLibPath = (string)Registry.GetValue(_libPathRegistryKey, "", "");
+            var tspPathExists = Directory.Exists(tspLibPath);
             var startDirectory = System.IO.Path.GetFullPath(_packageRelPath);
 
             do
             {
-                var dialog = new DirectoryBrowserDialog(_tspLibPath, startDirectory);
+                var dialog = new DirectoryBrowserDialog(tspLibPath, startDirectory);
                 dialog.Owner = this;
                 dialog.ShowDialog();
 
-                _tspLibPath = dialog.DirectoryPath;
-                tspPathExists = Directory.Exists(_tspLibPath);
+                tspLibPath = dialog.DirectoryPath;
+                tspPathExists = Directory.Exists(tspLibPath);
 
                 if (!tspPathExists)
                 {
                     MessageBox.Show(this, "Path to TSPLIB95 is invalid.", "Error!");
                 }
-            } while (String.IsNullOrWhiteSpace(_tspLibPath) || !tspPathExists);
+            } while (String.IsNullOrWhiteSpace(tspLibPath) || !tspPathExists);
 
-            Registry.SetValue(_libPathRegistryKey, "", _tspLibPath);
+            Registry.SetValue(_libPathRegistryKey, "", tspLibPath);
+            return tspLibPath;
         }
 
         private void DrawTspLibItem()
@@ -148,9 +144,8 @@ namespace AntSimComplex
             }
         }
 
-        private void PrepareTransformationMatrices(
-            double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
-            double canvasMinX, double canvasMaxX, double canvasMinY, double canvasMaxY)
+        private void PrepareTransformationMatrices(double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
+                                                   double canvasMinX, double canvasMaxX, double canvasMinY, double canvasMaxY)
         {
             _worldToCanvasMatrix = Matrix.Identity;
             _worldToCanvasMatrix.Translate(-worldMinX, -worldMinY);
