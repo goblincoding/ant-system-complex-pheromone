@@ -20,7 +20,7 @@ namespace AntSystem
         /// Constructor
         /// </summary>
         /// <param name="problem">A TSPLib.Net problem instance</param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">Thrown if an null problem instance was provided.</exception>
         public Parameters(IProblem problem)
         {
             if (problem == null)

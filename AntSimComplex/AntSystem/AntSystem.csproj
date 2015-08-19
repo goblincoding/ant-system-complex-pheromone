@@ -39,8 +39,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TspLibNet, Version=1.0.5702.16938, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\TSPLib.Net.1.1.2\lib\net451\TspLibNet.dll</HintPath>
+    <Reference Include="TspLibNet, Version=1.0.5708.35054, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TSPLib.Net.1.1.4\lib\net451\TspLibNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

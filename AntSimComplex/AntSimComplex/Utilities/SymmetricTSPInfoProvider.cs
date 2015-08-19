@@ -49,18 +49,30 @@ namespace AntSimComplex.Utilities
 
         /// <param name="problemName">The name of the symmetric TSP problem</param>
         /// <returns>A new "Parameters" object instance for the relevant TSP problem</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if no problem of this name was found.</exception>
         public Parameters GetProblemParameters(string problemName)
         {
-            var problem = _tspLibItems.First(i => i.Problem.Name == problemName).Problem;
+            var problem = _tspLibItems.FirstOrDefault(i => i.Problem.Name == problemName)?.Problem;
+            if (problem == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(problemName), "No problem of this name was found.");
+            }
+
             return new Parameters(problem);
         }
 
         /// <param name="problemName">The name of the symmetric TSP problem</param>
         /// <returns>A list of Node2D objects.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if no problem of this name was found.</exception>
         public List<Node2D> GetGraphNodes(string problemName)
         {
-            var item = _tspLibItems.First(i => i.Problem.Name == problemName);
-            var nodes = from n in item.Problem.NodeProvider.GetNodes()
+            var problem = _tspLibItems.FirstOrDefault(i => i.Problem.Name == problemName)?.Problem;
+            if (problem == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(problemName), "No problem of this name was found.");
+            }
+
+            var nodes = from n in problem.NodeProvider.GetNodes()
                         select n as Node2D;
             return nodes.ToList();
         }
@@ -69,10 +81,10 @@ namespace AntSimComplex.Utilities
         /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
         public List<Node2D> GetOptimalTourNodes(string problemName)
         {
-            var item = _tspLibItems.First(i => i.Problem.Name == problemName);
-            if (item.OptimalTour != null)
+            var item = _tspLibItems.FirstOrDefault(i => i.Problem.Name == problemName);
+            if (item?.OptimalTour != null)
             {
-                var nodes = (from n in item.OptimalTour?.Nodes
+                var nodes = (from n in item.OptimalTour.Nodes
                              select item.Problem.NodeProvider.GetNode(n) as Node2D).ToList();
                 nodes.RemoveAll(n => n == null);
                 return nodes;
