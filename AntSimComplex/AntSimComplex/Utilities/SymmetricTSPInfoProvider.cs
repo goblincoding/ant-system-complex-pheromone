@@ -107,8 +107,8 @@ namespace AntSimComplex.Utilities
         public double GetMinX(string problemName)
         {
             var nodes = GetGraphNodes(problemName);
-            var max = nodes.Min(i => i.X);
-            return max;
+            var min = nodes.Min(i => i.X);
+            return min;
         }
 
         /// <param name="problemName">The name of the symmetric TSP problem</param>
@@ -125,8 +125,8 @@ namespace AntSimComplex.Utilities
         public double GetMinY(string problemName)
         {
             var nodes = GetGraphNodes(problemName);
-            var max = nodes.Min(i => i.Y);
-            return max;
+            var min = nodes.Min(i => i.Y);
+            return min;
         }
     }
 }
