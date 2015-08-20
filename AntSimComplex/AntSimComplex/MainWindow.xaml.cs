@@ -175,7 +175,7 @@ namespace AntSimComplex
             DrawTspLibItem();
             var problemName = TSPCombo.SelectedItem?.ToString();
             var param = _tspLibProcessor.GetProblemParameters(problemName);
-            Console.WriteLine(param.TauZero);
+            Console.WriteLine(param.InitialPheromone);
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

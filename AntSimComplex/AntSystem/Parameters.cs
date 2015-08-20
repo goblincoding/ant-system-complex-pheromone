@@ -8,7 +8,7 @@ namespace AntSystem
 {
     /// <summary>
     /// Ant Colony Optimisation - Dorigo and Stutzle, p71, Box 3.1
-    /// Good settings for ACO without local search applied.
+    /// "Good settings for ACO without local search applied."
     /// These parameters are for the random proportional rule (probability
     /// of selection formula given on p70 of the same book).
     /// </summary>
@@ -29,7 +29,8 @@ namespace AntSystem
             }
 
             _tspProblem = problem;
-            TauZero = CalculateTauZero();
+            NumberOfAnts = _tspProblem.NodeProvider.GetNodes().Count();
+            InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength();
         }
 
         /// <summary>
@@ -44,11 +45,20 @@ namespace AntSystem
         public const double Beta = 2.0;
 
         /// <summary>
-        /// The pheromone evaporation rate for the pheromone update cycle.
+        /// The pheromone evaporation rate for the pheromone update cycle (rho).
         /// </summary>
-        public const double Rho = 0.5;
+        public const double EvaporationRate = 0.5;
 
-        public double TauZero { get; } = 0.1;
+        /// <summary>
+        /// The pheromone density initialisation value (tau zero).
+        /// </summary>
+        public double InitialPheromone { get; } = 0.1;
+
+        /// <summary>
+        /// The number of artificial ants initialised for the problem.  For Ant System
+        /// this number will always be equal to the number of nodes in the TSP.
+        /// </summary>
+        public int NumberOfAnts { get; set; } = 0;
 
         /// <summary>
         /// Calculates the pheromone initialisation value based on the nearest neighbour heuristic.
@@ -58,47 +68,31 @@ namespace AntSystem
         /// 3. Are there any unvisitied cities left? If yes, repeat step 2.
         /// 4. Return to the first city.
         /// </summary>
-        private double CalculateTauZero()
+        private double GetNearestNeighbourTourLength()
         {
-            // Select a random node.
-            var random = new Random();
-            var nodes = _tspProblem.NodeProvider.GetNodes().ToList();
+            var notVisited = _tspProblem.NodeProvider.GetNodes().ToList();
             var weightsProvider = _tspProblem.EdgeWeightsProvider;
-
-            var selected = nodes.ElementAt(random.Next(1, nodes.Count()));
-            var visited = new List<INode>() { selected };
-
             var tourLength = 0.0;
 
+            // Select a random node.
+            var random = new Random();
+            var current = notVisited.ElementAt(random.Next(1, notVisited.Count()));
+            notVisited.Remove(current);
+
             // Any unvisited nodes left?
-            var notVisited = nodes.Except(visited);
             while (notVisited.Any())
             {
+                // Calculate the weights (distances) from the current selected
+                // node to the remaining, unvisited nodes.
                 var weightList = from n in notVisited
-                                 let w = weightsProvider.GetWeight(selected, n)
-                                 where n != selected
-                                 select new { Nearest = n, Weight = w };
+                                 let w = weightsProvider.GetWeight(current, n)
+                                 select new { NearestNode = n, Weight = w };
 
-                var tuple = weightList.First(i => i.Weight.Equals(weightList.Min(t => t.Weight)));
-                visited.Add(tuple.Nearest);
+                var minWeight = weightList.Min(t => t.Weight);
+                var tuple = weightList.First(t => t.Weight.Equals(minWeight));
+                current = tuple.NearestNode;
                 tourLength += tuple.Weight;
-
-                // Leave this here for performance test.
-                //var nearest = notVisited.First();
-                //var currentMin = weightsProvider.GetWeight(selected, nearest);
-                //foreach (var node in notVisited)
-                //{
-                //    var weight = weightsProvider.GetWeight(selected, node);
-                //    if (weight < currentMin)
-                //    {
-                //        currentMin = weight;
-                //        nearest = node;
-                //    }
-                //}
-
-                //visited.Add(nearest);
-
-                notVisited = nodes.Except(visited);
+                notVisited.Remove(current);
             }
 
             return tourLength;
