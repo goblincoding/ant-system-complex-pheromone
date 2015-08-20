@@ -125,6 +125,8 @@ namespace AntSimComplex
             var points = from n in nodes
                          select new Point { X = n.X, Y = n.Y };
 
+            var optimalLength = _tspLibProcessor.GetOptimalTourLength(problemName);
+
             for (var i = 0; i < points.Count() - 1; ++i)
             {
                 var point1 = TransformWorldToCanvas(points.ElementAt(i));
@@ -137,7 +139,7 @@ namespace AntSimComplex
                     Y2 = point2.Y,
                     StrokeThickness = 1,
                     Stroke = Brushes.Green,
-                    ToolTip = "Optimal tour"
+                    ToolTip = $"Optimal tour: {optimalLength}"
                 };
 
                 canvas.Children.Add(line);

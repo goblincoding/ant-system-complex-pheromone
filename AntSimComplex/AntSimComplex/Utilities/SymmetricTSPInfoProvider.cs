@@ -94,6 +94,14 @@ namespace AntSimComplex.Utilities
         }
 
         /// <param name="problemName">The name of the symmetric TSP problem</param>
+        /// <returns>The optimal tour length if known, null if not.</returns>
+        public double? GetOptimalTourLength(string problemName)
+        {
+            var item = _tspLibItems.FirstOrDefault(i => i.Problem.Name == problemName);
+            return item?.OptimalTourDistance;
+        }
+
+        /// <param name="problemName">The name of the symmetric TSP problem</param>
         /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
         public double GetMaxX(string problemName)
         {
