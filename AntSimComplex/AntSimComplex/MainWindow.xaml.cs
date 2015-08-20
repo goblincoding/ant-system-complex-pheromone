@@ -2,12 +2,14 @@
 using AntSimComplex.Utilities;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplex
 {
@@ -122,10 +124,14 @@ namespace AntSimComplex
         private void DrawOptimalTour(string problemName)
         {
             var nodes = _tspLibProcessor.GetOptimalTourNodes(problemName);
+            var optimalLength = _tspLibProcessor.GetOptimalTourLength(problemName);
+            DrawTour(nodes, $"Optimal tour: {optimalLength}");
+        }
+
+        private void DrawTour(List<Node2D> nodes, string toolTip)
+        {
             var points = from n in nodes
                          select new Point { X = n.X, Y = n.Y };
-
-            var optimalLength = _tspLibProcessor.GetOptimalTourLength(problemName);
 
             for (var i = 0; i < points.Count() - 1; ++i)
             {
@@ -139,7 +145,7 @@ namespace AntSimComplex
                     Y2 = point2.Y,
                     StrokeThickness = 1,
                     Stroke = Brushes.Green,
-                    ToolTip = $"Optimal tour: {optimalLength}"
+                    ToolTip = toolTip
                 };
 
                 canvas.Children.Add(line);
@@ -177,6 +183,7 @@ namespace AntSimComplex
             DrawTspLibItem();
             var problemName = TSPCombo.SelectedItem?.ToString();
             var param = _tspLibProcessor.GetProblemParameters(problemName);
+            DrawTour(param.NearestNeighbourTour, "");
             Console.WriteLine(param.InitialPheromone);
         }
 
