@@ -2,7 +2,6 @@
 using AntSimComplex.Utilities;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -28,6 +27,7 @@ namespace AntSimComplex
         private Matrix _worldToCanvasMatrix;
         private Matrix _canvasToWorldMatrix;
 
+        private SymmetricTSPItemSelector _tspProblemSelector;
         private SymmetricTSPInfoProvider _tspInfoProvider;
 
         public MainWindow()
@@ -46,8 +46,8 @@ namespace AntSimComplex
             var tspLibPath = BrowseTSPLIBPath();
 
             // Load all symmetric TSP instances.
-            _tspInfoProvider = new SymmetricTSPInfoProvider(tspLibPath);
-            TSPCombo.ItemsSource = _tspInfoProvider.ProblemNames;
+            _tspProblemSelector = new SymmetricTSPItemSelector(tspLibPath, 100, typeof(Node2D));
+            TSPCombo.ItemsSource = _tspProblemSelector.ProblemNames;
         }
 
         private string BrowseTSPLIBPath()
@@ -77,11 +77,10 @@ namespace AntSimComplex
 
         private void DrawTspLibItem()
         {
-            var problemName = TSPCombo.SelectedItem?.ToString();
-            var worldMinX = _tspInfoProvider.GetMinX(problemName);
-            var worldMinY = _tspInfoProvider.GetMinY(problemName);
-            var worldMaxX = _tspInfoProvider.GetMaxX(problemName);
-            var worldMaxY = _tspInfoProvider.GetMaxY(problemName);
+            var worldMinX = _tspInfoProvider.GetMinX();
+            var worldMinY = _tspInfoProvider.GetMinY();
+            var worldMaxX = _tspInfoProvider.GetMaxX();
+            var worldMaxY = _tspInfoProvider.GetMaxY();
 
             const double margin = 20;
             const double canvasMinX = margin;
@@ -96,18 +95,17 @@ namespace AntSimComplex
                                           canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
 
             canvas.Children.Clear();
-            DrawNodes(problemName);
+            DrawNodes();
 
             if (_drawOptimal)
             {
-                DrawOptimalTour(problemName);
+                DrawOptimalTour();
             }
         }
 
-        private void DrawNodes(string problemName)
+        private void DrawNodes()
         {
-            var nodes = _tspInfoProvider.GetGraphNodes(problemName);
-            var points = from n in nodes
+            var points = from n in _tspInfoProvider.Nodes2D
                          select new Point { X = n.X, Y = n.Y };
 
             foreach (var point in points)
@@ -126,16 +124,15 @@ namespace AntSimComplex
             Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
         }
 
-        private void DrawOptimalTour(string problemName)
+        private void DrawOptimalTour()
         {
-            var nodes = _tspInfoProvider.GetOptimalTourNodes(problemName);
-
+            var nodes = _tspInfoProvider.OptimalTourNodes2D;
             if (!nodes.Any())
             {
                 return;
             }
 
-            var optimalLength = _tspInfoProvider.GetOptimalTourLength(problemName);
+            var optimalLength = _tspInfoProvider.OptimalTourLength;
             var points = (from n in nodes
                           select TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();
 
@@ -184,10 +181,10 @@ namespace AntSimComplex
 
         private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DrawTspLibItem();
             var problemName = TSPCombo.SelectedItem?.ToString();
-            var param = _tspInfoProvider.GetProblemParameters(problemName);
-            Console.WriteLine(param.InitialPheromone);
+            var item = _tspProblemSelector.GetItem(problemName);
+            _tspInfoProvider = new SymmetricTSPInfoProvider(item);
+            DrawTspLibItem();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="Utilities\CustomEventArgs.cs" />
     <Compile Include="Utilities\SymmetricTSPInfoProvider.cs" />
+    <Compile Include="Utilities\SymmetricTSPItemSelector.cs" />
     <Page Include="Dialogs\DirectoryBrowserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

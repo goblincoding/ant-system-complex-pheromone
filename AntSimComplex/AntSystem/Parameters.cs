@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TspLibNet;
-using TspLibNet.Graph.Nodes;
-using TspLibNet.Tours;
 
 namespace AntSystem
 {
