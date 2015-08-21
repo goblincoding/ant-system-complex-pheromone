@@ -62,8 +62,6 @@ namespace AntSystem
         /// </summary>
         public int NumberOfAnts { get; set; } = 0;
 
-        public List<Node2D> NearestNeighbourTour { get; private set; } = new List<Node2D>();
-
         /// <summary>
         /// Calculates the pheromone initialisation value based on the nearest neighbour heuristic.
         /// Pseudo code:
@@ -80,37 +78,27 @@ namespace AntSystem
 
             // Select a random node.
             var random = new Random();
-            var current = notVisited.First(n => n.Id == 5); //notVisited.ElementAt(random.Next(0, notVisited.Count()));
+            var current = notVisited.ElementAt(random.Next(0, notVisited.Count()));
+            var first = current;  // have to return here eventually
             notVisited.Remove(current);
-            NearestNeighbourTour.Add(current as Node2D);
 
-            // Any unvisited nodes left?
             while (notVisited.Any())
             {
-                Debug.WriteLine($"Current node: {current.Id}");
-
                 // Calculate the weights (distances) from the current selected
                 // node to the remaining, unvisited nodes.
                 var weightList = from n in notVisited
                                  let w = weightsProvider.GetWeight(current, n)
                                  select new { NearestNode = n, Weight = w };
 
-                var print = weightList.ToList();
                 var minWeight = weightList.Min(t => t.Weight);
                 var tuple = weightList.First(t => t.Weight.Equals(minWeight));
                 current = tuple.NearestNode;
-                Debug.WriteLine($"Distance to nearest: {tuple.Weight}");
                 tourLength += tuple.Weight;
-                NearestNeighbourTour.Add(current as Node2D);
                 notVisited.Remove(current);
             }
 
-            var tourIds = new List<int>() { 5, 15, 14, 13, 12, 7, 6, 10, 9, 16, 1, 8, 4, 2, 3 };
-            var tour = new Tour(_tspProblem.Name, _tspProblem.Comment, tourIds.Count(), tourIds);
-            var tourDistance = _tspProblem.TourDistance(tour);
-            Debug.WriteLine($"Tour length from problem: {tourDistance}");
-
-            Debug.WriteLine($"Tour length: {tourLength}");
+            // Return to the first node.
+            tourLength += weightsProvider.GetWeight(current, first);
             return tourLength;
         }
     }

@@ -183,7 +183,6 @@ namespace AntSimComplex
             DrawTspLibItem();
             var problemName = TSPCombo.SelectedItem?.ToString();
             var param = _tspLibProcessor.GetProblemParameters(problemName);
-            DrawTour(param.NearestNeighbourTour, "");
             Console.WriteLine(param.InitialPheromone);
         }
 
