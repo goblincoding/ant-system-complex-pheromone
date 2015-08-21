@@ -28,7 +28,7 @@ namespace AntSimComplex
         private Matrix _worldToCanvasMatrix;
         private Matrix _canvasToWorldMatrix;
 
-        private SymmetricTSPInfoProvider _tspLibProcessor;
+        private SymmetricTSPInfoProvider _tspInfoProvider;
 
         public MainWindow()
         {
@@ -46,8 +46,8 @@ namespace AntSimComplex
             var tspLibPath = BrowseTSPLIBPath();
 
             // Load all symmetric TSP instances.
-            _tspLibProcessor = new SymmetricTSPInfoProvider(tspLibPath);
-            TSPCombo.ItemsSource = _tspLibProcessor.ProblemNames;
+            _tspInfoProvider = new SymmetricTSPInfoProvider(tspLibPath);
+            TSPCombo.ItemsSource = _tspInfoProvider.ProblemNames;
         }
 
         private string BrowseTSPLIBPath()
@@ -78,10 +78,10 @@ namespace AntSimComplex
         private void DrawTspLibItem()
         {
             var problemName = TSPCombo.SelectedItem?.ToString();
-            var worldMinX = _tspLibProcessor.GetMinX(problemName);
-            var worldMinY = _tspLibProcessor.GetMinY(problemName);
-            var worldMaxX = _tspLibProcessor.GetMaxX(problemName);
-            var worldMaxY = _tspLibProcessor.GetMaxY(problemName);
+            var worldMinX = _tspInfoProvider.GetMinX(problemName);
+            var worldMinY = _tspInfoProvider.GetMinY(problemName);
+            var worldMaxX = _tspInfoProvider.GetMaxX(problemName);
+            var worldMaxY = _tspInfoProvider.GetMaxY(problemName);
 
             const double margin = 20;
             const double canvasMinX = margin;
@@ -106,50 +106,54 @@ namespace AntSimComplex
 
         private void DrawNodes(string problemName)
         {
-            var nodes = _tspLibProcessor.GetGraphNodes(problemName);
+            var nodes = _tspInfoProvider.GetGraphNodes(problemName);
             var points = from n in nodes
                          select new Point { X = n.X, Y = n.Y };
 
             foreach (var point in points)
             {
-                var ellipse = new Ellipse() { Width = _circleWidth, Height = _circleWidth, Fill = Brushes.Black };
-                ellipse.ToolTip = $"x: {point.X}, y: {point.Y}";
-                canvas.Children.Add(ellipse);
-                var transformed = TransformWorldToCanvas(point);
-                Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
-                Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
+                DrawNode(point, Brushes.Black);
             }
+        }
+
+        private void DrawNode(Point point, Brush brush)
+        {
+            var ellipse = new Ellipse() { Width = _circleWidth, Height = _circleWidth, Fill = brush };
+            ellipse.ToolTip = $"x: {point.X}, y: {point.Y}";
+            canvas.Children.Add(ellipse);
+            var transformed = TransformWorldToCanvas(point);
+            Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
+            Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
         }
 
         private void DrawOptimalTour(string problemName)
         {
-            var nodes = _tspLibProcessor.GetOptimalTourNodes(problemName);
-            var optimalLength = _tspLibProcessor.GetOptimalTourLength(problemName);
-            DrawTour(nodes, $"Optimal tour: {optimalLength}");
-        }
+            var nodes = _tspInfoProvider.GetOptimalTourNodes(problemName);
 
-        private void DrawTour(List<Node2D> nodes, string toolTip)
-        {
-            var points = from n in nodes
-                         select new Point { X = n.X, Y = n.Y };
-
-            for (var i = 0; i < points.Count() - 1; ++i)
+            if (!nodes.Any())
             {
-                var point1 = TransformWorldToCanvas(points.ElementAt(i));
-                var point2 = TransformWorldToCanvas(points.ElementAt(i + 1));
-                var line = new Line()
-                {
-                    X1 = point1.X,
-                    Y1 = point1.Y,
-                    X2 = point2.X,
-                    Y2 = point2.Y,
-                    StrokeThickness = 1,
-                    Stroke = Brushes.Green,
-                    ToolTip = toolTip
-                };
-
-                canvas.Children.Add(line);
+                return;
             }
+
+            var optimalLength = _tspInfoProvider.GetOptimalTourLength(problemName);
+            var points = (from n in nodes
+                          select TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();
+
+            // Draw the starting node in red for easier identification.
+            DrawNode(TransformCanvasToWorld(points.First()), Brushes.Red);
+
+            // Return to starting point.
+            points.Add(points.First());
+
+            var poly = new Polyline()
+            {
+                Points = new PointCollection(points),
+                Stroke = Brushes.Green,
+                StrokeThickness = 1,
+                ToolTip = $"Optimal tour: {optimalLength}"
+            };
+
+            canvas.Children.Add(poly);
         }
 
         private void PrepareTransformationMatrices(double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
@@ -182,7 +186,7 @@ namespace AntSimComplex
         {
             DrawTspLibItem();
             var problemName = TSPCombo.SelectedItem?.ToString();
-            var param = _tspLibProcessor.GetProblemParameters(problemName);
+            var param = _tspInfoProvider.GetProblemParameters(problemName);
             Console.WriteLine(param.InitialPheromone);
         }
 
