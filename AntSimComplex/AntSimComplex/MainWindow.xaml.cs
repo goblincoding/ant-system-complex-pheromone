@@ -1,5 +1,6 @@
 ﻿using AntSimComplex.Dialogs;
 using AntSimComplex.Utilities;
+using AntSimComplexAS;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -29,10 +30,21 @@ namespace AntSimComplex
 
         private SymmetricTSPItemSelector _tspProblemSelector;
         private SymmetricTSPInfoProvider _tspInfoProvider;
+        private AntSystem _antSystem;
 
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var problemName = TSPCombo.SelectedItem?.ToString();
+            var item = _tspProblemSelector.GetItem(problemName);
+            _tspInfoProvider = new SymmetricTSPInfoProvider(item);
+            DrawTspLibItem();
+
+            _antSystem = new AntSystem(item.Problem);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -177,14 +189,6 @@ namespace AntSimComplex
         private Point TransformCanvasToWorld(Point point)
         {
             return _canvasToWorldMatrix.Transform(point);
-        }
-
-        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var problemName = TSPCombo.SelectedItem?.ToString();
-            var item = _tspProblemSelector.GetItem(problemName);
-            _tspInfoProvider = new SymmetricTSPInfoProvider(item);
-            DrawTspLibItem();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

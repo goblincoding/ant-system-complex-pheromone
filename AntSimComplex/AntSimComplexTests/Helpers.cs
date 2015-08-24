@@ -1,4 +1,7 @@
 ﻿using AntSimComplex.Utilities;
+using System;
+using System.Linq;
+using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexTests
@@ -15,6 +18,15 @@ namespace AntSimComplexTests
         public static SymmetricTSPItemSelector GetItemSelector(string path)
         {
             return new SymmetricTSPItemSelector(path, 100, typeof(Node2D));
+        }
+
+        public static IProblem GetRandomTSPProblem()
+        {
+            var itemSelector = GetItemSelector(LibPath);
+            var rand = new Random();
+            var name = itemSelector.ProblemNames.ElementAt(rand.Next(0, itemSelector.ProblemNames.Count()));
+            var item = itemSelector.GetItem(name);
+            return item.Problem;
         }
     }
 }

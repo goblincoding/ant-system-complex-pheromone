@@ -82,24 +82,27 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AntSystem\AntSystemTests.cs" />
+    <Compile Include="AntSystem\UtilitiesTests.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="SymmetricTSPInfoProviderTests.cs" />
-    <Compile Include="SymmetricTSPItemSelectorTests.cs" />
+    <Compile Include="GUI\SymmetricTSPInfoProviderTests.cs" />
+    <Compile Include="GUI\SymmetricTSPItemSelectorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AntSimComplex\AntSimComplex.csproj">
+    <ProjectReference Include="..\AntSimComplex\AntSimComplexUI.csproj">
       <Project>{d0370c39-12e1-4b0d-9c5f-9b0f4a75a7c7}</Project>
-      <Name>AntSimComplex</Name>
+      <Name>AntSimComplexUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntSystem\AntSystem.csproj">
+    <ProjectReference Include="..\AntSystem\AntSimComplexAS.csproj">
       <Project>{c8dab661-49ea-44cf-8799-e18e70f4b103}</Project>
-      <Name>AntSystem</Name>
+      <Name>AntSimComplexAS</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

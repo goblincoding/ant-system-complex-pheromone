@@ -125,9 +125,9 @@
     <Resource Include="Notes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AntSystem\AntSystem.csproj">
+    <ProjectReference Include="..\AntSystem\AntSimComplexAS.csproj">
       <Project>{c8dab661-49ea-44cf-8799-e18e70f4b103}</Project>
-      <Name>AntSystem</Name>
+      <Name>AntSimComplexAS</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

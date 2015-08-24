@@ -2,7 +2,7 @@
 using System.Linq;
 using TspLibNet;
 
-namespace AntSystem
+namespace AntSimComplexAS
 {
     /// <summary>
     /// Ant Colony Optimisation - Dorigo and Stutzle, p71, Box 3.1
@@ -12,11 +12,6 @@ namespace AntSystem
     /// </summary>
     public class Parameters
     {
-        private readonly IProblem _tspProblem;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
         /// <param name="problem">A TSPLib.Net problem instance</param>
         /// <exception cref="ArgumentNullException">Thrown if an null problem instance was provided.</exception>
         public Parameters(IProblem problem)
@@ -26,9 +21,8 @@ namespace AntSystem
                 throw new ArgumentNullException(nameof(problem), "The Parameters constructor needs a valid problem instance argument");
             }
 
-            _tspProblem = problem;
-            NumberOfAnts = _tspProblem.NodeProvider.GetNodes().Count();
-            InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength();
+            NumberOfAnts = problem.NodeProvider.GetNodes().Count();
+            InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength(problem);
         }
 
         /// <summary>
@@ -66,10 +60,10 @@ namespace AntSystem
         /// 3. Are there any unvisitied cities left? If yes, repeat step 2.
         /// 4. Return to the first city.
         /// </summary>
-        private double GetNearestNeighbourTourLength()
+        private double GetNearestNeighbourTourLength(IProblem problem)
         {
-            var notVisited = _tspProblem.NodeProvider.GetNodes().ToList();
-            var weightsProvider = _tspProblem.EdgeWeightsProvider;
+            var notVisited = problem.NodeProvider.GetNodes().ToList();
+            var weightsProvider = problem.EdgeWeightsProvider;
             var tourLength = 0.0;
 
             // Select a random node.
