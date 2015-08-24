@@ -25,6 +25,7 @@ namespace AntSimComplex.Utilities
         /// <param name="maxNodes">The maximum number of nodes the selected TSP problems may contain.</param>
         /// <param name="nodeType">The derived node class (e.g. Node2D)</param>
         /// <exception cref="ArgumentNullException">Thrown if path argument is null or empty</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if no TspLib95Items were loaded.</exception>
         /// <exception cref="DirectoryNotFoundException">Thrown if TSP lib path does not point to TSPLIB95 or doesn't exist.</exception>
         public SymmetricTSPItemSelector(string tspLibPath, uint maxNodes, Type nodeType)
         {
@@ -38,11 +39,14 @@ namespace AntSimComplex.Utilities
                             where i.Problem.NodeProvider.CountNodes() <= maxNodes
                             where i.Problem.NodeProvider.GetNodes().First().GetType() == nodeType
                             select i)?.ToList();
-            Debug.Assert(_tspLibItems?.Any() != false);
+
+            if (_tspLibItems?.Any() == false)
+            {
+                throw new ArgumentOutOfRangeException($"No TspLib95Items were loaded for {tspLibPath} with max nodes {maxNodes} and node type {nodeType}");
+            }
 
             ProblemNames = (from i in _tspLibItems
-                            select i.Problem.Name)?.ToList();
-            Debug.Assert(ProblemNames?.Any() != false);
+                            select i.Problem.Name).ToList();
         }
 
         /// <returns>The TSP library item corresponding to problemName.</returns>

@@ -26,9 +26,15 @@ namespace AntSimComplex.Utilities
         /// Constructor.
         /// </summary>
         /// <param name="item">The item to provide information for.</param>
+        /// <exception cref="ArgumentNullException">Thrown when "item" is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if problem nodes are not Node2D types.</exception>
         public SymmetricTSPInfoProvider(TspLib95Item item)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             Nodes2D = (from n in item.Problem.NodeProvider.GetNodes()
                        where n is Node2D
                        select n as Node2D)?.ToList();

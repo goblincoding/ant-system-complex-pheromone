@@ -83,6 +83,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Helpers.cs" />
+    <Compile Include="SymmetricTSPInfoProviderTests.cs" />
     <Compile Include="SymmetricTSPItemSelectorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

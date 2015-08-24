@@ -1,5 +1,7 @@
-﻿using NUnit.Framework;
+﻿using AntSimComplex.Utilities;
+using NUnit.Framework;
 using System;
+using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexTests
 {
@@ -20,6 +22,13 @@ namespace AntSimComplexTests
         {
             // Select an arbitrary directory.
             var itemSelector = Helpers.GetItemSelector(System.IO.Directory.GetCurrentDirectory());
+        }
+
+        [Test]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestNoTspLibItemsLoadedConstructor()
+        {
+            var itemSelector = new SymmetricTSPItemSelector(Helpers.LibPath, 10, typeof(Node3D));
         }
 
         [TestCase("")]
