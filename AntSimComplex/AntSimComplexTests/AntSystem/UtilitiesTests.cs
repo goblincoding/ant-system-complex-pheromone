@@ -43,6 +43,41 @@ namespace AntSimComplexTests
             Assert.IsNotNull(data);
         }
 
+        [Test]
+        public void TestDataStructuresGetInterNodeDistanceSuccess()
+        {
+            var problem = Helpers.GetRandomTSPProblem();
+            var data = new DataStructures(problem);
+            var nodes = problem.NodeProvider.GetNodes();
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+                Assert.IsTrue(distance >= 0);
+            }
+
+            nodes.Reverse();
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+                Assert.IsTrue(distance >= 0);
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(IndexOutOfRangeException))]
+        public void TestDataStructuresGetInterNodeDistanceFail()
+        {
+            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
+            var data = new DataStructures(problem);
+
+            var otherProblem = Helpers.GetTSPProblemByName("eil51");
+            var nodes = otherProblem.NodeProvider.GetNodes();
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+            }
+        }
+
         #endregion DataStructures
     }
 }

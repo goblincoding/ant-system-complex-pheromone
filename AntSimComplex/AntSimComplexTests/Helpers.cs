@@ -25,7 +25,14 @@ namespace AntSimComplexTests
             var itemSelector = GetItemSelector(LibPath);
             var rand = new Random();
             var name = itemSelector.ProblemNames.ElementAt(rand.Next(0, itemSelector.ProblemNames.Count()));
-            var item = itemSelector.GetItem("ulysses16.tsp"/*name*/);
+            var item = itemSelector.GetItem(name);
+            return item.Problem;
+        }
+
+        public static IProblem GetTSPProblemByName(string name)
+        {
+            var itemSelector = GetItemSelector(LibPath);
+            var item = itemSelector.GetItem(name);
             return item.Problem;
         }
     }
