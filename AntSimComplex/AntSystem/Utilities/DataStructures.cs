@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
@@ -19,6 +21,13 @@ namespace AntSimComplexAS
         private double[][] _distances;
 
         /// <summary>
+        /// Represents the nearest neighbour lists for all nodes where _nearest[i]
+        /// returns an array of the (adjusted) node ids sorted by increasing distance
+        /// from node i.
+        /// </summary>
+        private int[][] _nearest;
+
+        /// <summary>
         /// The node ID numbering in TSPLIB95 problem sets are not necessarily zero based.
         /// This creates difficulties for data structure reference by node ID since data
         /// structures are obviously zero-based indexed.  This node offset takes care of
@@ -35,7 +44,9 @@ namespace AntSimComplexAS
                 throw new ArgumentNullException(nameof(problem), "The AntSystem constructor needs a valid problem instance argument");
             }
 
-            _distances = CalculateInterNodeDistances(problem);
+            // Order is important!
+            CalculateInterNodeDistances(problem);
+            CalculateNearestNeighbours();
         }
 
         /// <summary>
@@ -52,12 +63,6 @@ namespace AntSimComplexAS
         {
             var i = node1.Id - _nodeIDOffset;
             var j = node2.Id - _nodeIDOffset;
-
-            if (i > _distances.Length || j > _distances.Length)
-            {
-                throw new IndexOutOfRangeException();
-            }
-
             return _distances[i][j];
         }
 
@@ -70,29 +75,50 @@ namespace AntSimComplexAS
         /// </summary>
         /// <param name="problem"></param>
         /// <returns>A jagged array (n^2 matrix) of inter-node distances.</returns>
-        private double[][] CalculateInterNodeDistances(IProblem problem)
+        private void CalculateInterNodeDistances(IProblem problem)
         {
             var nodes = problem.NodeProvider.GetNodes();
             _nodeIDOffset = nodes.Min(n => n.Id);
 
             var nodeCount = nodes.Count;
             var weightsProvider = problem.EdgeWeightsProvider;
-            double[][] distances = new double[nodeCount][];
+            _distances = new double[nodeCount][];
 
             for (int i = 0; i < nodeCount; i++)
             {
-                distances[i] = new double[nodeCount];
+                _distances[i] = new double[nodeCount];
                 var node1 = nodes[i];
 
                 for (int j = 0; j < nodeCount; j++)
                 {
                     var node2 = nodes[j];
-                    distances[i][j] = weightsProvider.GetWeight(node1, node2);
+                    _distances[i][j] = weightsProvider.GetWeight(node1, node2);
                     //Debug.WriteLine($"Distance from node {node1.Id} to {node2.Id} is {distances[i][j]}");
                 }
             }
+        }
 
-            return distances;
+        private void CalculateNearestNeighbours()
+        {
+            var nrNodes = _distances.Length;
+            _nearest = new int[nrNodes][];
+
+            for (int n = 0; n < nrNodes; n++)
+            {
+                _nearest[n] = new int[nrNodes];
+                var pairs = _distances[n]
+                                  .Select((d, i) => new KeyValuePair<double, int>(d, i))
+                                  .OrderBy(d => d.Key).ToList();
+                var nearestIndices = (from p in pairs
+                                      select p.Value + _nodeIDOffset).ToArray();
+                nearestIndices.CopyTo(_nearest[n], 0);
+
+                for (int i = 1; i < _nearest[n].Length; i++)
+                {
+                    var index = _nearest[n][i - _nodeIDOffset];
+                    Debug.WriteLine($"Distance from {n} to {index} is {_distances[n][index]}");
+                }
+            }
         }
     }
 }
