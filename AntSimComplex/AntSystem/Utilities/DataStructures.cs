@@ -45,8 +45,8 @@ namespace AntSimComplexAS
             }
 
             // Order is important!
-            CalculateInterNodeDistances(problem);
-            CalculateNearestNeighbours();
+            BuildDistancesMatrix(problem);
+            BuildNearestNeighboursMatrix();
         }
 
         /// <summary>
@@ -61,9 +61,21 @@ namespace AntSimComplexAS
         /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node IDs fall outside the expected range.</exception>
         public double GetInterNodeDistance(INode node1, INode node2)
         {
-            var i = node1.Id - _nodeIDOffset;
-            var j = node2.Id - _nodeIDOffset;
-            return _distances[i][j];
+            return _distances[node1.Id - _nodeIDOffset][node2.Id - _nodeIDOffset];
+        }
+
+        /// <summary>
+        /// This method does not create the nearest neighbours list, but references
+        /// the lists obtained from the original problem with which the DataStructures object
+        /// was constructed. Care must therefore be taken to only use node instances that exist
+        /// for the problem at hand <seealso cref="DataStructures"/>
+        /// </summary>
+        /// <param name="node">The node whose neighbours to return.</param>
+        /// <returns>Returns an array of neighbouring INode ID's in ascending order.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when the node ID fall outside the expected range.</exception>
+        public int[] GetNearestNeighbourIDs(INode node)
+        {
+            return _nearest[node.Id - _nodeIDOffset];
         }
 
         /// <summary>
@@ -75,7 +87,7 @@ namespace AntSimComplexAS
         /// </summary>
         /// <param name="problem"></param>
         /// <returns>A jagged array (n^2 matrix) of inter-node distances.</returns>
-        private void CalculateInterNodeDistances(IProblem problem)
+        private void BuildDistancesMatrix(IProblem problem)
         {
             var nodes = problem.NodeProvider.GetNodes();
             _nodeIDOffset = nodes.Min(n => n.Id);
@@ -98,7 +110,7 @@ namespace AntSimComplexAS
             }
         }
 
-        private void CalculateNearestNeighbours()
+        private void BuildNearestNeighboursMatrix()
         {
             var nrNodes = _distances.Length;
             _nearest = new int[nrNodes][];
@@ -109,15 +121,19 @@ namespace AntSimComplexAS
                 var pairs = _distances[n]
                                   .Select((d, i) => new KeyValuePair<double, int>(d, i))
                                   .OrderBy(d => d.Key).ToList();
+
+                // Add the node offset here so that it does not have to happen on every
+                // "nearest neighbours list" query.
                 var nearestIndices = (from p in pairs
                                       select p.Value + _nodeIDOffset).ToArray();
                 nearestIndices.CopyTo(_nearest[n], 0);
 
-                for (int i = 1; i < _nearest[n].Length; i++)
-                {
-                    var index = _nearest[n][i - _nodeIDOffset];
-                    Debug.WriteLine($"Distance from {n} to {index} is {_distances[n][index]}");
-                }
+                // Debug.
+                //for (int i = 0; i < _nearest[n].Length; i++)
+                //{
+                //    var index = _nearest[n][i] - _nodeIDOffset;
+                //    Debug.WriteLine($"Distance from {n} to {index} is {_distances[n][index]}");
+                //}
             }
         }
     }

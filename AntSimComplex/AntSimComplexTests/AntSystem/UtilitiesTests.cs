@@ -1,6 +1,7 @@
 ﻿using AntSimComplexAS;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace AntSimComplexTests
 {
@@ -75,6 +76,39 @@ namespace AntSimComplexTests
             for (int i = 0; i < nodes.Count - 1; i++)
             {
                 var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+            }
+        }
+
+        [Test]
+        public void TestDataStructuresGetNearestNeighboursSuccess()
+        {
+            var problem = Helpers.GetRandomTSPProblem();
+            var data = new DataStructures(problem);
+            var nodes = problem.NodeProvider.GetNodes();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var neighbours = data.GetNearestNeighbourIDs(nodes[i]);
+                Assert.AreEqual(neighbours.Length, nodes.Count);
+
+                foreach (var node in nodes)
+                {
+                    Assert.IsTrue(neighbours.Contains(node.Id));
+                }
+            }
+        }
+
+        [Test]
+        [ExpectedException(typeof(IndexOutOfRangeException))]
+        public void TestDataStructuresGetNearestNeighboursFail()
+        {
+            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
+            var data = new DataStructures(problem);
+
+            var otherProblem = Helpers.GetTSPProblemByName("eil51");
+            var nodes = otherProblem.NodeProvider.GetNodes();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var neighbours = data.GetNearestNeighbourIDs(nodes[i]);
             }
         }
 
