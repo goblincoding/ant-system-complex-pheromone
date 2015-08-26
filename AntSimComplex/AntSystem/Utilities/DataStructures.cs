@@ -27,17 +27,24 @@ namespace AntSimComplexAS
         /// </summary>
         private int[][] _nearest;
 
+        /// <summary>
+        /// Represents the simple pheromone density trail between two nodes for the
+        /// "standard" Ant System implementation.
+        /// </summary>
         private double[][] _pheromone;
 
         /// <summary>
-        /// The node ID numbering in TSPLIB95 problem sets are not necessarily zero based.
-        /// This creates difficulties for data structure reference by node ID since data
-        /// structures are obviously zero-based indexed.  This node offset takes care of
-        /// the difference.
+        /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
+        /// nearest neighbour and pheromone density matrices.
         /// </summary>
-        private int _nodeIDOffset = 0;
-
         private int _nodeCount = 0;
+
+        /// <summary>
+        /// Since INode ID's are not necessarily zero-indexed, using this property to obtain
+        /// the list of indices corresponding to the ordered (ascending by INode ID) list of
+        /// problem nodes is essential for use with the <seealso cref="DataStructures"/> object.
+        /// </summary>
+        public int[] OrderedNodeIndices { get; }
 
         /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
         /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
@@ -49,6 +56,7 @@ namespace AntSimComplexAS
             }
 
             _nodeCount = problem.NodeProvider.CountNodes();
+            OrderedNodeIndices = Enumerable.Range(0, _nodeCount).ToArray();
 
             // Order is important!
             BuildDistancesMatrix(problem);
@@ -58,61 +66,65 @@ namespace AntSimComplexAS
 
         /// <summary>
         /// This method does not calculate the edge weight between two nodes, but references
-        /// the weights obtained from the original problem with which the DataStructures object
-        /// was constructed. Care must therefore be taken to only use node instances that exist
-        /// for the problem at hand <seealso cref="DataStructures"/>
+        /// the weights obtained from the original problem with which the <seealso cref="DataStructures"/>
+        /// object was constructed. Care must therefore be taken to only use node indices obtained
+        /// through <seealso cref="OrderedNodeIndices"/> for the problem at hand since INode ID's
+        /// will result in incorrect index offsets.
         /// </summary>
-        /// <param name="node1">First node</param>
-        /// <param name="node2">Second node</param>
+        /// <param name="node1">The index of the first node</param>
+        /// <param name="node2">The index of the second node</param>
         /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
-        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node IDs fall outside the expected range.</exception>
-        public double GetInterNodeDistance(INode node1, INode node2)
+        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
+        public double GetInterNodeDistance(int node1, int node2)
         {
-            return _distances[node1.Id - _nodeIDOffset][node2.Id - _nodeIDOffset];
+            return _distances[node1][node2];
         }
 
         /// <summary>
         /// This method does not create the nearest neighbours list, but references
-        /// the lists obtained from the original problem with which the DataStructures object
-        /// was constructed. Care must therefore be taken to only use node instances that exist
-        /// for the problem at hand <seealso cref="DataStructures"/>
+        /// the lists obtained from the original problem with which the <seealso cref="DataStructures"/>
+        /// object was constructed. Care must therefore be taken to only use node indices obtained
+        /// through <seealso cref="OrderedNodeIndices"/> for the problem at hand since INode ID's
+        /// will result in incorrect index offsets.
         /// </summary>
-        /// <param name="node">The node whose neighbours to return.</param>
-        /// <returns>Returns an array of neighbouring INode ID's in ascending order.</returns>
-        /// <exception cref="IndexOutOfRangeException">Thrown when the node ID fall outside the expected range.</exception>
-        public int[] GetNearestNeighbourIDs(INode node)
+        /// <param name="node">The node index whose neighbours should be returned.</param>
+        /// <returns>Returns an array of neighbouring node indices in ascending order.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when the node index falls outside the expected range.</exception>
+        public int[] GetNearestNeighbourNodeIDs(int node)
         {
-            return _nearest[node.Id - _nodeIDOffset];
+            return _nearest[node];
         }
 
         /// <summary>
         /// This method depends on the graph dimensions of the original problem with which the
-        /// DataStructures object was constructed. Care must therefore be taken to only use node
-        /// instances that exist for the problem at hand <seealso cref="DataStructures"/>
+        /// <seealso cref="DataStructures"/> object was constructed. Care must therefore be taken
+        /// to only use node indices obtained through <seealso cref="OrderedNodeIndices"/> for the
+        /// problem at hand since INode ID's will result in incorrect index offsets.
         /// </summary>
-        /// <param name="node1">First node</param>
-        /// <param name="node2">Second node</param>
-        /// <returns>Returns the pheromone trail density between two nodes.</returns>
-        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node IDs fall outside the expected range.</exception>
-        public double GetPheromoneTrailDensity(INode node1, INode node2)
+        /// <param name="node1">The index of the first node</param>
+        /// <param name="node2">The index of the second node</param>
+        /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
+        public double GetPheromoneTrailDensity(int node1, int node2)
         {
-            return _pheromone[node1.Id - _nodeIDOffset][node2.Id - _nodeIDOffset];
+            return _pheromone[node1][node2];
         }
 
         /// <summary>
         /// Sets the pheromone trail between "node1" and "node2" to "value".
         ///
         /// This method depends on the graph dimensions of the original problem with which the
-        /// DataStructures object was constructed. Care must therefore be taken to only use node
-        /// instances that exist for the problem at hand <seealso cref="DataStructures"/>        ///
+        /// <seealso cref="DataStructures"/> object was constructed. Care must therefore be taken
+        /// to only use node indices obtained through <seealso cref="OrderedNodeIndices"/> for the
+        /// problem at hand since INode ID's will result in incorrect index offsets.
         /// </summary>
-        /// <param name="node1">First node</param>
-        /// <param name="node2">Second node</param>
+        /// <param name="node1">The index of the first node</param>
+        /// <param name="node2">The index of the second node</param>
         /// <param name="value">The pheromone density</param>
-        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node IDs fall outside the expected range.</exception>
-        public void SetPheromoneTrailDensity(INode node1, INode node2, double value)
+        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
+        public void SetPheromoneTrailDensity(int node1, int node2, double value)
         {
-            _pheromone[node1.Id - _nodeIDOffset][node2.Id - _nodeIDOffset] = value;
+            _pheromone[node1][node2] = value;
         }
 
         /// <summary>
@@ -125,8 +137,11 @@ namespace AntSimComplexAS
         /// <param name="problem"></param>
         private void BuildDistancesMatrix(IProblem problem)
         {
-            var nodes = problem.NodeProvider.GetNodes();
-            _nodeIDOffset = nodes.Min(n => n.Id);
+            // Ensure that the nodes are sorted by ID ascending
+            // or else all matrix indices will be off.
+            var nodes = problem.NodeProvider.GetNodes()
+                                                .OrderBy(n => n.Id)
+                                                .ToArray();
 
             var weightsProvider = problem.EdgeWeightsProvider;
             _distances = new double[_nodeCount][];
@@ -158,8 +173,7 @@ namespace AntSimComplexAS
 
                 // Add the node offset here so that it does not have to happen on every
                 // "nearest neighbours list" query.
-                var nearestIndices = (from p in pairs
-                                      select p.Value + _nodeIDOffset).ToArray();
+                var nearestIndices = pairs.Select(p => p.Value).ToArray();
                 nearestIndices.CopyTo(_nearest[n], 0);
 
                 // Debug.

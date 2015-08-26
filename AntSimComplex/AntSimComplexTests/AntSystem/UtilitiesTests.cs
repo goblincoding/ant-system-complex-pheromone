@@ -56,7 +56,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+                var distance = data.GetInterNodeDistance(i, i + 1);
             }
         }
 
@@ -68,14 +68,14 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+                var distance = data.GetInterNodeDistance(i, i + 1);
                 Assert.IsTrue(distance >= 0);
             }
 
             nodes.Reverse();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var distance = data.GetInterNodeDistance(nodes[i], nodes[i + 1]);
+                var distance = data.GetInterNodeDistance(i, i + 1);
                 Assert.IsTrue(distance >= 0);
             }
         }
@@ -91,7 +91,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count; i++)
             {
-                var neighbours = data.GetNearestNeighbourIDs(nodes[i]);
+                var neighbours = data.GetNearestNeighbourNodeIDs(i);
             }
         }
 
@@ -103,12 +103,12 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count; i++)
             {
-                var neighbours = data.GetNearestNeighbourIDs(nodes[i]);
+                var neighbours = data.GetNearestNeighbourNodeIDs(i);
                 Assert.AreEqual(neighbours.Length, nodes.Count);
 
-                foreach (var node in nodes)
+                for (int j = 0; j < nodes.Count; j++)
                 {
-                    Assert.IsTrue(neighbours.Contains(node.Id));
+                    Assert.IsTrue(neighbours.Contains(j));
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var density = data.GetPheromoneTrailDensity(nodes[i], nodes[i + 1]);
+                var density = data.GetPheromoneTrailDensity(i, i + 1);
             }
         }
 
@@ -137,7 +137,7 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var density = data.GetPheromoneTrailDensity(nodes[i], nodes[i + 1]);
+                var density = data.GetPheromoneTrailDensity(i, i + 1);
             }
         }
 
@@ -150,10 +150,8 @@ namespace AntSimComplexTests
 
             var random = new Random();
             var nodeCount = problem.NodeProvider.CountNodes();
-            var node1 = problem.NodeProvider.GetNodes().ElementAt(random.Next(0, nodeCount));
-            var node2 = problem.NodeProvider.GetNodes().ElementAt(random.Next(0, nodeCount));
 
-            var density = data.GetPheromoneTrailDensity(node1, node2);
+            var density = data.GetPheromoneTrailDensity(random.Next(0, nodeCount), random.Next(0, nodeCount));
             Assert.AreEqual(density, parameters.InitialPheromone);
         }
 
@@ -168,7 +166,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                data.SetPheromoneTrailDensity(nodes[i], nodes[i + 1], 0);
+                data.SetPheromoneTrailDensity(i, i + 1, 0);
             }
         }
 
@@ -180,7 +178,7 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                data.SetPheromoneTrailDensity(nodes[i], nodes[i + 1], 1);
+                data.SetPheromoneTrailDensity(i, i + 1, 1);
             }
         }
 
