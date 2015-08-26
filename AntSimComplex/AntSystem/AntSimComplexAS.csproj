@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ant.cs" />
     <Compile Include="AntSystem.cs" />
     <Compile Include="Utilities\DataStructures.cs" />
     <Compile Include="Utilities\Parameters.cs" />

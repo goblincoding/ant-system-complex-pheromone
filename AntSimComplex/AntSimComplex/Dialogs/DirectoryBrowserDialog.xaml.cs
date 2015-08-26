@@ -1,7 +1,7 @@
-﻿using AntSimComplex.Utilities;
+﻿using AntSimComplexUI.Utilities;
 using System.Windows;
 
-namespace AntSimComplex.Dialogs
+namespace AntSimComplexUI.Dialogs
 {
     /// <summary>
     /// Interaction logic for DirectoryBrowserDialog.xaml

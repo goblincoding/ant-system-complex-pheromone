@@ -1,9 +1,9 @@
-﻿using AntSimComplex.Utilities;
+﻿using AntSimComplexUI.Utilities;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace AntSimComplex.UserControls
+namespace AntSimComplexUI.UserControls
 {
     /// <summary>
     /// Interaction logic for DirectoryBrowser.xaml

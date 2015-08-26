@@ -4,7 +4,7 @@ using System.Linq;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
-namespace AntSimComplex.Utilities
+namespace AntSimComplexUI.Utilities
 {
     /// <summary>
     /// This class is responsible for selecting the symmetrical TSP problems that we're interested in.

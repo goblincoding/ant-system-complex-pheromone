@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplex.Utilities
+namespace AntSimComplexUI.Utilities
 {
     /// <summary>
     /// This class selects a subset of symmetric TSP item instances based on the criteria passed in to its constructor.

@@ -1,6 +1,6 @@
-﻿using AntSimComplex.Dialogs;
-using AntSimComplex.Utilities;
-using AntSimComplexAS;
+﻿using AntSimComplexAS;
+using AntSimComplexUI.Dialogs;
+using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using TspLibNet.Graph.Nodes;
 
-namespace AntSimComplex
+namespace AntSimComplexUI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

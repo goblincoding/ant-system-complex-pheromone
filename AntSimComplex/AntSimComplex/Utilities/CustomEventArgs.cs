@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AntSimComplex.Utilities
+namespace AntSimComplexUI.Utilities
 {
     public class StringEventArgs : EventArgs
     {

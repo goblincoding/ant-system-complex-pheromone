@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AntSimComplex.Properties
+namespace AntSimComplexUI.Properties
 {
 
 
