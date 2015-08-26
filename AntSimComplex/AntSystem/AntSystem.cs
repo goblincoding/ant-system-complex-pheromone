@@ -24,8 +24,8 @@ namespace AntSimComplexAS
                 throw new ArgumentNullException(nameof(problem), "The AntSystem constructor needs a valid problem instance argument");
             }
 
-            _dataStructures = new DataStructures(problem);
             _parameters = new Parameters(problem);
+            _dataStructures = new DataStructures(problem, _parameters.InitialPheromone);
         }
     }
 }

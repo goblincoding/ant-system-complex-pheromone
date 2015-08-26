@@ -27,6 +27,8 @@ namespace AntSimComplexAS
         /// </summary>
         private int[][] _nearest;
 
+        private double[][] _pheromone;
+
         /// <summary>
         /// The node ID numbering in TSPLIB95 problem sets are not necessarily zero based.
         /// This creates difficulties for data structure reference by node ID since data
@@ -35,18 +37,23 @@ namespace AntSimComplexAS
         /// </summary>
         private int _nodeIDOffset = 0;
 
+        private int _nodeCount = 0;
+
         /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
         /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
-        public DataStructures(IProblem problem)
+        public DataStructures(IProblem problem, double initialPheromoneDensity)
         {
             if (problem == null)
             {
                 throw new ArgumentNullException(nameof(problem), "The AntSystem constructor needs a valid problem instance argument");
             }
 
+            _nodeCount = problem.NodeProvider.CountNodes();
+
             // Order is important!
             BuildDistancesMatrix(problem);
             BuildNearestNeighboursMatrix();
+            BuildPheromoneDensityMatrix(initialPheromoneDensity);
         }
 
         /// <summary>
@@ -79,6 +86,36 @@ namespace AntSimComplexAS
         }
 
         /// <summary>
+        /// This method depends on the graph dimensions of the original problem with which the
+        /// DataStructures object was constructed. Care must therefore be taken to only use node
+        /// instances that exist for the problem at hand <seealso cref="DataStructures"/>
+        /// </summary>
+        /// <param name="node1">First node</param>
+        /// <param name="node2">Second node</param>
+        /// <returns>Returns the pheromone trail density between two nodes.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node IDs fall outside the expected range.</exception>
+        public double GetPheromoneTrailDensity(INode node1, INode node2)
+        {
+            return _pheromone[node1.Id - _nodeIDOffset][node2.Id - _nodeIDOffset];
+        }
+
+        /// <summary>
+        /// Sets the pheromone trail between "node1" and "node2" to "value".
+        ///
+        /// This method depends on the graph dimensions of the original problem with which the
+        /// DataStructures object was constructed. Care must therefore be taken to only use node
+        /// instances that exist for the problem at hand <seealso cref="DataStructures"/>        ///
+        /// </summary>
+        /// <param name="node1">First node</param>
+        /// <param name="node2">Second node</param>
+        /// <param name="value">The pheromone density</param>
+        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node IDs fall outside the expected range.</exception>
+        public void SetPheromoneTrailDensity(INode node1, INode node2, double value)
+        {
+            _pheromone[node1.Id - _nodeIDOffset][node2.Id - _nodeIDOffset] = value;
+        }
+
+        /// <summary>
         /// From Ant Colony Optimization, Dorigo 2004 , p100
         /// "In fact, although for symmetric TSPs we only need to store n(n-1)/2 distinct
         /// distances, it is more efficient to use an n^2 matrix to avoid performing
@@ -86,22 +123,20 @@ namespace AntSimComplexAS
         /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
         /// </summary>
         /// <param name="problem"></param>
-        /// <returns>A jagged array (n^2 matrix) of inter-node distances.</returns>
         private void BuildDistancesMatrix(IProblem problem)
         {
             var nodes = problem.NodeProvider.GetNodes();
             _nodeIDOffset = nodes.Min(n => n.Id);
 
-            var nodeCount = nodes.Count;
             var weightsProvider = problem.EdgeWeightsProvider;
-            _distances = new double[nodeCount][];
+            _distances = new double[_nodeCount][];
 
-            for (int i = 0; i < nodeCount; i++)
+            for (int i = 0; i < _nodeCount; i++)
             {
-                _distances[i] = new double[nodeCount];
+                _distances[i] = new double[_nodeCount];
                 var node1 = nodes[i];
 
-                for (int j = 0; j < nodeCount; j++)
+                for (int j = 0; j < _nodeCount; j++)
                 {
                     var node2 = nodes[j];
                     _distances[i][j] = weightsProvider.GetWeight(node1, node2);
@@ -112,12 +147,11 @@ namespace AntSimComplexAS
 
         private void BuildNearestNeighboursMatrix()
         {
-            var nrNodes = _distances.Length;
-            _nearest = new int[nrNodes][];
+            _nearest = new int[_nodeCount][];
 
-            for (int n = 0; n < nrNodes; n++)
+            for (int n = 0; n < _nodeCount; n++)
             {
-                _nearest[n] = new int[nrNodes];
+                _nearest[n] = new int[_nodeCount];
                 var pairs = _distances[n]
                                   .Select((d, i) => new KeyValuePair<double, int>(d, i))
                                   .OrderBy(d => d.Key).ToList();
@@ -134,6 +168,24 @@ namespace AntSimComplexAS
                 //    var index = _nearest[n][i] - _nodeIDOffset;
                 //    Debug.WriteLine($"Distance from {n} to {index} is {_distances[n][index]}");
                 //}
+            }
+        }
+
+        /// <summary>
+        /// From Ant Colony Optimization, Dorigo 2004 , p102
+        /// "Again, as was the case for the distance matrix, it is more convenient to use some
+        /// redundancy and to store the pheromones in a symmetric n^2 matrix."
+        /// </summary>
+        private void BuildPheromoneDensityMatrix(double initialPheromoneDensity)
+        {
+            _pheromone = new double[_nodeCount][];
+            for (int n = 0; n < _nodeCount; n++)
+            {
+                _pheromone[n] = new double[_nodeCount];
+                for (int i = 0; i < _nodeCount; i++)
+                {
+                    _pheromone[n][i] = initialPheromoneDensity;
+                }
             }
         }
     }

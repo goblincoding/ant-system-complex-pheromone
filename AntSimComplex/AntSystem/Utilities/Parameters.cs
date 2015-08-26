@@ -21,25 +21,25 @@ namespace AntSimComplexAS
                 throw new ArgumentNullException(nameof(problem), "The Parameters constructor needs a valid problem instance argument");
             }
 
-            NumberOfAnts = problem.NodeProvider.GetNodes().Count();
+            NumberOfAnts = problem.NodeProvider.CountNodes();
             InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength(problem);
         }
 
         /// <summary>
         /// Determines the relative influence of the pheromone trail in the random proportional rule.
         /// </summary>
-        public const int Alpha = 1;
+        public int Alpha { get; } = 1;
 
         /// <summary>
         /// Good values are 2 - 5, determines the relative influence of the heuristic information
         /// in the random proportional rule.
         /// </summary>
-        public const double Beta = 2.0;
+        public double Beta { get; } = 2.0;
 
         /// <summary>
         /// The pheromone evaporation rate for the pheromone update cycle (rho).
         /// </summary>
-        public const double EvaporationRate = 0.5;
+        public double EvaporationRate { get; } = 0.5;
 
         /// <summary>
         /// The pheromone density initialisation value (tau zero).
@@ -50,7 +50,7 @@ namespace AntSimComplexAS
         /// The number of artificial ants initialised for the problem.  For Ant System
         /// this number will always be equal to the number of nodes in the TSP.
         /// </summary>
-        public int NumberOfAnts { get; set; } = 0;
+        public int NumberOfAnts { get; } = 0;
 
         /// <summary>
         /// Calculates the pheromone initialisation value based on the nearest neighbour heuristic.
