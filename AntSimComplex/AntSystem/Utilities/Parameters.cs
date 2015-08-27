@@ -28,18 +28,18 @@ namespace AntSimComplexAS.Utilities
         /// <summary>
         /// Determines the relative influence of the pheromone trail in the random proportional rule.
         /// </summary>
-        public int Alpha { get; } = 1;
+        public const int Alpha = 1;
 
         /// <summary>
         /// Good values are 2 - 5, determines the relative influence of the heuristic information
         /// in the random proportional rule.
         /// </summary>
-        public double Beta { get; } = 2.0;
+        public const double Beta = 2.0;
 
         /// <summary>
         /// The pheromone evaporation rate for the pheromone update cycle (rho).
         /// </summary>
-        public double EvaporationRate { get; } = 0.5;
+        public const double EvaporationRate = 0.5;
 
         /// <summary>
         /// The pheromone density initialisation value (tau zero).

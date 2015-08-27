@@ -19,17 +19,30 @@ namespace AntSimComplexAS.Utilities
         private double[][] _distances;
 
         /// <summary>
+        /// Represents the simple pheromone density trail between two nodes for the
+        /// "standard" Ant System implementation.
+        /// </summary>
+        private double[][] _pheromone;
+
+        /// <summary>
+        /// Represents the [n_ij]^B heuristic values for each edge [i][j] where
+        /// n_ij = 1/d_ij and 'B' is the Beta parameter value <seealso cref="Parameters"/>
+        /// </summary>
+        private double[][] _heuristic;
+
+        /// <summary>
+        /// Represents the [t_ij]^A [n_ij]^B heuristic values for each edge [i][j] where
+        /// t_ij is the pheromone density, n_ij = 1/d_ij, and 'A' and 'B' are the Alpha
+        /// and Beta parameter values <seealso cref="Parameters"/>
+        /// </summary>
+        private double[][] _choiceInfo;
+
+        /// <summary>
         /// Represents the nearest neighbour lists for all nodes where _nearest[i]
         /// returns an array of the (adjusted) node ids sorted by increasing distance
         /// from node i.
         /// </summary>
         private int[][] _nearest;
-
-        /// <summary>
-        /// Represents the simple pheromone density trail between two nodes for the
-        /// "standard" Ant System implementation.
-        /// </summary>
-        private double[][] _pheromone;
 
         /// <summary>
         /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
@@ -60,9 +73,8 @@ namespace AntSimComplexAS.Utilities
             OrderedNodeIndices = Enumerable.Range(0, _nodeCount).ToArray();
 
             // Order is important!
-            BuildDistancesMatrix(problem);
-            BuildNearestNeighboursMatrix();
-            BuildPheromoneDensityMatrix(initialPheromoneDensity);
+            BuildInfoMatrices(problem, initialPheromoneDensity);
+            BuildNearestNeighboursLists();
         }
 
         /// <summary>
@@ -134,10 +146,20 @@ namespace AntSimComplexAS.Utilities
         /// distances, it is more efficient to use an n^2 matrix to avoid performing
         /// additional operations to check whether, when accessing a generic distance
         /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
+        ///
+        /// Pheromone density matrix - p102
+        /// Heuristics matrix - p117
+        /// Choice info matrix - p117
         /// </summary>
         /// <param name="problem"></param>
-        private void BuildDistancesMatrix(IProblem problem)
+        /// <param name="initialPheromoneDensity"></param>
+        private void BuildInfoMatrices(IProblem problem, double initialPheromoneDensity)
         {
+            _distances = new double[_nodeCount][];
+            _pheromone = new double[_nodeCount][];
+            _heuristic = new double[_nodeCount][];
+            _choiceInfo = new double[_nodeCount][];
+
             // Ensure that the nodes are sorted by ID ascending
             // or else all matrix indices will be off.
             var nodes = problem.NodeProvider.GetNodes()
@@ -145,37 +167,42 @@ namespace AntSimComplexAS.Utilities
                                                 .ToArray();
 
             var weightsProvider = problem.EdgeWeightsProvider;
-            _distances = new double[_nodeCount][];
 
             for (int i = 0; i < _nodeCount; i++)
             {
                 _distances[i] = new double[_nodeCount];
-                var node1 = nodes[i];
+                _pheromone[i] = new double[_nodeCount];
+                _heuristic[i] = new double[_nodeCount];
+                _choiceInfo[i] = new double[_nodeCount];
 
                 for (int j = 0; j < _nodeCount; j++)
                 {
-                    var node2 = nodes[j];
-                    _distances[i][j] = weightsProvider.GetWeight(node1, node2);
-                    //Debug.WriteLine($"Distance from node {node1.Id} to {node2.Id} is {distances[i][j]}");
+                    _distances[i][j] = weightsProvider.GetWeight(nodes[i], nodes[j]);
+                    _heuristic[i][j] = Math.Pow((1 / _distances[i][j]), Parameters.Beta);
+                    _pheromone[i][j] = initialPheromoneDensity;
+                    _choiceInfo[i][j] = Math.Pow(_pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
                 }
             }
         }
 
-        private void BuildNearestNeighboursMatrix()
+        /// <summary>
+        /// From Ant Colony Optimization, Dorigo 2004 , p116.
+        /// </summary>
+        private void BuildNearestNeighboursLists()
         {
             _nearest = new int[_nodeCount][];
 
-            for (int n = 0; n < _nodeCount; n++)
+            for (int i = 0; i < _nodeCount; i++)
             {
-                _nearest[n] = new int[_nodeCount];
-                var pairs = _distances[n]
-                                  .Select((d, i) => new KeyValuePair<double, int>(d, i))
+                _nearest[i] = new int[_nodeCount];
+                var pairs = _distances[i]
+                                  .Select((d, j) => new KeyValuePair<double, int>(d, j))
                                   .OrderBy(d => d.Key).ToList();
 
                 // Add the node offset here so that it does not have to happen on every
                 // "nearest neighbours list" query.
                 var nearestIndices = pairs.Select(p => p.Value).ToArray();
-                nearestIndices.CopyTo(_nearest[n], 0);
+                nearestIndices.CopyTo(_nearest[i], 0);
 
                 // Debug.
                 //for (int i = 0; i < _nearest[n].Length; i++)
@@ -183,24 +210,6 @@ namespace AntSimComplexAS.Utilities
                 //    var index = _nearest[n][i] - _nodeIDOffset;
                 //    Debug.WriteLine($"Distance from {n} to {index} is {_distances[n][index]}");
                 //}
-            }
-        }
-
-        /// <summary>
-        /// From Ant Colony Optimization, Dorigo 2004 , p102
-        /// "Again, as was the case for the distance matrix, it is more convenient to use some
-        /// redundancy and to store the pheromones in a symmetric n^2 matrix."
-        /// </summary>
-        private void BuildPheromoneDensityMatrix(double initialPheromoneDensity)
-        {
-            _pheromone = new double[_nodeCount][];
-            for (int n = 0; n < _nodeCount; n++)
-            {
-                _pheromone[n] = new double[_nodeCount];
-                for (int i = 0; i < _nodeCount; i++)
-                {
-                    _pheromone[n][i] = initialPheromoneDensity;
-                }
             }
         }
     }

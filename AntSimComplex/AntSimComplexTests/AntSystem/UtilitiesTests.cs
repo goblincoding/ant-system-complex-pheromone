@@ -23,7 +23,6 @@ namespace AntSimComplexTests
             var parameters = new Parameters(problem);
             Assert.IsTrue(parameters.NumberOfAnts == problem.NodeProvider.CountNodes());
             Assert.IsTrue(parameters.InitialPheromone > 0.0);
-            Assert.IsTrue(parameters.EvaporationRate >= 0.0);
         }
 
         #endregion Parameters
