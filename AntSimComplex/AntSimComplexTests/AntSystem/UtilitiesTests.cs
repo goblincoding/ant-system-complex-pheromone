@@ -1,4 +1,4 @@
-﻿using AntSimComplexAS;
+﻿using AntSimComplexAS.Utilities;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var distance = data.GetInterNodeDistance(i, i + 1);
+                var distance = data.Distance(i, i + 1);
             }
         }
 
@@ -68,14 +68,14 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var distance = data.GetInterNodeDistance(i, i + 1);
+                var distance = data.Distance(i, i + 1);
                 Assert.IsTrue(distance >= 0);
             }
 
             nodes.Reverse();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var distance = data.GetInterNodeDistance(i, i + 1);
+                var distance = data.Distance(i, i + 1);
                 Assert.IsTrue(distance >= 0);
             }
         }
@@ -91,7 +91,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count; i++)
             {
-                var neighbours = data.GetNearestNeighbourNodeIDs(i);
+                var neighbours = data.NearestNeighbours(i);
             }
         }
 
@@ -103,7 +103,7 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count; i++)
             {
-                var neighbours = data.GetNearestNeighbourNodeIDs(i);
+                var neighbours = data.NearestNeighbours(i);
                 Assert.AreEqual(neighbours.Length, nodes.Count);
 
                 for (int j = 0; j < nodes.Count; j++)
@@ -125,7 +125,7 @@ namespace AntSimComplexTests
             var nodes = otherProblem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var density = data.GetPheromoneTrailDensity(i, i + 1);
+                var density = data.PheromoneTrailDensity(i, i + 1);
             }
         }
 
@@ -137,7 +137,7 @@ namespace AntSimComplexTests
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                var density = data.GetPheromoneTrailDensity(i, i + 1);
+                var density = data.PheromoneTrailDensity(i, i + 1);
             }
         }
 
@@ -151,7 +151,7 @@ namespace AntSimComplexTests
             var random = new Random();
             var nodeCount = problem.NodeProvider.CountNodes();
 
-            var density = data.GetPheromoneTrailDensity(random.Next(0, nodeCount), random.Next(0, nodeCount));
+            var density = data.PheromoneTrailDensity(random.Next(0, nodeCount), random.Next(0, nodeCount));
             Assert.AreEqual(density, parameters.InitialPheromone);
         }
 

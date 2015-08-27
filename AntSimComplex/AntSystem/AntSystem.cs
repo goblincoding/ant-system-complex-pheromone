@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AntSimComplexAS.Utilities;
+using AntSystemAS;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TspLibNet;
 
 namespace AntSimComplexAS
@@ -12,9 +11,17 @@ namespace AntSimComplexAS
     /// </summary>
     public class AntSystem
     {
-        private DataStructures _dataStructures;
-        private Parameters _parameters;
+        public event EventHandler MoveNext = delegate { };
 
+        public event EventHandler Reset = delegate { };
+
+        private readonly DataStructures _dataStructures;
+        private readonly Parameters _parameters;
+        private Ant[] _ants;
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
         /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
         public AntSystem(IProblem problem)
@@ -26,6 +33,27 @@ namespace AntSimComplexAS
 
             _parameters = new Parameters(problem);
             _dataStructures = new DataStructures(problem, _parameters.InitialPheromone);
+
+            ConstructAnts();
+        }
+
+        /// <summary>
+        /// Initialise Ants and place one on each node of the TSP graph.
+        /// </summary>
+        private void ConstructAnts()
+        {
+            var random = new Random();
+            var nodeCount = _dataStructures.OrderedNodeIndices.Count();
+            _ants = new Ant[nodeCount];
+
+            foreach (var index in _dataStructures.OrderedNodeIndices)
+            {
+                var startNode = random.Next(0, nodeCount);
+                var ant = new Ant(startNode, nodeCount);
+                MoveNext += ant.MoveNext;
+                Reset += ant.Reset;
+                _ants[index] = ant;
+            }
         }
     }
 }

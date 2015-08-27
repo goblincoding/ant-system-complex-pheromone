@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TspLibNet;
-using TspLibNet.Graph.Nodes;
 
-namespace AntSimComplexAS
+namespace AntSimComplexAS.Utilities
 {
     /// <summary>
     /// This class represents the prepopulated (prior to algorithm run-time), consolidated,
@@ -46,6 +44,9 @@ namespace AntSimComplexAS
         /// </summary>
         public int[] OrderedNodeIndices { get; }
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
         /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
         public DataStructures(IProblem problem, double initialPheromoneDensity)
@@ -75,7 +76,7 @@ namespace AntSimComplexAS
         /// <param name="node2">The index of the second node</param>
         /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
-        public double GetInterNodeDistance(int node1, int node2)
+        public double Distance(int node1, int node2)
         {
             return _distances[node1][node2];
         }
@@ -90,7 +91,7 @@ namespace AntSimComplexAS
         /// <param name="node">The node index whose neighbours should be returned.</param>
         /// <returns>Returns an array of neighbouring node indices in ascending order.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when the node index falls outside the expected range.</exception>
-        public int[] GetNearestNeighbourNodeIDs(int node)
+        public int[] NearestNeighbours(int node)
         {
             return _nearest[node];
         }
@@ -105,7 +106,7 @@ namespace AntSimComplexAS
         /// <param name="node2">The index of the second node</param>
         /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
-        public double GetPheromoneTrailDensity(int node1, int node2)
+        public double PheromoneTrailDensity(int node1, int node2)
         {
             return _pheromone[node1][node2];
         }

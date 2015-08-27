@@ -2,7 +2,7 @@
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplexAS
+namespace AntSimComplexAS.Utilities
 {
     /// <summary>
     /// Ant Colony Optimisation - Dorigo and Stutzle, p71, Box 3.1
@@ -53,7 +53,7 @@ namespace AntSimComplexAS
         public int NumberOfAnts { get; } = 0;
 
         /// <summary>
-        /// Calculates the pheromone initialisation value based on the nearest neighbour heuristic.
+        /// Calculates the pheromone initialisation value based on the nearest neighbour heuristic (ACO Dorigo Ch3, p70).
         /// Pseudo code:
         /// 1. Select a random city.
         /// 2. Find the nearest unvisited city and go there.

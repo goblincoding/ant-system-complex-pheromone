@@ -11,7 +11,7 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     public class SymmetricTSPItemSelector
     {
-        private List<TspLib95Item> _tspLibItems;
+        private readonly List<TspLib95Item> _tspLibItems;
 
         /// <summary>
         /// The list of names of all symmetric TSP problems loaded.
