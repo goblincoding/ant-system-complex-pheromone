@@ -83,10 +83,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AntSystem\AntSystemTests.cs" />
-    <Compile Include="AntSystem\UtilitiesTests.cs" />
+    <Compile Include="AntSystem\DataStructuresTests.cs" />
+    <Compile Include="AntSystem\ParametersTests.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="GUI\SymmetricTSPInfoProviderTests.cs" />
     <Compile Include="GUI\SymmetricTSPItemSelectorTests.cs" />
+    <Compile Include="MockObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

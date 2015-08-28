@@ -5,35 +5,15 @@ using System.Linq;
 
 namespace AntSimComplexTests
 {
-    public class UtilitiesTests
+    internal class DataStructuresTests
     {
-        #region Parameters
+        #region objectSetup
 
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void TestNullProblemParametersConstructor()
+        public void TestNullProblemDataStructuresConstructorFail()
         {
-            var parameters = new Parameters(null);
-        }
-
-        [Test]
-        public void TestParametersConstructionSuccess()
-        {
-            var problem = Helpers.GetRandomTSPProblem();
-            var parameters = new Parameters(problem);
-            Assert.IsTrue(parameters.NumberOfAnts == problem.NodeProvider.CountNodes());
-            Assert.IsTrue(parameters.InitialPheromone > 0.0);
-        }
-
-        #endregion Parameters
-
-        #region DataStructures
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestNullProblemDataStructuresConstructor()
-        {
-            var parameters = new DataStructures(null, 0);
+            var data = new DataStructures(null, 0);
         }
 
         [Test]
@@ -44,9 +24,11 @@ namespace AntSimComplexTests
             Assert.IsNotNull(data);
         }
 
+        #endregion objectSetup
+
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void TestDataStructuresGetInterNodeDistanceFail()
+        public void TestDataStructuresDistanceIndexInvalid()
         {
             var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
             var data = new DataStructures(problem, 0);
@@ -62,26 +44,26 @@ namespace AntSimComplexTests
         [Test]
         public void TestDataStructuresGetInterNodeDistanceSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
+            var problem = new MockProblem();
             var data = new DataStructures(problem, 0);
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
                 var distance = data.Distance(i, i + 1);
-                Assert.IsTrue(distance >= 0);
+                Assert.AreEqual(distance, problem.GetWeight(i, i + 1));
             }
 
             nodes.Reverse();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
                 var distance = data.Distance(i, i + 1);
-                Assert.IsTrue(distance >= 0);
+                Assert.AreEqual(distance, problem.GetWeight(i, i + 1));
             }
         }
 
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void TestDataStructuresGetNearestNeighboursFail()
+        public void TestDataStructuresNearestNeighboursIndexInvalid()
         {
             var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
             var data = new DataStructures(problem, 0);
@@ -114,7 +96,7 @@ namespace AntSimComplexTests
 
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void TestDataStructuresGetPheromoneFail()
+        public void TestDataStructuresPheromoneIndexInvalid()
         {
             var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
             var parameters = new Parameters(problem);
@@ -183,7 +165,7 @@ namespace AntSimComplexTests
 
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void TestDataStructuresGetChoiceInfoFail()
+        public void TestDataStructuresGetChoiceInfoIndexInvalid()
         {
             var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
             var parameters = new Parameters(problem);
@@ -210,7 +192,5 @@ namespace AntSimComplexTests
             var info = data.ChoiceInfo(random.Next(0, nodeCount), random.Next(0, nodeCount));
             Assert.IsTrue(info > 0.0);
         }
-
-        #endregion DataStructures
     }
 }

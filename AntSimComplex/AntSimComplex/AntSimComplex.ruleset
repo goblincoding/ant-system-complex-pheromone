@@ -65,6 +65,7 @@
     <Rule Id="CA2242" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="RefactoringEssentials" RuleNamespace="RefactoringEssentials">
+    <Rule Id="RECS0129" Action="None" />
     <Rule Id="RECS0145" Action="None" />
   </Rules>
 </RuleSet>
