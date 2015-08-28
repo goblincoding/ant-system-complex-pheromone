@@ -181,6 +181,36 @@ namespace AntSimComplexTests
             }
         }
 
+        [Test]
+        [ExpectedException(typeof(IndexOutOfRangeException))]
+        public void TestDataStructuresGetChoiceInfoFail()
+        {
+            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
+            var parameters = new Parameters(problem);
+            var data = new DataStructures(problem, parameters.InitialPheromone);
+
+            var otherProblem = Helpers.GetTSPProblemByName("eil51");
+            var nodes = otherProblem.NodeProvider.GetNodes();
+            for (int i = 0; i < nodes.Count - 1; i++)
+            {
+                var density = data.ChoiceInfo(i, i + 1);
+            }
+        }
+
+        [Test]
+        public void TestDataStructuresGetChoiceInfoSuccess()
+        {
+            var problem = Helpers.GetRandomTSPProblem();
+            var parameters = new Parameters(problem);
+            var data = new DataStructures(problem, parameters.InitialPheromone);
+
+            var random = new Random();
+            var nodeCount = problem.NodeProvider.CountNodes();
+
+            var info = data.ChoiceInfo(random.Next(0, nodeCount), random.Next(0, nodeCount));
+            Assert.IsTrue(info > 0.0);
+        }
+
         #endregion DataStructures
     }
 }
