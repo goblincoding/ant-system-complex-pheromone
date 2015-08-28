@@ -49,7 +49,7 @@ namespace AntSimComplexAS
             foreach (var index in _dataStructures.OrderedNodeIndices)
             {
                 var startNode = random.Next(0, nodeCount);
-                var ant = new Ant(startNode, nodeCount);
+                var ant = new Ant(_dataStructures, startNode, nodeCount);
                 MoveNext += ant.MoveNext;
                 Reset += ant.Reset;
                 _ants[index] = ant;
