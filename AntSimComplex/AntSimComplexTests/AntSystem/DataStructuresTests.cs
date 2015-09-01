@@ -7,8 +7,6 @@ namespace AntSimComplexTests
 {
     internal class DataStructuresTests
     {
-        #region objectSetup
-
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullProblemDataStructuresConstructorFail()
@@ -24,21 +22,13 @@ namespace AntSimComplexTests
             Assert.IsNotNull(data);
         }
 
-        #endregion objectSetup
-
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void TestDataStructuresDistanceIndexInvalid()
         {
-            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
+            var problem = new MockProblem();
             var data = new DataStructures(problem, 0);
-
-            var otherProblem = Helpers.GetTSPProblemByName("eil51");
-            var nodes = otherProblem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                var distance = data.Distance(i, i + 1);
-            }
+            var distance = data.Distance(0, MockConstants.NrNodes);
         }
 
         [Test]
@@ -65,15 +55,9 @@ namespace AntSimComplexTests
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void TestDataStructuresNearestNeighboursIndexInvalid()
         {
-            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
+            var problem = new MockProblem();
             var data = new DataStructures(problem, 0);
-
-            var otherProblem = Helpers.GetTSPProblemByName("eil51");
-            var nodes = otherProblem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                var neighbours = data.NearestNeighbours(i);
-            }
+            var neighbours = data.NearestNeighbours(MockConstants.NrNodes);
         }
 
         [Test]
@@ -98,16 +82,9 @@ namespace AntSimComplexTests
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void TestDataStructuresPheromoneIndexInvalid()
         {
-            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
-            var parameters = new Parameters(problem);
-            var data = new DataStructures(problem, parameters.InitialPheromone);
-
-            var otherProblem = Helpers.GetTSPProblemByName("eil51");
-            var nodes = otherProblem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                var density = data.PheromoneTrailDensity(i, i + 1);
-            }
+            var problem = new MockProblem();
+            var data = new DataStructures(problem, 0);
+            var density = data.PheromoneTrailDensity(0, MockConstants.NrNodes);
         }
 
         [Test]
@@ -140,15 +117,9 @@ namespace AntSimComplexTests
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void TestDataStructuresSetPheromoneFail()
         {
-            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
-            var data = new DataStructures(problem, 1);
-
-            var otherProblem = Helpers.GetTSPProblemByName("eil51");
-            var nodes = otherProblem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                data.SetPheromoneTrailDensity(i, i + 1, 0);
-            }
+            var problem = new MockProblem();
+            var data = new DataStructures(problem, 0);
+            data.SetPheromoneTrailDensity(0, MockConstants.NrNodes, 0);
         }
 
         [Test]
@@ -167,16 +138,10 @@ namespace AntSimComplexTests
         [ExpectedException(typeof(IndexOutOfRangeException))]
         public void TestDataStructuresGetChoiceInfoIndexInvalid()
         {
-            var problem = Helpers.GetTSPProblemByName("ulysses16.tsp");
+            var problem = new MockProblem();
             var parameters = new Parameters(problem);
             var data = new DataStructures(problem, parameters.InitialPheromone);
-
-            var otherProblem = Helpers.GetTSPProblemByName("eil51");
-            var nodes = otherProblem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                var density = data.ChoiceInfo(i, i + 1);
-            }
+            var density = data.ChoiceInfo(0, MockConstants.NrNodes);
         }
 
         [Test]

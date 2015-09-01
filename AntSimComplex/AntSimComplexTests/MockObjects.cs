@@ -10,6 +10,11 @@ using TspLibNet.Tours;
 
 namespace AntSimComplexTests
 {
+    internal static class MockConstants
+    {
+        public const int NrNodes = 10;
+    }
+
     internal class MockEdgeWeightsProvider : IEdgeWeightsProvider
     {
         // Random edge weight values (10 * 10).

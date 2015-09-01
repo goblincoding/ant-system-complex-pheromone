@@ -69,7 +69,7 @@ namespace AntSimComplexAS.Utilities
         {
             if (problem == null)
             {
-                throw new ArgumentNullException(nameof(problem), "The AntSystem constructor needs a valid problem instance argument");
+                throw new ArgumentNullException(nameof(problem), $"The {nameof(DataStructures)} constructor needs a valid problem instance argument");
             }
 
             _nodeCount = problem.NodeProvider.CountNodes();
