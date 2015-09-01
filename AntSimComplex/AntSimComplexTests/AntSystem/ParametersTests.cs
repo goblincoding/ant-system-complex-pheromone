@@ -16,7 +16,7 @@ namespace AntSimComplexTests
         [Test]
         public void TestParametersConstructionSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
+            var problem = new MockProblem();
             var parameters = new Parameters(problem);
             Assert.IsTrue(parameters.NumberOfAnts == problem.NodeProvider.CountNodes());
             Assert.IsTrue(parameters.InitialPheromone > 0.0);

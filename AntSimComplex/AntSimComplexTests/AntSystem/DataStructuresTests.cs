@@ -17,7 +17,7 @@ namespace AntSimComplexTests
         [Test]
         public void TestDataStructuresConstructionSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
+            var problem = new MockProblem();
             var data = new DataStructures(problem, 0);
             Assert.IsNotNull(data);
         }
@@ -63,17 +63,19 @@ namespace AntSimComplexTests
         [Test]
         public void TestDataStructuresGetNearestNeighboursSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
+            var problem = new MockProblem();
             var data = new DataStructures(problem, 0);
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count; i++)
             {
                 var neighbours = data.NearestNeighbours(i);
-                Assert.AreEqual(neighbours.Length, nodes.Count);
 
-                for (int j = 0; j < nodes.Count; j++)
+                // -1 since nodes are not included in their own nearest neighbours lists.
+                Assert.AreEqual(neighbours.Length, nodes.Count - 1);
+
+                for (int j = 0; j < neighbours.Length - 1; j++)
                 {
-                    Assert.IsTrue(neighbours.Contains(j));
+                    Assert.IsTrue(data.Distance(i, neighbours[j]) <= data.Distance(i, neighbours[j + 1]));
                 }
             }
         }
@@ -90,27 +92,15 @@ namespace AntSimComplexTests
         [Test]
         public void TestDataStructuresGetPheromoneSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
-            var data = new DataStructures(problem, 1);
+            const int pherDensity = 1;
+            var problem = new MockProblem();
+            var data = new DataStructures(problem, pherDensity);
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
                 var density = data.PheromoneTrailDensity(i, i + 1);
+                Assert.AreEqual(density, pherDensity);
             }
-        }
-
-        [Test]
-        public void TestDataStructuresGetInitialPheromoneSuccess()
-        {
-            var problem = Helpers.GetRandomTSPProblem();
-            var parameters = new Parameters(problem);
-            var data = new DataStructures(problem, parameters.InitialPheromone);
-
-            var random = new Random();
-            var nodeCount = problem.NodeProvider.CountNodes();
-
-            var density = data.PheromoneTrailDensity(random.Next(0, nodeCount), random.Next(0, nodeCount));
-            Assert.AreEqual(density, parameters.InitialPheromone);
         }
 
         [Test]
@@ -125,12 +115,15 @@ namespace AntSimComplexTests
         [Test]
         public void TestDataStructuresSetPheromoneSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
-            var data = new DataStructures(problem, 1);
+            const int pherDensity = 1;
+            var problem = new MockProblem();
+            var data = new DataStructures(problem, pherDensity);
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
-                data.SetPheromoneTrailDensity(i, i + 1, 1);
+                const int newDensity = 2;
+                data.SetPheromoneTrailDensity(i, i + 1, newDensity);
+                Assert.AreEqual(data.PheromoneTrailDensity(i, i + 1), newDensity);
             }
         }
 
@@ -147,15 +140,21 @@ namespace AntSimComplexTests
         [Test]
         public void TestDataStructuresGetChoiceInfoSuccess()
         {
-            var problem = Helpers.GetRandomTSPProblem();
+            var problem = new MockProblem();
             var parameters = new Parameters(problem);
             var data = new DataStructures(problem, parameters.InitialPheromone);
 
             var random = new Random();
             var nodeCount = problem.NodeProvider.CountNodes();
 
-            var info = data.ChoiceInfo(random.Next(0, nodeCount), random.Next(0, nodeCount));
+            var i = random.Next(0, nodeCount);
+            var j = random.Next(0, nodeCount);
+            var heuristic = Math.Pow((1 / data.Distance(i, j)), Parameters.Beta);
+            var choiceInfo = Math.Pow(data.PheromoneTrailDensity(i, j), Parameters.Alpha) * heuristic;
+
+            var info = data.ChoiceInfo(i, j);
             Assert.IsTrue(info > 0.0);
+            Assert.AreEqual(info, choiceInfo);
         }
     }
 }

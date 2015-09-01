@@ -20,9 +20,9 @@ namespace AntSimComplexTests
         // Random edge weight values (10 * 10).
         private static readonly double[][] _weights =
         {
-            new double[]{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 },
-            new double[]{ 1, 0, 3, 4, 5, 6, 7, 8, 9, 1 },
-            new double[]{ 2, 3, 0, 5, 6, 7, 8, 9, 1, 2 },
+            new double[]{ 0, 3, 7, 3, 4, 5, 6, 7, 8, 9 },
+            new double[]{ 3, 0, 3, 4, 5, 6, 7, 8, 9, 1 },
+            new double[]{ 7, 3, 0, 5, 6, 7, 8, 9, 1, 2 },
             new double[]{ 3, 4, 5, 0, 7, 8, 9, 1, 2, 3 },
             new double[]{ 4, 5, 6, 7, 0, 9, 1, 2, 3, 4 },
             new double[]{ 5, 6, 7, 8, 9, 0, 2, 3, 4, 5 },

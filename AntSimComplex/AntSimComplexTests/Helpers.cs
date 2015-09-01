@@ -19,21 +19,5 @@ namespace AntSimComplexTests
         {
             return new SymmetricTSPItemSelector(path, 100, typeof(Node2D));
         }
-
-        public static IProblem GetRandomTSPProblem()
-        {
-            var itemSelector = GetItemSelector(LibPath);
-            var rand = new Random();
-            var name = itemSelector.ProblemNames.ElementAt(rand.Next(0, itemSelector.ProblemNames.Count()));
-            var item = itemSelector.GetItem(name);
-            return item.Problem;
-        }
-
-        public static IProblem GetTSPProblemByName(string name)
-        {
-            var itemSelector = GetItemSelector(LibPath);
-            var item = itemSelector.GetItem(name);
-            return item.Problem;
-        }
     }
 }

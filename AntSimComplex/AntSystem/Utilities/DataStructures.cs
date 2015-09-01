@@ -104,7 +104,7 @@ namespace AntSimComplexAS.Utilities
         /// will result in incorrect index offsets.
         /// </summary>
         /// <param name="node">The node index whose neighbours should be returned.</param>
-        /// <returns>Returns an array of neighbouring node indices in ascending order.</returns>
+        /// <returns>Returns an array of neighbouring node indices, ordered by ascending distance.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when the node index falls outside the expected range.</exception>
         public int[] NearestNeighbours(int node)
         {
@@ -221,14 +221,15 @@ namespace AntSimComplexAS.Utilities
 
             for (int i = 0; i < _nodeCount; i++)
             {
-                _nearest[i] = new int[_nodeCount];
+                // Remove nodes from their own nearest neighbour lists.
+                _nearest[i] = new int[_nodeCount - 1];
                 var pairs = _distances[i]
                                   .Select((d, j) => new KeyValuePair<double, int>(d, j))
                                   .OrderBy(d => d.Key).ToList();
 
                 // Add the node offset here so that it does not have to happen on every
                 // "nearest neighbours list" query.
-                var nearestIndices = pairs.Select(p => p.Value).ToArray();
+                var nearestIndices = pairs.Where(p => p.Value != i).Select(p => p.Value).ToArray();
                 nearestIndices.CopyTo(_nearest[i], 0);
 
                 // Debug.
