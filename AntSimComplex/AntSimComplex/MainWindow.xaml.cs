@@ -1,4 +1,4 @@
-﻿using AntSimComplexAS;
+﻿using AntSimComplexAlgorithms;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;

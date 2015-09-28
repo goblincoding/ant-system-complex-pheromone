@@ -1,8 +1,8 @@
-﻿using AntSimComplexAS.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities;
 using System;
 using System.Linq;
 
-namespace AntSystemAS
+namespace AntSimComplexAlgorithms
 {
     public class Ant
     {

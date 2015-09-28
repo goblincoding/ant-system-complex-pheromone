@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplexAS.Utilities
+namespace AntSimComplexAlgorithms.Utilities
 {
     /// <summary>
     /// This class represents the prepopulated (prior to algorithm run-time), consolidated,

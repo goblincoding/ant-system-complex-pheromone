@@ -2,7 +2,7 @@
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplexAS.Utilities
+namespace AntSimComplexAlgorithms.Utilities
 {
     /// <summary>
     /// Ant Colony Optimisation - Dorigo and Stutzle, p71, Box 3.1

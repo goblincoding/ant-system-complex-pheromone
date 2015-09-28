@@ -82,9 +82,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AntSystem\AntSystemTests.cs" />
-    <Compile Include="AntSystem\DataStructuresTests.cs" />
-    <Compile Include="AntSystem\ParametersTests.cs" />
+    <Compile Include="Backend\AntSystemTests.cs" />
+    <Compile Include="Backend\DataStructuresTests.cs" />
+    <Compile Include="Backend\ParametersTests.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="GUI\SymmetricTSPInfoProviderTests.cs" />
     <Compile Include="GUI\SymmetricTSPItemSelectorTests.cs" />
@@ -99,9 +99,9 @@
       <Project>{d0370c39-12e1-4b0d-9c5f-9b0f4a75a7c7}</Project>
       <Name>AntSimComplexUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntSystem\AntSimComplexAS.csproj">
+    <ProjectReference Include="..\AntSystem\AntSimComplexAlgorithms.csproj">
       <Project>{c8dab661-49ea-44cf-8799-e18e70f4b103}</Project>
-      <Name>AntSimComplexAS</Name>
+      <Name>AntSimComplexAlgorithms</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

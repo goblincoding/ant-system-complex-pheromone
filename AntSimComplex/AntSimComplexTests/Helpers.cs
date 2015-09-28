@@ -1,7 +1,4 @@
 ﻿using AntSimComplexUI.Utilities;
-using System;
-using System.Linq;
-using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexTests

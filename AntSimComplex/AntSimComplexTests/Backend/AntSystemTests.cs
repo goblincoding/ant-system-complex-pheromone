@@ -1,8 +1,8 @@
-﻿using AntSimComplexAS;
+﻿using AntSimComplexAlgorithms;
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests
+namespace AntSimComplexTests.Backend
 {
     public class AntSystemTests
     {

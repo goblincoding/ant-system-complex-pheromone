@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests
+namespace AntSimComplexTests.GUI
 {
     public class SymmetricTSPInfoProviderTests
     {

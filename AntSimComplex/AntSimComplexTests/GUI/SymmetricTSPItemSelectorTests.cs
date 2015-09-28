@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using TspLibNet.Graph.Nodes;
 
-namespace AntSimComplexTests
+namespace AntSimComplexTests.GUI
 {
     public class SymmetricTSPItemSelectorTests
     {

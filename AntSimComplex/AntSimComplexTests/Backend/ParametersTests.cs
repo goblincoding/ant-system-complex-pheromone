@@ -1,8 +1,8 @@
-﻿using AntSimComplexAS.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities;
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests
+namespace AntSimComplexTests.Backend
 {
     public class ParametersTests
     {

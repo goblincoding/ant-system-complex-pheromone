@@ -1,10 +1,9 @@
-﻿using AntSimComplexAS.Utilities;
-using AntSystemAS;
+﻿using AntSimComplexAlgorithms.Utilities;
 using System;
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplexAS
+namespace AntSimComplexAlgorithms
 {
     /// <summary>
     /// This class is the entry point for the Ant System implementation.

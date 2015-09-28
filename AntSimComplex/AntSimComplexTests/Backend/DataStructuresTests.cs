@@ -1,9 +1,8 @@
-﻿using AntSimComplexAS.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities;
 using NUnit.Framework;
 using System;
-using System.Linq;
 
-namespace AntSimComplexTests
+namespace AntSimComplexTests.Backend
 {
     internal class DataStructuresTests
     {

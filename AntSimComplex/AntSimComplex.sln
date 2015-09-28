@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntSimComplexUI", "AntSimCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntSimComplexTests", "AntSimComplexTests\AntSimComplexTests.csproj", "{379488DF-6530-48AA-9ACD-7C285377ECD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntSimComplexAS", "AntSystem\AntSimComplexAS.csproj", "{C8DAB661-49EA-44CF-8799-E18E70F4B103}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntSimComplexAlgorithms", "AntSystem\AntSimComplexAlgorithms.csproj", "{C8DAB661-49EA-44CF-8799-E18E70F4B103}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
