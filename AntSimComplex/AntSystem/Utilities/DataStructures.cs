@@ -9,6 +9,9 @@ namespace AntSimComplexAlgorithms.Utilities
     /// This class represents the prepopulated (prior to algorithm run-time), consolidated,
     /// calculated values of different aspects of a particular TSP problem instance in data
     /// structures such as distance and nearest neighbour matrices.
+    /// All the data structures are created and populated as per "Ant Colony Optimisation"
+    /// Dorigo and Stutzle (2004), Ch3.8, p99 which is aimed at obtaining an efficient
+    /// Ant System implementation.
     /// </summary>
     public class DataStructures
     {
@@ -54,8 +57,8 @@ namespace AntSimComplexAlgorithms.Utilities
         private int _nodeCount = 0;
 
         /// <summary>
-        /// Since INode ID's are not necessarily zero-indexed, using this property to obtain
-        /// the list of indices corresponding to the ordered (ascending by INode ID) list of
+        /// Since INode ID's (from TspLibNet) are not necessarily zero-indexed, using this property to
+        /// obtain the list of indices corresponding to the ordered (ascending by INode ID) list of
         /// problem nodes is essential for use with the <seealso cref="DataStructures"/> object.
         /// </summary>
         public int[] OrderedNodeIndices { get; }
@@ -65,11 +68,17 @@ namespace AntSimComplexAlgorithms.Utilities
         /// </summary>
         /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
         /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
         public DataStructures(IProblem problem, double initialPheromoneDensity)
         {
             if (problem == null)
             {
                 throw new ArgumentNullException(nameof(problem), $"The {nameof(DataStructures)} constructor needs a valid problem instance argument");
+            }
+
+            if (initialPheromoneDensity <= 0.0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
             }
 
             _nodeCount = problem.NodeProvider.CountNodes();
@@ -170,8 +179,8 @@ namespace AntSimComplexAlgorithms.Utilities
         /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
         ///
         /// Pheromone density matrix - p102
-        /// Heuristics matrix - p117
-        /// Choice info matrix - p117
+        /// Heuristics matrix - p102
+        /// Choice info matrix - p102
         /// </summary>
         /// <param name="problem"></param>
         /// <param name="initialPheromoneDensity"></param>
@@ -199,7 +208,7 @@ namespace AntSimComplexAlgorithms.Utilities
 
                 for (int j = 0; j < _nodeCount; j++)
                 {
-                    _distances[i][j] = weightsProvider.GetWeight(nodes[i], nodes[j]);
+                    _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
                     _heuristic[i][j] = Math.Pow((1 / _distances[i][j]), Parameters.Beta);
                     _pheromone[i][j] = initialPheromoneDensity;
                     UpdateChoiceInfo(i, j);
@@ -213,7 +222,7 @@ namespace AntSimComplexAlgorithms.Utilities
         }
 
         /// <summary>
-        /// From Ant Colony Optimization, Dorigo 2004 , p116.
+        /// From Ant Colony Optimization, Dorigo 2004 , p101.
         /// </summary>
         private void BuildNearestNeighboursLists()
         {
@@ -221,14 +230,18 @@ namespace AntSimComplexAlgorithms.Utilities
 
             for (int i = 0; i < _nodeCount; i++)
             {
-                // Remove nodes from their own nearest neighbour lists.
+                // -1 since nodes aren't included in their own nearest neighbours lists.
                 _nearest[i] = new int[_nodeCount - 1];
-                var pairs = _distances[i]
-                                  .Select((d, j) => new KeyValuePair<double, int>(d, j))
-                                  .OrderBy(d => d.Key).ToList();
 
-                // Add the node offset here so that it does not have to happen on every
-                // "nearest neighbours list" query.
+                // Select all the distance/index pairs for all nodes OTHER than
+                // the current (i) (we need this so that we do not lose the position
+                // of the index once we sort by distance).  In this case, "key" is
+                // distance.
+                var pairs = _distances[i]
+                                  .Select((distance, index) => new KeyValuePair<double, int>(distance, index))
+                                  .OrderBy(pair => pair.Key).ToList();
+
+                // Remove nodes from their own nearest neighbour lists.
                 var nearestIndices = pairs.Where(p => p.Value != i).Select(p => p.Value).ToArray();
                 nearestIndices.CopyTo(_nearest[i], 0);
 

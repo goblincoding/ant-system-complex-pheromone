@@ -85,6 +85,7 @@
     <Compile Include="Backend\AntSystemTests.cs" />
     <Compile Include="Backend\DataStructuresTests.cs" />
     <Compile Include="Backend\ParametersTests.cs" />
+    <Compile Include="Backend\RouletteWheelSelectorTests.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="GUI\SymmetricTSPInfoProviderTests.cs" />
     <Compile Include="GUI\SymmetricTSPItemSelectorTests.cs" />

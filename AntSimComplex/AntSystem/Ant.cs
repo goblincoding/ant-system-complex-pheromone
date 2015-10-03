@@ -1,25 +1,35 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AntSimComplexAlgorithms
 {
+    /// <summary>
+    /// Ants are implemented predominantly as per "Ant Colony Optimisation" Dorigo and Stutzle (2004), Ch3.8, p103.
+    /// </summary>
     public class Ant
     {
         private double _tourLength;
         private int _currentNode;
-        private int[] _visited;
-        private int[] _tour;
+
+        private readonly int[] _visited;     // the indices of the nodes the Ant has already visited.
+        private readonly List<int> _tour;    // the indices of the nodes belonging to the current tour.
 
         private readonly DataStructures _dataStructures;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="dataStructures">Provides access to the underlying neighbour, pheromone density,
+        /// heuristic and choice info matrices used in applying the random proportional rule.</param>
+        /// <param name="startNode">The node the Ant is spawned on.</param>
+        /// <param name="nrNodes">The nr of nodes in the TSP graph.</param>
         public Ant(DataStructures dataStructures, int startNode, int nrNodes)
         {
             _dataStructures = dataStructures;
             _currentNode = startNode;
-
-            // +1 since the ant has to return to the initial node.
-            _tour = new int[nrNodes + 1];
+            _tour = new List<int>();
 
             // Flag the current node as having been visited.
             _visited = new int[nrNodes];
@@ -33,7 +43,10 @@ namespace AntSimComplexAlgorithms
                              where _visited[n] != 1
                              select n;
 
-            //var probabilities = Probabilities(notVisited);
+            var selectedNext = RouletteWheelSelector.MakeSelection(_dataStructures, notVisited.ToArray(), _currentNode);
+            _visited[selectedNext] = 1;
+            _currentNode = selectedNext;
+            _tour.Add(_currentNode);
         }
 
         public void Reset(object sender, EventArgs args)
@@ -41,27 +54,8 @@ namespace AntSimComplexAlgorithms
             // Do nothing with current node, we can start with whichever node
             // we are on (that should be random enough).
             _tourLength = 0.0;
-            _tour.Initialize();
+            _tour.Clear();
             _visited.Initialize();
-        }
-
-        /// <summary>
-        /// Determines the probabilities of selection of the "neighbour" nodes based on the
-        /// "random proportional rule" (ACO, Dorigo, 2004 p70).
-        /// </summary>
-        /// <param name="neighbour"></param>
-        /// <returns></returns>
-        private double[] Probabilities(int[] neighbours)
-        {
-            var probabilities = new double[neighbours.Length];
-            var denominator = neighbours.Sum(n => _dataStructures.ChoiceInfo(_currentNode, n));
-            foreach (var neighbour in neighbours)
-            {
-                var numerator = _dataStructures.ChoiceInfo(_currentNode, neighbour);
-                probabilities[neighbour] = numerator / denominator;
-            }
-
-            return probabilities;
         }
     }
 }

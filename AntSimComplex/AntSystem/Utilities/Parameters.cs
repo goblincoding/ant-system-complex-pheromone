@@ -5,26 +5,13 @@ using TspLibNet;
 namespace AntSimComplexAlgorithms.Utilities
 {
     /// <summary>
-    /// Ant Colony Optimisation - Dorigo and Stutzle, p71, Box 3.1
-    /// "Good settings for ACO without local search applied."
-    /// These parameters are for the random proportional rule (probability
-    /// of selection formula given on p70 of the same book).
+    /// Ant Colony Optimisation - Dorigo and Stutzle.
+    /// These parameters are for the random proportional rule (probability of selection, formula given on p70) and
+    /// are determined as per Box 3.1 "Good settings for ACO without local search applied." on p71.
+    /// Initial pheromone is calculated as t0 = m / C^nn (nr of ants / nearest neighbour heuristic) as suggested on p70.
     /// </summary>
     public class Parameters
     {
-        /// <param name="problem">A TSPLib.Net problem instance</param>
-        /// <exception cref="ArgumentNullException">Thrown if an null problem instance was provided.</exception>
-        public Parameters(IProblem problem)
-        {
-            if (problem == null)
-            {
-                throw new ArgumentNullException(nameof(problem), "The Parameters constructor needs a valid problem instance argument");
-            }
-
-            NumberOfAnts = problem.NodeProvider.CountNodes();
-            InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength(problem);
-        }
-
         /// <summary>
         /// Determines the relative influence of the pheromone trail in the random proportional rule.
         /// </summary>
@@ -51,6 +38,19 @@ namespace AntSimComplexAlgorithms.Utilities
         /// this number will always be equal to the number of nodes in the TSP.
         /// </summary>
         public int NumberOfAnts { get; } = 0;
+
+        /// <param name="problem">A TSPLib.Net problem instance</param>
+        /// <exception cref="ArgumentNullException">Thrown if an null problem instance was provided.</exception>
+        public Parameters(IProblem problem)
+        {
+            if (problem == null)
+            {
+                throw new ArgumentNullException(nameof(problem), "The Parameters constructor needs a valid problem instance argument");
+            }
+
+            NumberOfAnts = problem.NodeProvider.CountNodes();
+            InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength(problem);
+        }
 
         /// <summary>
         /// Calculates the pheromone initialisation value based on the nearest neighbour heuristic (ACO Dorigo Ch3, p70).
