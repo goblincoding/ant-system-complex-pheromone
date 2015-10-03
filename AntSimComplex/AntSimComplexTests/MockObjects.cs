@@ -29,7 +29,7 @@ namespace AntSimComplexTests
             new double[]{ 6, 7, 8, 9, 1, 2, 0, 4, 5, 6 },
             new double[]{ 7, 8, 9, 1, 2, 3, 4, 0, 6, 7 },
             new double[]{ 8, 9, 1, 2, 3, 4, 5, 6, 0, 8 },
-            new double[]{ 9, 1, 2, 3, 4, 5, 6, 7, 8, 0 },
+            new double[]{ 9, 1, 2, 3, 4, 5, 6, 7, 8, 0 }
         };
 
         // Convenience method so we can work with indices directly.
@@ -96,6 +96,8 @@ namespace AntSimComplexTests
             return ((MockEdgeWeightsProvider)EdgeWeightsProvider).GetWeight(first, second);
         }
 
+#pragma warning disable RECS0083 // Shows NotImplementedException throws in the quick task bar
+
         public string Comment
         {
             get
@@ -140,5 +142,7 @@ namespace AntSimComplexTests
         {
             throw new NotImplementedException();
         }
+
+#pragma warning restore RECS0083 // Shows NotImplementedException throws in the quick task bar
     }
 }

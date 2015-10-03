@@ -6,7 +6,7 @@ using TspLibNet;
 namespace AntSimComplexAlgorithms
 {
     /// <summary>
-    /// This class is the entry point for the Ant System implementation.
+    /// This class is the entry point for the basic Ant System implementation.
     /// </summary>
     public class AntSystem
     {

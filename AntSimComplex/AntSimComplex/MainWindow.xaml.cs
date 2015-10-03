@@ -128,7 +128,7 @@ namespace AntSimComplexUI
 
         private void DrawNode(Point point, Brush brush)
         {
-            var ellipse = new Ellipse() { Width = _circleWidth, Height = _circleWidth, Fill = brush };
+            var ellipse = new Ellipse { Width = _circleWidth, Height = _circleWidth, Fill = brush };
             ellipse.ToolTip = $"x: {point.X}, y: {point.Y}";
             canvas.Children.Add(ellipse);
             var transformed = TransformWorldToCanvas(point);
@@ -154,7 +154,7 @@ namespace AntSimComplexUI
             // Return to starting point.
             points.Add(points.First());
 
-            var poly = new Polyline()
+            var poly = new Polyline
             {
                 Points = new PointCollection(points),
                 Stroke = Brushes.Green,

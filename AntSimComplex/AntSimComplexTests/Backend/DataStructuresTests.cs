@@ -6,18 +6,29 @@ namespace AntSimComplexTests.Backend
 {
     internal class DataStructuresTests
     {
+        private const double _initialPheromoneDensity = 0.5;
+
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TestNullProblemDataStructuresConstructorFail()
         {
-            var data = new DataStructures(null, 0);
+            var data = new DataStructures(null, _initialPheromoneDensity);
+        }
+
+        [TestCase(0.0)]
+        [TestCase(-1)]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestInitialPheromoneOutOfRangeDataStructuresConstructorFail(double initialPheromone)
+        {
+            var problem = new MockProblem();
+            var data = new DataStructures(problem, initialPheromone);
         }
 
         [Test]
         public void TestDataStructuresConstructionSuccess()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             Assert.IsNotNull(data);
         }
 
@@ -26,7 +37,7 @@ namespace AntSimComplexTests.Backend
         public void TestDataStructuresDistanceIndexInvalid()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             var distance = data.Distance(0, MockConstants.NrNodes);
         }
 
@@ -34,7 +45,7 @@ namespace AntSimComplexTests.Backend
         public void TestDataStructuresGetInterNodeDistanceSuccess()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count - 1; i++)
             {
@@ -55,7 +66,7 @@ namespace AntSimComplexTests.Backend
         public void TestDataStructuresNearestNeighboursIndexInvalid()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             var neighbours = data.NearestNeighbours(MockConstants.NrNodes);
         }
 
@@ -63,7 +74,7 @@ namespace AntSimComplexTests.Backend
         public void TestDataStructuresGetNearestNeighboursSuccess()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             var nodes = problem.NodeProvider.GetNodes();
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -84,7 +95,7 @@ namespace AntSimComplexTests.Backend
         public void TestDataStructuresPheromoneIndexInvalid()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             var density = data.PheromoneTrailDensity(0, MockConstants.NrNodes);
         }
 
@@ -107,7 +118,7 @@ namespace AntSimComplexTests.Backend
         public void TestDataStructuresSetPheromoneFail()
         {
             var problem = new MockProblem();
-            var data = new DataStructures(problem, 0);
+            var data = new DataStructures(problem, _initialPheromoneDensity);
             data.SetPheromoneTrailDensity(0, MockConstants.NrNodes, 0);
         }
 
