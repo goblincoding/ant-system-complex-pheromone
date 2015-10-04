@@ -22,6 +22,8 @@ namespace AntSimComplexUI.Utilities
         /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
         public double OptimalTourLength { get; } = double.MaxValue;
 
+        public bool HasOptimalTour { get; } = false;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -52,6 +54,7 @@ namespace AntSimComplexUI.Utilities
                 nodes.RemoveAll(n => n == null);
                 OptimalTourNodes2D = nodes;
                 OptimalTourLength = item.OptimalTourDistance;
+                HasOptimalTour = true;
             }
         }
 

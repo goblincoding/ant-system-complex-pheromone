@@ -12,6 +12,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
         <Grid.Resources>
@@ -44,6 +45,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="75" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -52,14 +54,23 @@
                 <ComboBox Name="TSPCombo" Grid.Row="0" Grid.Column="1" SelectionChanged="TSPCombo_SelectionChanged" />
                 <CheckBox Name="ShowOptimal"
                           Content="Show Optimal Tour (if available)"
-                          Grid.Row="2" Grid.Column="3"
+                          Grid.Row="0" Grid.Column="2"
                           Checked="ShowOptimal_Checked"
                           Unchecked="ShowOptimal_Unchecked" />
+                <Button x:Name="ExecuteButton" Content="Execute"
+                        Grid.Row="0" Grid.Column="3"
+                        Click="ExecuteButton_Click" />
             </Grid>
         </Border>
 
         <Border Grid.Row="2">
             <Canvas Name="canvas" Background="LightGray" />
+        </Border>
+
+        <Border Grid.Row="3">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <TextBlock Name="StatsBlock" />
+            </ScrollViewer>
         </Border>
     </Grid>
 </Window>

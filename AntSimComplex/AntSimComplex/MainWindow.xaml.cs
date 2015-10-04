@@ -45,6 +45,20 @@ namespace AntSimComplexUI
             DrawTspLibItem();
 
             _antSystem = new AntSystem(item.Problem);
+
+            var tourLength = "N/A";
+            var nodeSequence = "N/A";
+            if (_tspInfoProvider.HasOptimalTour)
+            {
+                tourLength = _tspInfoProvider.OptimalTourLength.ToString();
+                var ids = from n in _tspInfoProvider.OptimalTourNodes2D
+                          select n.Id.ToString();
+                nodeSequence = ids.Aggregate((a, b) => a + "," + b);
+            }
+
+            StatsBlock.Text = $"Current Problem: {problemName}\n" +
+                              $"Optimal Tour Length: {tourLength}\n" +
+                              $"Optimal Tour Node Sequence: {nodeSequence}";
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -217,6 +231,11 @@ namespace AntSimComplexUI
             {
                 DrawTspLibItem();
             }
+        }
+
+        private void ExecuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            _antSystem.Execute();
         }
     }
 }
