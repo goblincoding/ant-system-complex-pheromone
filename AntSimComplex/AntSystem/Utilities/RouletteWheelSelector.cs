@@ -43,24 +43,21 @@ namespace AntSimComplexAlgorithms.Utilities
         /// of the node corresponding to the probability of selection represented by the key.</returns>
         private static List<KeyValuePair<double, int>> Probabilities(DataStructures dataStructures, int[] neighbours, int currentNode)
         {
-            var probabilities = new double[neighbours.Length];
+            // Select all the probability/index pairs (we need this so that we do not
+            // lose the position of the neighbour index once we sort by probability).
+            // In this case, "key" is probability and "value" is the corresponding node index.
+            var pairs = new List<KeyValuePair<double, int>>();
             var denominator = neighbours.Sum(n => dataStructures.ChoiceInfo(currentNode, n));
 
             for (int i = 0; i < neighbours.Length; i++)
             {
                 var neighbour = neighbours[i];
                 var numerator = dataStructures.ChoiceInfo(currentNode, neighbour);
-                probabilities[i] = numerator / denominator;
+                var probability = numerator / denominator;
+                pairs.Add(new KeyValuePair<double, int>(probability, neighbour));
             }
 
-            // Select all the probability/index pairs (we need this so that we do not
-            // lose the position of the index once we sort by probability).  In this case, "key" is
-            // probability and "value" is the corresponding node index.
-            var pairs = probabilities
-                              .Select((prob, index) => new KeyValuePair<double, int>(prob, index))
-                              .OrderBy(pair => pair.Key).ToList();
-
-            return pairs;
+            return pairs.OrderBy(pair => pair.Key).ToList();
         }
     }
 }

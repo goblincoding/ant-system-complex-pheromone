@@ -58,7 +58,7 @@ namespace AntSimComplexUI
 
             StatsBlock.Text = $"Current Problem: {problemName}\n" +
                               $"Optimal Tour Length: {tourLength}\n" +
-                              $"Optimal Tour Node Sequence: {nodeSequence}";
+                              $"Optimal Tour Node Sequence: {nodeSequence}\n";
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -236,6 +236,17 @@ namespace AntSimComplexUI
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
             _antSystem.Execute();
+            var count = 0;
+            foreach (var ant in _antSystem.Ants)
+            {
+                var ids = from n in ant.Tour
+                          select n.ToString();
+
+                StatsBlock.Text += $"Ant {count}\n" +
+                                   $"Tour length: {ant.TourLength}\n" +
+                                   $"Tour nodes: {ids.Aggregate((a, b) => a + "," + b)}\n";
+                count++;
+            }
         }
     }
 }

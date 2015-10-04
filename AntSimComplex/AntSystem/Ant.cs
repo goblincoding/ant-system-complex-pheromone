@@ -10,12 +10,19 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public class Ant
     {
-        private double _tourLength;
+        /// <summary>
+        /// Debugging helper.
+        /// </summary>
+        private static int _counter = 0;
+
+        private int _id = 0;
+
+        public double TourLength { get; private set; } = 0.0;
+        public List<int> Tour { get; } = new List<int>();   // the indices of the nodes belonging to the current tour.
+
+        private int _startingNode;
         private int _currentNode;
-
         private readonly int[] _visited;     // the indices of the nodes the Ant has already visited.
-        private readonly List<int> _tour;    // the indices of the nodes belonging to the current tour.
-
         private readonly DataStructures _dataStructures;
 
         /// <summary>
@@ -27,9 +34,12 @@ namespace AntSimComplexAlgorithms
         /// <param name="nrNodes">The nr of nodes in the TSP graph.</param>
         public Ant(DataStructures dataStructures, int startNode, int nrNodes)
         {
+            _counter++;
+            _id = _counter;
+
             _dataStructures = dataStructures;
+            _startingNode = startNode;
             _currentNode = startNode;
-            _tour = new List<int>();
 
             // Flag the current node as having been visited.
             _visited = new int[nrNodes];
@@ -39,23 +49,16 @@ namespace AntSimComplexAlgorithms
         public void MoveNext(object sender, EventArgs args)
         {
             var neighbours = _dataStructures.NearestNeighbours(_currentNode);
-            var notVisited = from n in neighbours
-                             where _visited[n] != 1
-                             select n;
+            var notVisited = (from n in neighbours
+                              where _visited[n] != 1
+                              select n).ToArray();
 
-            var selectedNext = RouletteWheelSelector.MakeSelection(_dataStructures, notVisited.ToArray(), _currentNode);
+            // If we've visited all nodes, return to the starting node.
+            var selectedNext = notVisited.Any() ? RouletteWheelSelector.MakeSelection(_dataStructures, notVisited, _currentNode) : _startingNode;
+            TourLength += _dataStructures.Distance(_currentNode, selectedNext);
+            Tour.Add(selectedNext);
             _visited[selectedNext] = 1;
             _currentNode = selectedNext;
-            _tour.Add(_currentNode);
-        }
-
-        public void Reset(object sender, EventArgs args)
-        {
-            // Do nothing with current node, we can start with whichever node
-            // we are on (that should be random enough).
-            _tourLength = 0.0;
-            _tour.Clear();
-            _visited.Initialize();
         }
     }
 }

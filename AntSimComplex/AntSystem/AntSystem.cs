@@ -12,11 +12,11 @@ namespace AntSimComplexAlgorithms
     {
         public event EventHandler MoveNext = delegate { };
 
-        public event EventHandler Reset = delegate { };
+        public Ant[] Ants { get; }
 
         private readonly DataStructures _dataStructures;
         private readonly Parameters _parameters;
-        private Ant[] _ants;
+        private readonly int _nodeCount;
 
         /// <summary>
         /// Constructor.
@@ -32,8 +32,22 @@ namespace AntSimComplexAlgorithms
 
             _parameters = new Parameters(problem);
             _dataStructures = new DataStructures(problem, _parameters.InitialPheromone);
+            _nodeCount = _dataStructures.OrderedNodeIndices.Count();
 
+            Ants = new Ant[_nodeCount];
             ConstructAnts();
+        }
+
+        /// <summary>
+        /// Completes one full iteration of the TSP graph, raising the "MoveNext"
+        /// event the same number of times as there are nodes in the graph.
+        /// </summary>
+        public void Execute()
+        {
+            for (int i = 0; i < _nodeCount; i++)
+            {
+                MoveNext(this, EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -42,16 +56,12 @@ namespace AntSimComplexAlgorithms
         private void ConstructAnts()
         {
             var random = new Random();
-            var nodeCount = _dataStructures.OrderedNodeIndices.Count();
-            _ants = new Ant[nodeCount];
-
             foreach (var index in _dataStructures.OrderedNodeIndices)
             {
-                var startNode = random.Next(0, nodeCount);
-                var ant = new Ant(_dataStructures, startNode, nodeCount);
+                var startNode = random.Next(0, _nodeCount);
+                var ant = new Ant(_dataStructures, startNode, _nodeCount);
                 MoveNext += ant.MoveNext;
-                Reset += ant.Reset;
-                _ants[index] = ant;
+                Ants[index] = ant;
             }
         }
     }
