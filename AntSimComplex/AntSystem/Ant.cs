@@ -10,13 +10,6 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public class Ant
     {
-        /// <summary>
-        /// Debugging helper.
-        /// </summary>
-        private static int _counter = 0;
-
-        private int _id = 0;
-
         public double TourLength { get; private set; } = 0.0;
         public List<int> Tour { get; } = new List<int>();   // the indices of the nodes belonging to the current tour.
 
@@ -34,9 +27,6 @@ namespace AntSimComplexAlgorithms
         /// <param name="nrNodes">The nr of nodes in the TSP graph.</param>
         public Ant(DataStructures dataStructures, int startNode, int nrNodes)
         {
-            _counter++;
-            _id = _counter;
-
             _dataStructures = dataStructures;
             _startingNode = startNode;
             _currentNode = startNode;
@@ -59,6 +49,20 @@ namespace AntSimComplexAlgorithms
             Tour.Add(selectedNext);
             _visited[selectedNext] = 1;
             _currentNode = selectedNext;
+        }
+
+        public void Reset(object sender, EventArgs args)
+        {
+            TourLength = 0.0;
+            Tour.Clear();
+
+            _startingNode = _currentNode;
+            for (int i = 0; i < _visited.Length; i++)
+            {
+                _visited[i] = 0;
+            }
+
+            _visited[_startingNode] = 1;
         }
     }
 }

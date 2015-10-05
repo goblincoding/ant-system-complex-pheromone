@@ -12,6 +12,8 @@ namespace AntSimComplexAlgorithms
     {
         public event EventHandler MoveNext = delegate { };
 
+        public event EventHandler Reset = delegate { };
+
         public Ant[] Ants { get; }
 
         private readonly DataStructures _dataStructures;
@@ -44,6 +46,7 @@ namespace AntSimComplexAlgorithms
         /// </summary>
         public void Execute()
         {
+            Reset(this, EventArgs.Empty);
             for (int i = 0; i < _nodeCount; i++)
             {
                 MoveNext(this, EventArgs.Empty);
@@ -61,6 +64,7 @@ namespace AntSimComplexAlgorithms
                 var startNode = random.Next(0, _nodeCount);
                 var ant = new Ant(_dataStructures, startNode, _nodeCount);
                 MoveNext += ant.MoveNext;
+                Reset += ant.Reset;
                 Ants[index] = ant;
             }
         }

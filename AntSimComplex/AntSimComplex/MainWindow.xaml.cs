@@ -1,8 +1,11 @@
-﻿using AntSimComplexAlgorithms;
+﻿using AntSimComplex.Utilities;
+using AntSimComplexAlgorithms;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -28,6 +31,8 @@ namespace AntSimComplexUI
         private Matrix _worldToCanvasMatrix;
         private Matrix _canvasToWorldMatrix;
 
+        private ObservableCollection<ListViewTourItem> _tourItems;
+
         private SymmetricTSPItemSelector _tspProblemSelector;
         private SymmetricTSPInfoProvider _tspInfoProvider;
         private AntSystem _antSystem;
@@ -35,36 +40,8 @@ namespace AntSimComplexUI
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var problemName = TSPCombo.SelectedItem?.ToString();
-            var item = _tspProblemSelector.GetItem(problemName);
-            _tspInfoProvider = new SymmetricTSPInfoProvider(item);
-            DrawTspLibItem();
-
-            _antSystem = new AntSystem(item.Problem);
-
-            var tourLength = "N/A";
-            var nodeSequence = "N/A";
-            if (_tspInfoProvider.HasOptimalTour)
-            {
-                tourLength = _tspInfoProvider.OptimalTourLength.ToString();
-                var ids = from n in _tspInfoProvider.OptimalTourNodes2D
-                          select n.Id.ToString();
-                nodeSequence = ids.Aggregate((a, b) => a + "," + b);
-            }
-
-            StatsBlock.Text = $"Current Problem: {problemName}\n" +
-                              $"Optimal Tour Length: {tourLength}\n" +
-                              $"Optimal Tour Node Sequence: {nodeSequence}\n";
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Initialise();
-            _initialised = true;
+            _tourItems = new ObservableCollection<ListViewTourItem>();
+            TourListView.ItemsSource = _tourItems;
         }
 
         private void Initialise()
@@ -122,11 +99,71 @@ namespace AntSimComplexUI
 
             canvas.Children.Clear();
             DrawNodes();
+            DrawSelectedTour();
 
             if (_drawOptimal)
             {
                 DrawOptimalTour();
             }
+        }
+
+        private void DrawOptimalTour()
+        {
+            var nodes = _tspInfoProvider.OptimalTourNodes2D;
+            if (!nodes.Any())
+            {
+                return;
+            }
+
+            var optimalLength = _tspInfoProvider.OptimalTourLength;
+            DrawTour(nodes, optimalLength, Brushes.Red, Brushes.Green);
+        }
+
+        private void DrawSelectedTour()
+        {
+            var item = TourListView.SelectedItem as ListViewTourItem;
+            if (item != null)
+            {
+                DrawTour(item.Nodes, item.Length, Brushes.CornflowerBlue, Brushes.DodgerBlue);
+            }
+        }
+
+        /// <summary>
+        /// Select a random brush in the Brushes colour range.
+        /// </summary>
+        /// <returns></returns>
+        //private Brush PickBrush()
+        //{
+        //    var brushesType = typeof(Brushes);
+        //    var properties = brushesType.GetProperties();
+
+        //    var random = new Random();
+        //    var next = random.Next(properties.Length);
+
+        //    var brush = (Brush)properties[next].GetValue(null, null);
+        //    return brush;
+        //}
+
+        private void DrawTour(List<Node2D> nodes, double tourLength, Brush startNodeBrush, Brush lineBrush)
+        {
+            var points = (from n in nodes
+                          select TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();
+
+            // Draw the starting node in red for easier identification.
+            DrawNode(TransformCanvasToWorld(points.First()), startNodeBrush);
+
+            // Return to starting point.
+            points.Add(points.First());
+
+            var poly = new Polyline
+            {
+                Points = new PointCollection(points),
+                Stroke = lineBrush,
+                StrokeThickness = 1,
+                ToolTip = $"Tour length: {tourLength}"
+            };
+
+            canvas.Children.Add(poly);
         }
 
         private void DrawNodes()
@@ -148,35 +185,6 @@ namespace AntSimComplexUI
             var transformed = TransformWorldToCanvas(point);
             Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
             Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
-        }
-
-        private void DrawOptimalTour()
-        {
-            var nodes = _tspInfoProvider.OptimalTourNodes2D;
-            if (!nodes.Any())
-            {
-                return;
-            }
-
-            var optimalLength = _tspInfoProvider.OptimalTourLength;
-            var points = (from n in nodes
-                          select TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();
-
-            // Draw the starting node in red for easier identification.
-            DrawNode(TransformCanvasToWorld(points.First()), Brushes.Red);
-
-            // Return to starting point.
-            points.Add(points.First());
-
-            var poly = new Polyline
-            {
-                Points = new PointCollection(points),
-                Stroke = Brushes.Green,
-                StrokeThickness = 1,
-                ToolTip = $"Optimal tour: {optimalLength}"
-            };
-
-            canvas.Children.Add(poly);
         }
 
         private void PrepareTransformationMatrices(double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
@@ -203,6 +211,34 @@ namespace AntSimComplexUI
         private Point TransformCanvasToWorld(Point point)
         {
             return _canvasToWorldMatrix.Transform(point);
+        }
+
+        #region eventhandlers
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Initialise();
+            _initialised = true;
+        }
+
+        private void TSPCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var problemName = TSPCombo.SelectedItem?.ToString();
+            var item = _tspProblemSelector.GetItem(problemName);
+            _tspInfoProvider = new SymmetricTSPInfoProvider(item);
+            DrawTspLibItem();
+
+            _antSystem = new AntSystem(item.Problem);
+            _tourItems.Clear();
+
+            if (_tspInfoProvider.HasOptimalTour)
+            {
+                var ids = from n in _tspInfoProvider.OptimalTourNodes2D
+                          select n.Id.ToString();
+                _tourItems.Add(new ListViewTourItem(_tspInfoProvider.OptimalTourNodes2D,
+                                                    _tspInfoProvider.OptimalTourLength,
+                                                    $"Current Problem (Optimal): {problemName}"));
+            }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -236,17 +272,76 @@ namespace AntSimComplexUI
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
             _antSystem.Execute();
-            var count = 0;
+
+            _tourItems.Clear();
+            var count = 1;
             foreach (var ant in _antSystem.Ants)
             {
-                var ids = from n in ant.Tour
-                          select n.ToString();
-
-                StatsBlock.Text += $"Ant {count}\n" +
-                                   $"Tour length: {ant.TourLength}\n" +
-                                   $"Tour nodes: {ids.Aggregate((a, b) => a + "," + b)}\n";
+                var nodeTour = _tspInfoProvider.BuildNode2DTourFromZeroBasedIndices(ant.Tour);
+                _tourItems.Add(new ListViewTourItem(nodeTour, ant.TourLength, $"Ant {count}"));
                 count++;
             }
         }
+
+        /// <summary>
+        /// http://blogs.msdn.com/b/permanenttan/archive/2009/01/19/wpf-listview-with-check-boxes-and-no-clipping.aspx
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        //private void TextBlock_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    var gridView = TourListView.View as GridView;
+
+        //    if (gridView?.Columns.Count >= 2)
+        //    {
+        //        // Calculate the item's desired text width and increase the
+        //        // text column's width to match the widest text
+        //        var textBlock = (TextBlock)sender;
+        //        textBlock.Measure(new Size(Double.MaxValue, Double.MaxValue));
+
+        //        var newWidth = textBlock.DesiredSize.Width;
+        //        var columns = gridView.Columns;
+
+        //        if (newWidth > columns[1].Width ||
+        //            double.IsNaN(columns[1].Width))
+        //        {
+        //            columns[1].Width = newWidth;
+        //        }
+
+        //        // Remove the text block cell's content presenter built-in
+        //        // margin for better-looking spacing
+        //        var contentPresenter = VisualTreeHelper.GetParent(textBlock) as ContentPresenter;
+        //        if (contentPresenter != null)
+        //        {
+        //            contentPresenter.Margin = new Thickness(0);
+        //        }
+        //    }
+        //}
+
+        //private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    if (_initialised)
+        //    {
+        //        DrawTspLibItem();
+        //    }
+        //}
+
+        //private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    if (_initialised)
+        //    {
+        //        DrawTspLibItem();
+        //    }
+        //}
+
+        private void TourListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_initialised)
+            {
+                DrawTspLibItem();
+            }
+        }
+
+        #endregion eventhandlers
     }
 }

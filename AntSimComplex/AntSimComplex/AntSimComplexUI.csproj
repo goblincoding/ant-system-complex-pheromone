@@ -68,6 +68,7 @@
     <Compile Include="UserControls\DirectoryBrowserControl.xaml.cs">
       <DependentUpon>DirectoryBrowserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\ListViewTourItem.cs" />
     <Compile Include="Utilities\CustomEventArgs.cs" />
     <Compile Include="Utilities\SymmetricTSPInfoProvider.cs" />
     <Compile Include="Utilities\SymmetricTSPItemSelector.cs" />

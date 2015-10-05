@@ -25,6 +25,13 @@ namespace AntSimComplexUI.Utilities
         public bool HasOptimalTour { get; } = false;
 
         /// <summary>
+        /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
+        /// the INode ID's and the zero-based indices used by <seealso cref="AntSystem"/>, the underlying
+        /// <seealso cref="DataStructures"/> and <seealso cref="Ant"/>.
+        /// </summary>
+        private int _zeroBasedOffset = 0;
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="item">The item to provide information for.</param>
@@ -47,6 +54,8 @@ namespace AntSimComplexUI.Utilities
                 throw new ArgumentOutOfRangeException(nameof(item), "Selected problem node list does not contain Node2D objects.");
             }
 
+            _zeroBasedOffset = Nodes2D.Min(n => n.Id) - 0;
+
             if (item?.OptimalTour != null)
             {
                 var nodes = (from n in item.OptimalTour.Nodes
@@ -56,6 +65,23 @@ namespace AntSimComplexUI.Utilities
                 OptimalTourLength = item.OptimalTourDistance;
                 HasOptimalTour = true;
             }
+        }
+
+        /// <summary>
+        /// Constructs a tour consisting of Node2D elements from the zero based tour indices
+        /// representing an Ant's tour of the TSP graph.
+        /// </summary>
+        /// <param name="antTourIndices">A list of zero-based node indices.</param>
+        /// <returns>A list of Node2D objects representing an Ant's constructed tour.</returns>
+        public List<Node2D> BuildNode2DTourFromZeroBasedIndices(List<int> antTourIndices)
+        {
+            var nodes = new List<Node2D>();
+            foreach (var index in antTourIndices)
+            {
+                var node = Nodes2D.First(n => n.Id == index + _zeroBasedOffset);
+                nodes.Add(node);
+            }
+            return nodes;
         }
 
         /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>

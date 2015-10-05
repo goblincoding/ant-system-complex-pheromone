@@ -11,8 +11,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="100" />
+            <RowDefinition Height="*" MinHeight="500" />
+            <RowDefinition Height="*" MaxHeight="300" />
         </Grid.RowDefinitions>
 
         <Grid.Resources>
@@ -68,9 +68,52 @@
         </Border>
 
         <Border Grid.Row="3">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                <TextBlock Name="StatsBlock" />
-            </ScrollViewer>
+            <ListView Name="TourListView"
+                      SelectionChanged="TourListView_SelectionChanged">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <WrapPanel>
+                                <TextBlock Text="Tour Type: " />
+                                <TextBlock Text="{Binding Type}" FontWeight="Bold" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="Tour Length: " />
+                                <TextBlock Text="{Binding Length}" FontWeight="Bold" />
+                            </WrapPanel>
+                            <WrapPanel>
+                                <TextBlock Text="Node Sequence: " />
+                                <TextBlock Text="{Binding NodeSequence}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+                <!--<ListView.View>
+                    <GridView>
+                        <GridView.ColumnHeaderContainerStyle>
+                            <Style TargetType="{x:Type GridViewColumnHeader}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Style>
+                        </GridView.ColumnHeaderContainerStyle>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Margin="0" VerticalAlignment="Center" IsChecked="{Binding IsChecked}"
+                                              Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="0" Text="{Binding Text}" Loaded="TextBlock_Loaded" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>-->
+            </ListView>
         </Border>
     </Grid>
 </Window>

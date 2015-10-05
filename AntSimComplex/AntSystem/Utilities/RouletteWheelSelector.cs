@@ -7,6 +7,12 @@ namespace AntSimComplexAlgorithms.Utilities
     public static class RouletteWheelSelector
     {
         /// <summary>
+        /// Use a single, static random variable so that we do not end up with roughly
+        /// the same number generation sequences with fast clock cycles.
+        /// </summary>
+        private static Random random = new Random();
+
+        /// <summary>
         /// Randomly selects the index of the next node based on the "roulette wheel
         /// selection" principle.
         /// </summary>
@@ -14,9 +20,7 @@ namespace AntSimComplexAlgorithms.Utilities
         /// <returns>The index of the next node to visit.</returns>
         public static int MakeSelection(DataStructures dataStructures, int[] neighbours, int currentNode)
         {
-            var random = new Random();
             var selectedProbability = random.NextDouble();
-
             var probabilities = Probabilities(dataStructures, neighbours, currentNode);
             var probability = probabilities.First();
             var sum = probability.Key;
