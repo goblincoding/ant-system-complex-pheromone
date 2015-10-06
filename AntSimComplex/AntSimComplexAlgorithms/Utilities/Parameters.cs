@@ -33,12 +33,6 @@ namespace AntSimComplexAlgorithms.Utilities
         /// </summary>
         public double InitialPheromone { get; } = 0.1;
 
-        /// <summary>
-        /// The number of artificial ants initialised for the problem.  For Ant System
-        /// this number will always be equal to the number of nodes in the TSP.
-        /// </summary>
-        public int NumberOfAnts { get; } = 0;
-
         /// <param name="problem">A TSPLib.Net problem instance</param>
         /// <exception cref="ArgumentNullException">Thrown if an null problem instance was provided.</exception>
         public Parameters(IProblem problem)
@@ -48,8 +42,8 @@ namespace AntSimComplexAlgorithms.Utilities
                 throw new ArgumentNullException(nameof(problem), "The Parameters constructor needs a valid problem instance argument");
             }
 
-            NumberOfAnts = problem.NodeProvider.CountNodes();
-            InitialPheromone = NumberOfAnts / GetNearestNeighbourTourLength(problem);
+            var numberOfAnts = problem.NodeProvider.CountNodes();
+            InitialPheromone = numberOfAnts / GetNearestNeighbourTourLength(problem);
         }
 
         /// <summary>

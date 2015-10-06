@@ -9,6 +9,9 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public class AntSystem
     {
+        /// <summary>
+        /// Emitted when ants have to move to the next node.
+        /// </summary>
         public event EventHandler MoveNext = delegate { };
 
         public Ant[] Ants { get; }
@@ -37,12 +40,18 @@ namespace AntSimComplexAlgorithms
             _nodeCount = _dataStructures.NodeCount;
 
             Ants = new Ant[_nodeCount];
-            ConstructAnts();
+            for (int i = 0; i < _nodeCount; i++)
+            {
+                var ant = new Ant(_dataStructures, _nodeCount);
+                MoveNext += ant.MoveNext;
+                Ants[i] = ant;
+            }
         }
 
         /// <summary>
-        /// Completes one full iteration of the TSP graph, raising the "MoveNext"
-        /// event the same number of times as there are nodes in the graph.
+        /// 1. Initialise ants.
+        /// 2. Construct solutions.
+        /// 3. Update pheromone trails.
         /// </summary>
         public void Execute()
         {
@@ -61,20 +70,14 @@ namespace AntSimComplexAlgorithms
             }
 
             // Update pheromone trails.
-            Evaporate();
-            foreach (var ant in Ants)
-            {
-                DepositPheromone(ant);
-            }
+            EvaporatePheromone();
+            DepositPheromone();
 
             // Choice info matrix has to be updated after pheromone changes.
             _dataStructures.UpdateChoiceInfoMatrix();
         }
 
-        /// <summary>
-        /// Evaporates all the pheromone on all the arcs by the evaporation factor <seealso cref="Parameters"/>.
-        /// </summary>
-        private void Evaporate()
+        private void EvaporatePheromone()
         {
             for (int i = 0; i < _nodeCount; i++)
             {
@@ -88,29 +91,19 @@ namespace AntSimComplexAlgorithms
             }
         }
 
-        private void DepositPheromone(Ant ant)
+        private void DepositPheromone()
         {
-            var deposit = 1 / ant.TourLength;
-            for (int i = 0; i < _nodeCount; i++)
+            foreach (var ant in Ants)
             {
-                var j = ant.Tour[i];
-                var l = ant.Tour[i + 1]; // stays within array bounds since Tour = n + 1 (returns to starting node)
-                var pher = _dataStructures.Pheromone[i][j] + deposit;
-                _dataStructures.Pheromone[j][l] = pher;  // matrix is symmetric
-                _dataStructures.Pheromone[l][j] = pher;
-            }
-        }
-
-        /// <summary>
-        /// Initialise Ants and place one on each node of the TSP graph.
-        /// </summary>
-        private void ConstructAnts()
-        {
-            for (int i = 0; i < _nodeCount; i++)
-            {
-                var ant = new Ant(_dataStructures, _nodeCount);
-                MoveNext += ant.MoveNext;
-                Ants[i] = ant;
+                var deposit = 1 / ant.TourLength;
+                for (int i = 0; i < _nodeCount; i++)
+                {
+                    var j = ant.Tour[i];
+                    var l = ant.Tour[i + 1]; // stays within array bounds since Tour = n + 1 (returns to starting node)
+                    var pher = _dataStructures.Pheromone[i][j] + deposit;
+                    _dataStructures.Pheromone[j][l] = pher;  // matrix is symmetric
+                    _dataStructures.Pheromone[l][j] = pher;
+                }
             }
         }
     }

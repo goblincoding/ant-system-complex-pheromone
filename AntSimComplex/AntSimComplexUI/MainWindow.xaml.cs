@@ -128,22 +128,6 @@ namespace AntSimComplexUI
             }
         }
 
-        /// <summary>
-        /// Select a random brush in the Brushes colour range.
-        /// </summary>
-        /// <returns></returns>
-        //private Brush PickBrush()
-        //{
-        //    var brushesType = typeof(Brushes);
-        //    var properties = brushesType.GetProperties();
-
-        //    var random = new Random();
-        //    var next = random.Next(properties.Length);
-
-        //    var brush = (Brush)properties[next].GetValue(null, null);
-        //    return brush;
-        //}
-
         private void DrawTour(List<Node2D> nodes, double tourLength, Brush startNodeBrush, Brush lineBrush)
         {
             var points = (from n in nodes
@@ -282,57 +266,6 @@ namespace AntSimComplexUI
                 count++;
             }
         }
-
-        /// <summary>
-        /// http://blogs.msdn.com/b/permanenttan/archive/2009/01/19/wpf-listview-with-check-boxes-and-no-clipping.aspx
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    var gridView = TourListView.View as GridView;
-
-        //    if (gridView?.Columns.Count >= 2)
-        //    {
-        //        // Calculate the item's desired text width and increase the
-        //        // text column's width to match the widest text
-        //        var textBlock = (TextBlock)sender;
-        //        textBlock.Measure(new Size(Double.MaxValue, Double.MaxValue));
-
-        //        var newWidth = textBlock.DesiredSize.Width;
-        //        var columns = gridView.Columns;
-
-        //        if (newWidth > columns[1].Width ||
-        //            double.IsNaN(columns[1].Width))
-        //        {
-        //            columns[1].Width = newWidth;
-        //        }
-
-        //        // Remove the text block cell's content presenter built-in
-        //        // margin for better-looking spacing
-        //        var contentPresenter = VisualTreeHelper.GetParent(textBlock) as ContentPresenter;
-        //        if (contentPresenter != null)
-        //        {
-        //            contentPresenter.Margin = new Thickness(0);
-        //        }
-        //    }
-        //}
-
-        //private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (_initialised)
-        //    {
-        //        DrawTspLibItem();
-        //    }
-        //}
-
-        //private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
-        //{
-        //    if (_initialised)
-        //    {
-        //        DrawTspLibItem();
-        //    }
-        //}
 
         private void TourListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

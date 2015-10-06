@@ -214,13 +214,6 @@ namespace AntSimComplexAlgorithms.Utilities
                 // Remove nodes from their own nearest neighbour lists.
                 var nearestIndices = pairs.Where(p => p.Value != i).Select(p => p.Value).ToArray();
                 nearestIndices.CopyTo(_nearest[i], 0);
-
-                // Debug.
-                //for (int i = 0; i < _nearest[n].Length; i++)
-                //{
-                //    var index = _nearest[n][i] - _nodeIDOffset;
-                //    Debug.WriteLine($"Distance from {n} to {index} is {_distances[n][index]}");
-                //}
             }
         }
     }

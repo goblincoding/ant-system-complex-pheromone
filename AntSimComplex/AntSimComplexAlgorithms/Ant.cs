@@ -32,7 +32,7 @@ namespace AntSimComplexAlgorithms
         }
 
         /// <summary>
-        /// Initialises the internal state of the Ant.  Discards constructed tour information (if it exists).
+        /// Initialises the internal state of the Ant (discards constructed tour information if it exists).
         /// </summary>
         public void Initialise(int startNode)
         {
@@ -47,11 +47,12 @@ namespace AntSimComplexAlgorithms
 
             TourLength = 0.0;
             Tour.Clear();
+            Tour.Add(_currentNode);
         }
 
         /// <summary>
-        /// Moves the ant to the next node selected according to the random proportional rule,
-        /// updating tour information in the process.
+        /// Applies the random proportional rule on non-visited neighbours and moves the ant
+        /// to the node selected by the <seealso cref="RouletteWheelSelector"/>.
         /// </summary>
         public void MoveNext(object sender, EventArgs args)
         {
@@ -67,9 +68,9 @@ namespace AntSimComplexAlgorithms
 
             // Update tour information and move to the next node.
             TourLength += _dataStructures.Distance(_currentNode, selectedNext);
-            Tour.Add(selectedNext);
-            _visited[selectedNext] = 1;
             _currentNode = selectedNext;
+            Tour.Add(_currentNode);
+            _visited[_currentNode] = 1;
         }
     }
 }
