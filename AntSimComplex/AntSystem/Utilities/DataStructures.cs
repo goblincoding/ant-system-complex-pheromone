@@ -16,6 +16,12 @@ namespace AntSimComplexAlgorithms.Utilities
     public class DataStructures
     {
         /// <summary>
+        /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
+        /// nearest neighbour and pheromone density matrices.
+        /// </summary>
+        public int NodeCount { get; } = 0;
+
+        /// <summary>
         /// Represents ALL inter-city distances in a grid format, i.e. querying
         /// _distances[3][5] will return the distance from node 3 to node 5.
         /// Once initialised, the values in this matrix do not change.
@@ -51,19 +57,6 @@ namespace AntSimComplexAlgorithms.Utilities
         private int[][] _nearest;
 
         /// <summary>
-        /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
-        /// nearest neighbour and pheromone density matrices.
-        /// </summary>
-        private int _nodeCount = 0;
-
-        /// <summary>
-        /// Since INode ID's (from TspLibNet) are not necessarily zero-indexed, using this property to
-        /// obtain the list of indices corresponding to the ordered (ascending by INode ID) list of
-        /// problem nodes is essential for use with the <seealso cref="DataStructures"/> object.
-        /// </summary>
-        public int[] OrderedNodeIndices { get; }
-
-        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
@@ -81,8 +74,7 @@ namespace AntSimComplexAlgorithms.Utilities
                 throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
             }
 
-            _nodeCount = problem.NodeProvider.CountNodes();
-            OrderedNodeIndices = Enumerable.Range(0, _nodeCount).ToArray();
+            NodeCount = problem.NodeProvider.CountNodes();
 
             // Order is important!
             BuildInfoMatrices(problem, initialPheromoneDensity);
@@ -186,10 +178,10 @@ namespace AntSimComplexAlgorithms.Utilities
         /// <param name="initialPheromoneDensity"></param>
         private void BuildInfoMatrices(IProblem problem, double initialPheromoneDensity)
         {
-            _distances = new double[_nodeCount][];
-            _pheromone = new double[_nodeCount][];
-            _heuristic = new double[_nodeCount][];
-            _choiceInfo = new double[_nodeCount][];
+            _distances = new double[NodeCount][];
+            _pheromone = new double[NodeCount][];
+            _heuristic = new double[NodeCount][];
+            _choiceInfo = new double[NodeCount][];
 
             // Ensure that the nodes are sorted by ID ascending
             // or else all matrix indices will be off.
@@ -199,14 +191,14 @@ namespace AntSimComplexAlgorithms.Utilities
 
             var weightsProvider = problem.EdgeWeightsProvider;
 
-            for (int i = 0; i < _nodeCount; i++)
+            for (int i = 0; i < NodeCount; i++)
             {
-                _distances[i] = new double[_nodeCount];
-                _pheromone[i] = new double[_nodeCount];
-                _heuristic[i] = new double[_nodeCount];
-                _choiceInfo[i] = new double[_nodeCount];
+                _distances[i] = new double[NodeCount];
+                _pheromone[i] = new double[NodeCount];
+                _heuristic[i] = new double[NodeCount];
+                _choiceInfo[i] = new double[NodeCount];
 
-                for (int j = 0; j < _nodeCount; j++)
+                for (int j = 0; j < NodeCount; j++)
                 {
                     _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
                     _heuristic[i][j] = Math.Pow((1 / _distances[i][j]), Parameters.Beta);
@@ -226,12 +218,12 @@ namespace AntSimComplexAlgorithms.Utilities
         /// </summary>
         private void BuildNearestNeighboursLists()
         {
-            _nearest = new int[_nodeCount][];
+            _nearest = new int[NodeCount][];
 
-            for (int i = 0; i < _nodeCount; i++)
+            for (int i = 0; i < NodeCount; i++)
             {
                 // -1 since nodes aren't included in their own nearest neighbours lists.
-                _nearest[i] = new int[_nodeCount - 1];
+                _nearest[i] = new int[NodeCount - 1];
 
                 // Select all the distance/index pairs for all nodes OTHER than
                 // the current (i) (we need this so that we do not lose the position

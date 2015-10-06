@@ -13,7 +13,7 @@ namespace AntSimComplexTests.Backend
             var data = new DataStructures(problem, 0.3);
             var neighbours = data.NearestNeighbours(current);
             var nextIndex = RouletteWheelSelector.MakeSelection(data, neighbours, current);
-            Assert.Contains(nextIndex, data.OrderedNodeIndices);
+            Assert.Contains(nextIndex, neighbours);
         }
     }
 }
