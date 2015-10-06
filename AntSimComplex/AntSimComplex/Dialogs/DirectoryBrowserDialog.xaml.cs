@@ -19,7 +19,7 @@ namespace AntSimComplexUI.Dialogs
             dirBrowser.StartDirectory = startDirectory;
         }
 
-        private void DirectoryAccepted(object sender, StringEventArgs stringArgs)
+        private void DirectoryAccepted(object sender, DirPathEventArgs stringArgs)
         {
             DirectoryPath = stringArgs.DirPath;
             Close();

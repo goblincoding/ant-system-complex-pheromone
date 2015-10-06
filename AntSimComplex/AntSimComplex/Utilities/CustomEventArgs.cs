@@ -2,11 +2,11 @@
 
 namespace AntSimComplexUI.Utilities
 {
-    public class StringEventArgs : EventArgs
+    public class DirPathEventArgs : EventArgs
     {
         public string DirPath { get; private set; }
 
-        public StringEventArgs(string dirPath)
+        public DirPathEventArgs(string dirPath)
         {
             DirPath = dirPath;
         }

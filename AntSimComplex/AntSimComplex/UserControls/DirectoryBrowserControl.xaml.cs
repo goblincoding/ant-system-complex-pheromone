@@ -10,7 +10,7 @@ namespace AntSimComplexUI.UserControls
     /// </summary>
     public partial class DirectoryBrowserControl : UserControl
     {
-        public event EventHandler<StringEventArgs> DirectoryAccepted = delegate { };
+        public event EventHandler<DirPathEventArgs> DirectoryAccepted = delegate { };
 
         public string DirectoryPath
         {
@@ -34,7 +34,7 @@ namespace AntSimComplexUI.UserControls
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            DirectoryAccepted(this, new StringEventArgs(DirectoryPath));
+            DirectoryAccepted(this, new DirPathEventArgs(DirectoryPath));
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
