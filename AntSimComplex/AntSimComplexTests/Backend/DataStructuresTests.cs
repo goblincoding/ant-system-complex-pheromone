@@ -92,53 +92,6 @@ namespace AntSimComplexTests.Backend
 
         [Test]
         [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void TestDataStructuresPheromoneIndexInvalid()
-        {
-            var problem = new MockProblem();
-            var data = new DataStructures(problem, _initialPheromoneDensity);
-            var density = data.PheromoneTrailDensity(0, MockConstants.NrNodes);
-        }
-
-        [Test]
-        public void TestDataStructuresGetPheromoneSuccess()
-        {
-            const int pherDensity = 1;
-            var problem = new MockProblem();
-            var data = new DataStructures(problem, pherDensity);
-            var nodes = problem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                var density = data.PheromoneTrailDensity(i, i + 1);
-                Assert.AreEqual(density, pherDensity);
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(IndexOutOfRangeException))]
-        public void TestDataStructuresSetPheromoneFail()
-        {
-            var problem = new MockProblem();
-            var data = new DataStructures(problem, _initialPheromoneDensity);
-            data.SetPheromoneTrailDensity(0, MockConstants.NrNodes, 0);
-        }
-
-        [Test]
-        public void TestDataStructuresSetPheromoneSuccess()
-        {
-            const int pherDensity = 1;
-            var problem = new MockProblem();
-            var data = new DataStructures(problem, pherDensity);
-            var nodes = problem.NodeProvider.GetNodes();
-            for (int i = 0; i < nodes.Count - 1; i++)
-            {
-                const int newDensity = 2;
-                data.SetPheromoneTrailDensity(i, i + 1, newDensity);
-                Assert.AreEqual(data.PheromoneTrailDensity(i, i + 1), newDensity);
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(IndexOutOfRangeException))]
         public void TestDataStructuresGetChoiceInfoIndexInvalid()
         {
             var problem = new MockProblem();
@@ -160,7 +113,7 @@ namespace AntSimComplexTests.Backend
             var i = random.Next(0, nodeCount);
             var j = random.Next(0, nodeCount);
             var heuristic = Math.Pow((1 / data.Distance(i, j)), Parameters.Beta);
-            var choiceInfo = Math.Pow(data.PheromoneTrailDensity(i, j), Parameters.Alpha) * heuristic;
+            var choiceInfo = Math.Pow(data.Pheromone[i][j], Parameters.Alpha) * heuristic;
 
             var info = data.ChoiceInfo(i, j);
             Assert.IsTrue(info > 0.0);

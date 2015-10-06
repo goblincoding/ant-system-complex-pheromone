@@ -22,6 +22,12 @@ namespace AntSimComplexAlgorithms.Utilities
         public int NodeCount { get; } = 0;
 
         /// <summary>
+        /// Represents the simple pheromone density trail between two nodes for the
+        /// "standard" Ant System implementation.
+        /// </summary>
+        public double[][] Pheromone;
+
+        /// <summary>
         /// Represents ALL inter-city distances in a grid format, i.e. querying
         /// _distances[3][5] will return the distance from node 3 to node 5.
         /// Once initialised, the values in this matrix do not change.
@@ -34,12 +40,6 @@ namespace AntSimComplexAlgorithms.Utilities
         /// Once initialised, the values in this matrix do not change.
         /// </summary>
         private double[][] _heuristic;
-
-        /// <summary>
-        /// Represents the simple pheromone density trail between two nodes for the
-        /// "standard" Ant System implementation.
-        /// </summary>
-        private double[][] _pheromone;
 
         /// <summary>
         /// Represents the [t_ij]^A [n_ij]^B heuristic values for each edge [i][j] where
@@ -84,9 +84,7 @@ namespace AntSimComplexAlgorithms.Utilities
         /// <summary>
         /// This method does not calculate the edge weight between two nodes, but references
         /// the weights obtained from the original problem with which the <seealso cref="DataStructures"/>
-        /// object was constructed. Care must therefore be taken to only use node indices obtained
-        /// through <seealso cref="OrderedNodeIndices"/> for the problem at hand since INode ID's
-        /// will result in incorrect index offsets.
+        /// object was constructed.
         /// </summary>
         /// <param name="node1">The index of the first node</param>
         /// <param name="node2">The index of the second node</param>
@@ -100,9 +98,7 @@ namespace AntSimComplexAlgorithms.Utilities
         /// <summary>
         /// This method does not create the nearest neighbours list, but references
         /// the lists obtained from the original problem with which the <seealso cref="DataStructures"/>
-        /// object was constructed. Care must therefore be taken to only use node indices obtained
-        /// through <seealso cref="OrderedNodeIndices"/> for the problem at hand since INode ID's
-        /// will result in incorrect index offsets.
+        /// object was constructed.
         /// </summary>
         /// <param name="node">The node index whose neighbours should be returned.</param>
         /// <returns>Returns an array of neighbouring node indices, ordered by ascending distance.</returns>
@@ -117,9 +113,7 @@ namespace AntSimComplexAlgorithms.Utilities
         /// pheromone density, n_ij = 1/d_ij, and 'A' and 'B' are the Alpha and Beta parameter values.
         /// This method does not calculate the choice info heuristics, but references values in a matrix
         /// of dimensions dependent on the original problem with which the <seealso cref="DataStructures"/>
-        /// object was constructed. Care must therefore be taken to only use node indices obtained
-        /// through <seealso cref="OrderedNodeIndices"/> for the problem at hand since INode ID's
-        /// will result in incorrect index offsets.
+        /// object was constructed.
         /// </summary>
         /// <param name="node1">The index of the first node</param>
         /// <param name="node2">The index of the second node</param>
@@ -131,36 +125,25 @@ namespace AntSimComplexAlgorithms.Utilities
         }
 
         /// <summary>
-        /// This method depends on the graph dimensions of the original problem with which the
-        /// <seealso cref="DataStructures"/> object was constructed. Care must therefore be taken
-        /// to only use node indices obtained through <seealso cref="OrderedNodeIndices"/> for the
-        /// problem at hand since INode ID's will result in incorrect index offsets.
+        /// Updates the ChoiceInfo matrix with the latest pheromone values.  Should be called after the pheromone update
+        /// process is completed.
         /// </summary>
-        /// <param name="node1">The index of the first node</param>
-        /// <param name="node2">The index of the second node</param>
-        /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
-        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
-        public double PheromoneTrailDensity(int node1, int node2)
+        public void UpdateChoiceInfoMatrix()
         {
-            return _pheromone[node1][node2];
+            for (int i = 0; i < NodeCount; i++)
+            {
+                for (int j = i; j < NodeCount; j++)
+                {
+                    // Matrix is symmetric.
+                    UpdateChoiceInfo(i, j);
+                    UpdateChoiceInfo(j, i);
+                }
+            }
         }
 
-        /// <summary>
-        /// Sets the pheromone trail between "node1" and "node2" to "value".
-        ///
-        /// This method depends on the graph dimensions of the original problem with which the
-        /// <seealso cref="DataStructures"/> object was constructed. Care must therefore be taken
-        /// to only use node indices obtained through <seealso cref="OrderedNodeIndices"/> for the
-        /// problem at hand since INode ID's will result in incorrect index offsets.
-        /// </summary>
-        /// <param name="node1">The index of the first node</param>
-        /// <param name="node2">The index of the second node</param>
-        /// <param name="value">The pheromone density</param>
-        /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
-        public void SetPheromoneTrailDensity(int node1, int node2, double value)
+        private void UpdateChoiceInfo(int i, int j)
         {
-            _pheromone[node1][node2] = value;
-            UpdateChoiceInfo(node1, node2);
+            _choiceInfo[i][j] = Math.Pow(Pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
         }
 
         /// <summary>
@@ -179,7 +162,7 @@ namespace AntSimComplexAlgorithms.Utilities
         private void BuildInfoMatrices(IProblem problem, double initialPheromoneDensity)
         {
             _distances = new double[NodeCount][];
-            _pheromone = new double[NodeCount][];
+            Pheromone = new double[NodeCount][];
             _heuristic = new double[NodeCount][];
             _choiceInfo = new double[NodeCount][];
 
@@ -194,7 +177,7 @@ namespace AntSimComplexAlgorithms.Utilities
             for (int i = 0; i < NodeCount; i++)
             {
                 _distances[i] = new double[NodeCount];
-                _pheromone[i] = new double[NodeCount];
+                Pheromone[i] = new double[NodeCount];
                 _heuristic[i] = new double[NodeCount];
                 _choiceInfo[i] = new double[NodeCount];
 
@@ -202,15 +185,10 @@ namespace AntSimComplexAlgorithms.Utilities
                 {
                     _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
                     _heuristic[i][j] = Math.Pow((1 / _distances[i][j]), Parameters.Beta);
-                    _pheromone[i][j] = initialPheromoneDensity;
+                    Pheromone[i][j] = initialPheromoneDensity;
                     UpdateChoiceInfo(i, j);
                 }
             }
-        }
-
-        private void UpdateChoiceInfo(int i, int j)
-        {
-            _choiceInfo[i][j] = Math.Pow(_pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
         }
 
         /// <summary>
