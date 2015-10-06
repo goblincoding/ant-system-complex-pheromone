@@ -1,6 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
 using System;
-using System.Linq;
 using TspLibNet;
 
 namespace AntSimComplexAlgorithms
@@ -11,8 +10,6 @@ namespace AntSimComplexAlgorithms
     public class AntSystem
     {
         public event EventHandler MoveNext = delegate { };
-
-        public event EventHandler Initialise = delegate { };
 
         public Ant[] Ants { get; }
 
@@ -70,6 +67,7 @@ namespace AntSimComplexAlgorithms
                 DepositPheromone(ant);
             }
 
+            // Choice info matrix has to be updated after pheromone changes.
             _dataStructures.UpdateChoiceInfoMatrix();
         }
 
