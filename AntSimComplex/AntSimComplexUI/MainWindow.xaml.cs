@@ -6,8 +6,10 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -27,6 +29,7 @@ namespace AntSimComplexUI
 
         private bool _initialised;
         private bool _drawOptimal;
+        private static bool _timerRunning;
 
         private Matrix _worldToCanvasMatrix;
         private Matrix _canvasToWorldMatrix;
@@ -41,6 +44,7 @@ namespace AntSimComplexUI
         {
             InitializeComponent();
             _tourItems = new ObservableCollection<ListViewTourItem>();
+            TourListView.Items.SortDescriptions.Add(new SortDescription("Length", ListSortDirection.Ascending));
             TourListView.ItemsSource = _tourItems;
         }
 
@@ -51,6 +55,70 @@ namespace AntSimComplexUI
             // Load all symmetric TSP instances.
             _tspProblemSelector = new SymmetricTSPItemSelector(tspLibPath, 100, typeof(Node2D));
             TSPCombo.ItemsSource = _tspProblemSelector.ProblemNames;
+        }
+
+        private void ExecuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var worker = new BackgroundWorker();
+
+            // Work has completed. you can now interact with the UI
+            worker.RunWorkerCompleted += (o, ea) =>
+            {
+                BusyIndicator.IsBusy = false;
+
+                _tourItems.Clear();
+                AddOptimalTourToListView();
+                var count = 1;
+                foreach (var ant in _antSystem.Ants)
+                {
+                    var nodeTour = _tspInfoProvider.BuildNode2DTourFromZeroBasedIndices(ant.Tour);
+                    _tourItems.Add(new ListViewTourItem(nodeTour, ant.TourLength, $"Ant {count}"));
+                    count++;
+                }
+            };
+
+            if (RunCount.IsChecked == true)
+            {
+                var runCount = RunCountInt.Value;
+
+                // No direct interaction with the UI is allowed from this method.
+                worker.DoWork += (o, ea) =>
+                {
+                    for (int i = 0; i < runCount; i++)
+                    {
+                        _antSystem.Execute();
+                    }
+                };
+            }
+            else
+            {
+                var timeOut = (double)RunTimeInt.Value;
+                _timerRunning = true;
+
+                // No direct interaction with the UI is allowed from this method.
+                worker.DoWork += (o, ea) =>
+                {
+                    using (var timer = new Timer(timeOut * 1000))
+                    {
+                        timer.Elapsed += OnTimerElapsed;
+                        timer.Start();
+
+                        while (_timerRunning)
+                        {
+                            _antSystem.Execute();
+                        }
+                    }
+                };
+            }
+
+            // Set the IsBusy before we start the thread.
+            BusyIndicator.IsBusy = true;
+            worker.RunWorkerAsync();
+        }
+
+        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            _timerRunning = false;
         }
 
         private string BrowseTSPLIBPath()
@@ -70,7 +138,7 @@ namespace AntSimComplexUI
 
                 if (!tspPathExists)
                 {
-                    MessageBox.Show(this, "Path to TSPLIB95 is invalid.", "Error!");
+                    System.Windows.MessageBox.Show(this, "Path to TSPLIB95 is invalid.", "Error!");
                 }
             } while (String.IsNullOrWhiteSpace(tspLibPath) || !tspPathExists);
 
@@ -214,14 +282,16 @@ namespace AntSimComplexUI
 
             _antSystem = new AntSystem(item.Problem);
             _tourItems.Clear();
+            AddOptimalTourToListView();
+        }
 
+        private void AddOptimalTourToListView()
+        {
             if (_tspInfoProvider.HasOptimalTour)
             {
-                var ids = from n in _tspInfoProvider.OptimalTourNodes2D
-                          select n.Id.ToString();
                 _tourItems.Add(new ListViewTourItem(_tspInfoProvider.OptimalTourNodes2D,
                                                     _tspInfoProvider.OptimalTourLength,
-                                                    $"Current Problem (Optimal): {problemName}"));
+                                                    $"Current Problem (Optimal): {_tspInfoProvider.ProblemName}"));
             }
         }
 
@@ -250,20 +320,6 @@ namespace AntSimComplexUI
             if (_initialised)
             {
                 DrawTspLibItem();
-            }
-        }
-
-        private void ExecuteButton_Click(object sender, RoutedEventArgs e)
-        {
-            _antSystem.Execute();
-
-            _tourItems.Clear();
-            var count = 1;
-            foreach (var ant in _antSystem.Ants)
-            {
-                var nodeTour = _tspInfoProvider.BuildNode2DTourFromZeroBasedIndices(ant.Tour);
-                _tourItems.Add(new ListViewTourItem(nodeTour, ant.TourLength, $"Ant {count}"));
-                count++;
             }
         }
 

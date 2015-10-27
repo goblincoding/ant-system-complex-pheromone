@@ -13,6 +13,9 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     public class SymmetricTSPInfoProvider
     {
+        /// <returns>The name of the current TSP problem.
+        public string ProblemName { get; }
+
         /// <returns>A list of problem graph Node2D objects.</returns>
         public List<Node2D> Nodes2D { get; } = new List<Node2D>();
 
@@ -65,6 +68,8 @@ namespace AntSimComplexUI.Utilities
                 OptimalTourLength = item.OptimalTourDistance;
                 HasOptimalTour = true;
             }
+
+            ProblemName = item.Problem.Name;
         }
 
         /// <summary>

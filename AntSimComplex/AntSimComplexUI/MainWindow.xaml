@@ -4,116 +4,164 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AntSimComplexUI"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="960" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
-    <Grid x:Name="PrimaryGrid">
+        Title="MainWindow"
+        MinHeight="700" MinWidth="960"
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" MinHeight="500" />
-            <RowDefinition Height="*" MaxHeight="300" />
-        </Grid.RowDefinitions>
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
+        SizeChanged="Window_SizeChanged">
 
-        <Grid.Resources>
-            <Style TargetType="ComboBox">
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="SelectedIndex" Value="0" />
-                <Setter Property="Margin" Value="10, 0, 5, 0" />
-            </Style>
-            <Style TargetType="Border">
-                <Setter Property="BorderBrush" Value="DarkGray" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Margin" Value="5,0,5,2" />
-                <Setter Property="CornerRadius" Value="3" />
-            </Style>
-            <Style TargetType="CheckBox">
-                <Setter Property="VerticalAlignment" Value="Center" />
-            </Style>
-        </Grid.Resources>
+    <xctk:BusyIndicator Name="BusyIndicator" IsBusy="False" BusyContent="Executing...">
+        <Grid x:Name="PrimaryGrid">
 
-        <Menu x:Name="menu" Grid.Row="0" IsMainMenu="True" DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem x:Name="MenuOpen" Header="_Open" />
-            </MenuItem>
-        </Menu>
+            <!-- Set up primary grid. -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="500" />
+            </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="1">
-            <Grid x:Name="ToolsGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="75" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Label Content="Select Symmetric TSP Problem" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" />
-                <ComboBox Name="TSPCombo" Grid.Row="0" Grid.Column="1" SelectionChanged="TSPCombo_SelectionChanged" />
-                <CheckBox Name="ShowOptimal"
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" MinHeight="500" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Set up styles. -->
+            <Grid.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="DarkGray" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Margin" Value="5,5,5,5" />
+                    <Setter Property="CornerRadius" Value="3" />
+                </Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="SelectedIndex" Value="0" />
+                    <Setter Property="Margin" Value="5, 5, 5, 5" />
+                </Style>
+                <Style TargetType="CheckBox">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="5, 5, 5, 5" />
+                </Style>
+                <Style TargetType="Button">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="5, 5, 5, 5" />
+                </Style>
+                <Style TargetType="RadioButton">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="5, 5, 5, 5" />
+                </Style>
+                <Style TargetType="xctk:IntegerUpDown">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="5, 5, 5, 5" />
+                </Style>
+            </Grid.Resources>
+
+            <!-- Set up tool grid. -->
+            <Border Grid.Column="0" Grid.RowSpan="2">
+                <Grid x:Name="ToolsGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0">
+                        <Grid x:Name="SelectionGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Content="Select Symmetric TSP Problem:" Grid.Row="0" HorizontalAlignment="Left" />
+                            <ComboBox Name="TSPCombo" Grid.Row="1" SelectionChanged="TSPCombo_SelectionChanged" />
+                            <CheckBox Name="ShowOptimal"
                           Content="Show Optimal Tour (if available)"
-                          Grid.Row="0" Grid.Column="2"
+                          Grid.Row="2"
                           Checked="ShowOptimal_Checked"
                           Unchecked="ShowOptimal_Unchecked" />
-                <Button x:Name="ExecuteButton" Content="Execute"
-                        Grid.Row="0" Grid.Column="3"
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1">
+                        <Grid x:Name="OptionsGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" MinWidth="70" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Select Execution Options:" Grid.Row="0" HorizontalAlignment="Left" />
+                            <RadioButton Name="RunCount"
+                          GroupName="ExecuteRadioButtons"
+                          Content="Run x times:"
+                          Grid.Column="0"
+                          Grid.Row="1"
+                          HorizontalAlignment="Left"
+                          IsChecked="True" />
+                            <xctk:IntegerUpDown Name="RunCountInt"
+                          Value="10" Minimum="1"
+                          Grid.Column="1"
+                          Grid.Row="1" />
+
+                            <RadioButton Name="RunTime"
+                          GroupName="ExecuteRadioButtons"
+                          Content="Run for x seconds:"
+                          Grid.Column="0"
+                          Grid.Row="2"
+                          HorizontalAlignment="Left" />
+                            <xctk:IntegerUpDown Name="RunTimeInt"
+                          Value="10" Minimum="1"
+                          Grid.Column="1"
+                          Grid.Row="2" />
+                        </Grid>
+                    </Border>
+
+                    <Button x:Name="ExecuteButton" Content="Execute"
+                        Grid.Row="3" Grid.Column="0"
                         Click="ExecuteButton_Click" />
-            </Grid>
-        </Border>
+                </Grid>
+            </Border>
 
-        <Border Grid.Row="2">
-            <Canvas Name="canvas" Background="LightGray" />
-        </Border>
+            <!-- Set up canvas. -->
+            <Border Grid.Column="1" Grid.Row="0">
+                <Canvas Name="canvas" Background="LightGray" />
+            </Border>
 
-        <Border Grid.Row="3">
-            <ListView Name="TourListView"
+            <!-- Set up tour display. -->
+            <Border Grid.Column="1" Grid.Row="1">
+                <ListView Name="TourListView"
+
                       SelectionChanged="TourListView_SelectionChanged">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <WrapPanel>
-                                <TextBlock Text="Tour Type: " />
-                                <TextBlock Text="{Binding Type}" FontWeight="Bold" />
-                            </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="Tour Length: " />
-                                <TextBlock Text="{Binding Length}" FontWeight="Bold" />
-                            </WrapPanel>
-                            <WrapPanel>
-                                <TextBlock Text="Node Sequence: " />
-                                <TextBlock Text="{Binding NodeSequence}" />
-                            </WrapPanel>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-
-                <!--<ListView.View>
-                    <GridView>
-                        <GridView.ColumnHeaderContainerStyle>
-                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </Style>
-                        </GridView.ColumnHeaderContainerStyle>
-                        <GridViewColumn>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <CheckBox Margin="0" VerticalAlignment="Center" IsChecked="{Binding IsChecked}"
-                                              Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn>
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Margin="0" Text="{Binding Text}" Loaded="TextBlock_Loaded" />
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>-->
-            </ListView>
-        </Border>
-    </Grid>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <WrapPanel>
+                                    <TextBlock Text="Tour Type: " />
+                                    <TextBlock Text="{Binding Type}" FontWeight="Bold" />
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <TextBlock Text="Tour Length: " />
+                                    <TextBlock Text="{Binding Length}" FontWeight="Bold" />
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <TextBlock Text="Node Sequence: " />
+                                    <TextBlock Text="{Binding NodeSequence}" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+        </Grid>
+    </xctk:BusyIndicator>
 </Window>
