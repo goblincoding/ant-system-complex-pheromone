@@ -1,5 +1,4 @@
-﻿using AntSimComplexAlgorithms.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,18 +16,18 @@ namespace AntSimComplexAlgorithms
         private int _currentNode;
 
         private readonly int[] _visited;     // the indices of the nodes the Ant has already visited.
-        private readonly DataStructures _dataStructures;
+        private readonly ProblemContext _problemContext;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="dataStructures">Provides access to the underlying neighbour, pheromone density,
-        /// heuristic and choice info matrices used in applying the random proportional rule.</param>
+        /// <param name="problemContext">Provides access to the problem-specific parameters and information matrices
+        /// used in applying the random proportional rule.</param>
         /// <param name="nrNodes">The nr of nodes in the TSP graph.</param>
-        public Ant(DataStructures dataStructures, int nrNodes)
+        public Ant(ProblemContext problemContext)
         {
-            _dataStructures = dataStructures;
-            _visited = new int[nrNodes];
+            _problemContext = problemContext;
+            _visited = new int[_problemContext.NodeCount];
         }
 
         /// <summary>
@@ -57,17 +56,15 @@ namespace AntSimComplexAlgorithms
         public void MoveNext(object sender, EventArgs args)
         {
             // Find the neighbours we haven't visited yet.
-            var neighbours = _dataStructures.NearestNeighbours(_currentNode);
-            var notVisited = (from n in neighbours
-                              where _visited[n] != 1
-                              select n).ToArray();
+            var neighbours = _problemContext.DataStructures.NearestNeighbours(_currentNode);
+            var notVisited = neighbours.Where(n => _visited[n] != 1).ToArray();
 
             // If we've visited all nodes, return to the starting node.
             var selectedNext = notVisited.Any() ?
-                                    RouletteWheelSelector.MakeSelection(_dataStructures, notVisited, _currentNode) : _startNode;
+                                    _problemContext.RouletteWheelSelector.MakeSelection(notVisited, _currentNode) : _startNode;
 
             // Update tour information and move to the next node.
-            TourLength += _dataStructures.Distance(_currentNode, selectedNext);
+            TourLength += _problemContext.DataStructures.Distance(_currentNode, selectedNext);
             _currentNode = selectedNext;
             Tour.Add(_currentNode);
             _visited[_currentNode] = 1;

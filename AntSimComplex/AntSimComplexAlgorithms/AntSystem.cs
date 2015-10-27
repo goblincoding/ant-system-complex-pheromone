@@ -5,7 +5,7 @@ using TspLibNet;
 namespace AntSimComplexAlgorithms
 {
     /// <summary>
-    /// This class is the entry point for the basic Ant System implementation.
+    /// This class is the entry point for the basic ("standard") Ant System implementation.
     /// </summary>
     public class AntSystem
     {
@@ -16,11 +16,8 @@ namespace AntSimComplexAlgorithms
 
         public Ant[] Ants { get; }
 
-        private readonly DataStructures _dataStructures;
-        private readonly Parameters _parameters;
-        private readonly Random _random;
-
         private readonly int _nodeCount;
+        private readonly ProblemContext _problemContext;
 
         /// <summary>
         /// Constructor.
@@ -34,15 +31,13 @@ namespace AntSimComplexAlgorithms
                 throw new ArgumentNullException(nameof(problem), "The AntSystem constructor needs a valid problem instance argument");
             }
 
-            _random = new Random();
-            _parameters = new Parameters(problem);
-            _dataStructures = new DataStructures(problem, _parameters.InitialPheromone);
-            _nodeCount = _dataStructures.NodeCount;
+            _problemContext = new ProblemContext(problem);
+            _nodeCount = _problemContext.NodeCount;
 
             Ants = new Ant[_nodeCount];
             for (int i = 0; i < _nodeCount; i++)
             {
-                var ant = new Ant(_dataStructures, _nodeCount);
+                var ant = new Ant(_problemContext);
                 MoveNext += ant.MoveNext;
                 Ants[i] = ant;
             }
@@ -58,7 +53,7 @@ namespace AntSimComplexAlgorithms
             // Initialise the ants at random start nodes.
             foreach (var ant in Ants)
             {
-                var startNode = _random.Next(0, _nodeCount);
+                var startNode = ProblemContext.Random.Next(0, _nodeCount);
                 ant.Initialise(startNode);
             }
 
@@ -74,7 +69,7 @@ namespace AntSimComplexAlgorithms
             DepositPheromone();
 
             // Choice info matrix has to be updated after pheromone changes.
-            _dataStructures.UpdateChoiceInfoMatrix();
+            _problemContext.DataStructures.UpdateChoiceInfoMatrix();
         }
 
         private void EvaporatePheromone()
@@ -84,9 +79,9 @@ namespace AntSimComplexAlgorithms
                 for (int j = i; j < _nodeCount; j++)
                 {
                     // Matrix is symmetric.
-                    var pher = _dataStructures.Pheromone[i][j] * Parameters.EvaporationRate;
-                    _dataStructures.Pheromone[i][j] = pher;
-                    _dataStructures.Pheromone[i][j] = pher;
+                    var pher = _problemContext.DataStructures.Pheromone[i][j] * Parameters.EvaporationRate;
+                    _problemContext.DataStructures.Pheromone[i][j] = pher;
+                    _problemContext.DataStructures.Pheromone[i][j] = pher;
                 }
             }
         }
@@ -100,9 +95,9 @@ namespace AntSimComplexAlgorithms
                 {
                     var j = ant.Tour[i];
                     var l = ant.Tour[i + 1]; // stays within array bounds since Tour = n + 1 (returns to starting node)
-                    var pher = _dataStructures.Pheromone[i][j] + deposit;
-                    _dataStructures.Pheromone[j][l] = pher;  // matrix is symmetric
-                    _dataStructures.Pheromone[l][j] = pher;
+                    var pher = _problemContext.DataStructures.Pheromone[i][j] + deposit;
+                    _problemContext.DataStructures.Pheromone[j][l] = pher;  // matrix is symmetric
+                    _problemContext.DataStructures.Pheromone[l][j] = pher;
                 }
             }
         }

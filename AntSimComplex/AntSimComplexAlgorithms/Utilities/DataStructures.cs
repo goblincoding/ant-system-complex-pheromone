@@ -5,6 +5,8 @@ using TspLibNet;
 
 namespace AntSimComplexAlgorithms.Utilities
 {
+    // Note:  Might have to change distance matrix to integers: ACO p101
+
     /// <summary>
     /// This class represents the prepopulated (prior to algorithm run-time), consolidated,
     /// calculated values of different aspects of a particular TSP problem instance in data
@@ -12,6 +14,13 @@ namespace AntSimComplexAlgorithms.Utilities
     /// All the data structures are created and populated as per "Ant Colony Optimisation"
     /// Dorigo and Stutzle (2004), Ch3.8, p99 which is aimed at obtaining an efficient
     /// Ant System implementation.
+    ///
+    /// All matrices are n^2.  From Ant Colony Optimization, Dorigo 2004, p100:
+    ///
+    /// "In fact, although for symmetric TSPs we only need to store n(n-1)/2 distinct
+    /// distances, it is more efficient to use an n^2 matrix to avoid performing
+    /// additional operations to check whether, when accessing a generic distance
+    /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
     /// </summary>
     public class DataStructures
     {
@@ -19,11 +28,12 @@ namespace AntSimComplexAlgorithms.Utilities
         /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
         /// nearest neighbour and pheromone density matrices.
         /// </summary>
-        public int NodeCount { get; } = 0;
+        private readonly int _nodeCount;
 
         /// <summary>
-        /// Represents the simple pheromone density trail between two nodes for the
-        /// "standard" Ant System implementation.
+        /// Represents the simple pheromone density trails between two nodes (graph arcs)
+        /// for the "standard" Ant System implementation. Pheromone is frequently updated
+        /// during the evaporation and deposit steps.
         /// </summary>
         public double[][] Pheromone;
 
@@ -50,8 +60,8 @@ namespace AntSimComplexAlgorithms.Utilities
 
         /// <summary>
         /// Represents the nearest neighbour lists for all nodes where _nearest[i]
-        /// returns an array of the (adjusted) node ids sorted by increasing distance
-        /// from node i.
+        /// returns an array of the (adjusted from TSPLIB node ID's) node ids sorted
+        /// by increasing distance from node i.
         /// Once initialised, the values in this matrix do not change.
         /// </summary>
         private int[][] _nearest;
@@ -74,7 +84,7 @@ namespace AntSimComplexAlgorithms.Utilities
                 throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
             }
 
-            NodeCount = problem.NodeProvider.CountNodes();
+            _nodeCount = problem.NodeProvider.CountNodes();
 
             // Order is important!
             BuildInfoMatrices(problem, initialPheromoneDensity);
@@ -130,11 +140,11 @@ namespace AntSimComplexAlgorithms.Utilities
         /// </summary>
         public void UpdateChoiceInfoMatrix()
         {
-            for (int i = 0; i < NodeCount; i++)
+            // Matrix is symmetric.
+            for (int i = 0; i < _nodeCount; i++)
             {
-                for (int j = i; j < NodeCount; j++)
+                for (int j = i; j < _nodeCount; j++)
                 {
-                    // Matrix is symmetric.
                     UpdateChoiceInfo(i, j);
                     UpdateChoiceInfo(j, i);
                 }
@@ -147,12 +157,6 @@ namespace AntSimComplexAlgorithms.Utilities
         }
 
         /// <summary>
-        /// From Ant Colony Optimization, Dorigo 2004 , p100
-        /// "In fact, although for symmetric TSPs we only need to store n(n-1)/2 distinct
-        /// distances, it is more efficient to use an n^2 matrix to avoid performing
-        /// additional operations to check whether, when accessing a generic distance
-        /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
-        ///
         /// Pheromone density matrix - p102
         /// Heuristics matrix - p102
         /// Choice info matrix - p102
@@ -161,10 +165,11 @@ namespace AntSimComplexAlgorithms.Utilities
         /// <param name="initialPheromoneDensity"></param>
         private void BuildInfoMatrices(IProblem problem, double initialPheromoneDensity)
         {
-            _distances = new double[NodeCount][];
-            Pheromone = new double[NodeCount][];
-            _heuristic = new double[NodeCount][];
-            _choiceInfo = new double[NodeCount][];
+            // Initialise rows.
+            Pheromone = new double[_nodeCount][];
+            _distances = new double[_nodeCount][];
+            _heuristic = new double[_nodeCount][];
+            _choiceInfo = new double[_nodeCount][];
 
             // Ensure that the nodes are sorted by ID ascending
             // or else all matrix indices will be off.
@@ -174,15 +179,18 @@ namespace AntSimComplexAlgorithms.Utilities
 
             var weightsProvider = problem.EdgeWeightsProvider;
 
-            for (int i = 0; i < NodeCount; i++)
+            for (int i = 0; i < _nodeCount; i++)
             {
-                _distances[i] = new double[NodeCount];
-                Pheromone[i] = new double[NodeCount];
-                _heuristic[i] = new double[NodeCount];
-                _choiceInfo[i] = new double[NodeCount];
+                // Initialise columns.
+                Pheromone[i] = new double[_nodeCount];
+                _distances[i] = new double[_nodeCount];
+                _heuristic[i] = new double[_nodeCount];
+                _choiceInfo[i] = new double[_nodeCount];
 
-                for (int j = 0; j < NodeCount; j++)
+                for (int j = 0; j < _nodeCount; j++)
                 {
+                    // Set the distance from a node to itself as sufficiently large that it
+                    // is HIGHLY unlikely to be selected.
                     _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
                     _heuristic[i][j] = Math.Pow((1 / _distances[i][j]), Parameters.Beta);
                     Pheromone[i][j] = initialPheromoneDensity;
@@ -196,12 +204,12 @@ namespace AntSimComplexAlgorithms.Utilities
         /// </summary>
         private void BuildNearestNeighboursLists()
         {
-            _nearest = new int[NodeCount][];
+            _nearest = new int[_nodeCount][];
 
-            for (int i = 0; i < NodeCount; i++)
+            for (int i = 0; i < _nodeCount; i++)
             {
                 // -1 since nodes aren't included in their own nearest neighbours lists.
-                _nearest[i] = new int[NodeCount - 1];
+                _nearest[i] = new int[_nodeCount - 1];
 
                 // Select all the distance/index pairs for all nodes OTHER than
                 // the current (i) (we need this so that we do not lose the position

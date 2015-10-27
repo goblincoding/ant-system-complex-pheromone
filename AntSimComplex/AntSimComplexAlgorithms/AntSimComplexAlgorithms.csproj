@@ -7,8 +7,8 @@
     <ProjectGuid>{C8DAB661-49EA-44CF-8799-E18E70F4B103}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AntSystem</RootNamespace>
-    <AssemblyName>AntSystem</AssemblyName>
+    <RootNamespace>AntSimComplexAlgorithms</RootNamespace>
+    <AssemblyName>AntSimComplexAlgorithms</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Ant.cs" />
     <Compile Include="AntSystem.cs" />
+    <Compile Include="ProblemContext.cs" />
     <Compile Include="Utilities\DataStructures.cs" />
     <Compile Include="Utilities\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

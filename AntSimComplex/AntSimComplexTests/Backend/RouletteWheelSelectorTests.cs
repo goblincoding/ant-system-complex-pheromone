@@ -12,7 +12,8 @@ namespace AntSimComplexTests.Backend
             var problem = new MockProblem();
             var data = new DataStructures(problem, 0.3);
             var neighbours = data.NearestNeighbours(current);
-            var nextIndex = RouletteWheelSelector.MakeSelection(data, neighbours, current);
+            var selector = new RouletteWheelSelector(data, new System.Random());
+            var nextIndex = selector.MakeSelection(neighbours, current);
             Assert.Contains(nextIndex, neighbours);
         }
     }

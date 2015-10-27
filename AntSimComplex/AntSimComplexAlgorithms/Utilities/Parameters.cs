@@ -5,9 +5,10 @@ using TspLibNet;
 namespace AntSimComplexAlgorithms.Utilities
 {
     /// <summary>
-    /// Ant Colony Optimisation - Dorigo and Stutzle.
-    /// These parameters are for the random proportional rule (probability of selection, formula given on p70) and
-    /// are determined as per Box 3.1 "Good settings for ACO without local search applied." on p71.
+    /// These parameters are for the random proportional rule (probability of selection, formula given on p70 of
+    /// Ant Colony Optimisation - Dorigo and Stutzle) and are determined as per Box 3.1 "Good settings for ACO
+    /// without local search applied." on p71.
+    ///
     /// Initial pheromone is calculated as t0 = m / C^nn (nr of ants / nearest neighbour heuristic) as suggested on p70.
     /// </summary>
     public class Parameters
@@ -21,7 +22,7 @@ namespace AntSimComplexAlgorithms.Utilities
         /// Good values are 2 - 5, determines the relative influence of the heuristic information
         /// in the random proportional rule.
         /// </summary>
-        public const double Beta = 2.0;
+        public const int Beta = 2;
 
         /// <summary>
         /// The pheromone evaporation rate for the pheromone update cycle (rho).
@@ -29,7 +30,7 @@ namespace AntSimComplexAlgorithms.Utilities
         public const double EvaporationRate = 0.5;
 
         /// <summary>
-        /// The pheromone density initialisation value (tau zero).
+        /// The pheromone density initialisation value (tau zero or t0 = m / C^nn).
         /// </summary>
         public double InitialPheromone { get; } = 0.1;
 
@@ -39,7 +40,7 @@ namespace AntSimComplexAlgorithms.Utilities
         {
             if (problem == null)
             {
-                throw new ArgumentNullException(nameof(problem), "The Parameters constructor needs a valid problem instance argument");
+                throw new ArgumentNullException(nameof(problem), $"The {nameof(Parameters)} constructor needs a valid problem instance argument");
             }
 
             var numberOfAnts = problem.NodeProvider.CountNodes();
