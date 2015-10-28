@@ -1,5 +1,6 @@
 ﻿using AntSimComplex.Utilities;
 using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
@@ -341,5 +342,20 @@ namespace AntSimComplexUI
         }
 
         #endregion eventhandlers
+
+        private void AlphaInt_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            Parameters.Alpha = (int)e.NewValue;
+        }
+
+        private void BetaInt_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            Parameters.Beta = (int)e.NewValue;
+        }
+
+        private void EvapDouble_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            Parameters.EvaporationRate = (double)e.NewValue;
+        }
     }
 }

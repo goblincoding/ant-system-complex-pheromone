@@ -58,6 +58,10 @@
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="Margin" Value="5, 5, 5, 5" />
                 </Style>
+                <Style TargetType="xctk:DoubleUpDown">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="5, 5, 5, 5" />
+                </Style>
             </Grid.Resources>
 
             <!-- Set up tool grid. -->
@@ -80,10 +84,10 @@
                             <Label Content="Select Symmetric TSP Problem:" Grid.Row="0" HorizontalAlignment="Left" />
                             <ComboBox Name="TSPCombo" Grid.Row="1" SelectionChanged="TSPCombo_SelectionChanged" />
                             <CheckBox Name="ShowOptimal"
-                          Content="Show Optimal Tour (if available)"
-                          Grid.Row="2"
-                          Checked="ShowOptimal_Checked"
-                          Unchecked="ShowOptimal_Unchecked" />
+                                      Content="Show Optimal Tour (if available)"
+                                      Grid.Row="2"
+                                      Checked="ShowOptimal_Checked"
+                                      Unchecked="ShowOptimal_Unchecked" />
                         </Grid>
                     </Border>
 
@@ -101,33 +105,65 @@
 
                             <Label Content="Select Execution Options:" Grid.Row="0" HorizontalAlignment="Left" />
                             <RadioButton Name="RunCount"
-                          GroupName="ExecuteRadioButtons"
-                          Content="Run x times:"
-                          Grid.Column="0"
-                          Grid.Row="1"
-                          HorizontalAlignment="Left"
-                          IsChecked="True" />
+                                         GroupName="ExecuteRadioButtons"
+                                         Content="Run x times:"
+                                         Grid.Column="0"
+                                         Grid.Row="1"
+                                         HorizontalAlignment="Left"
+                                         IsChecked="True" />
                             <xctk:IntegerUpDown Name="RunCountInt"
-                          Value="10" Minimum="1"
-                          Grid.Column="1"
-                          Grid.Row="1" />
+                                                Value="10" Minimum="1"
+                                                Grid.Column="1"
+                                                Grid.Row="1" />
 
                             <RadioButton Name="RunTime"
-                          GroupName="ExecuteRadioButtons"
-                          Content="Run for x seconds:"
-                          Grid.Column="0"
-                          Grid.Row="2"
-                          HorizontalAlignment="Left" />
+                                         GroupName="ExecuteRadioButtons"
+                                         Content="Run for x seconds:"
+                                         Grid.Column="0"
+                                         Grid.Row="2"
+                                         HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="RunTimeInt"
-                          Value="10" Minimum="1"
-                          Grid.Column="1"
-                          Grid.Row="2" />
+                                                Value="10" Minimum="1"
+                                                Grid.Column="1"
+                                                Grid.Row="2" />
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="2">
+                        <Grid x:Name="ParametersGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" MinWidth="70" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Select Parameters:" Grid.Row="0" HorizontalAlignment="Left" />
+                            <Label Content="Alpha" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" />
+                            <xctk:IntegerUpDown Name="AlphaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="1"
+                                                ValueChanged="AlphaInt_ValueChanged"
+                                                AllowTextInput="False" />
+
+                            <Label Content="Beta" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
+                            <xctk:IntegerUpDown Name="BetaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="2"
+                                                ValueChanged="BetaInt_ValueChanged"
+                                                AllowTextInput="False" />
+
+                            <Label Content="Evaporation Rate" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
+                            <xctk:DoubleUpDown Name="EvapDouble" Value="0.5" Minimum="0.0" Maximum="1.0" Increment="0.1"
+                                               Grid.Column="1" Grid.Row="3"
+                                               ValueChanged="EvapDouble_ValueChanged"
+                                               AllowTextInput="False" />
                         </Grid>
                     </Border>
 
                     <Button x:Name="ExecuteButton" Content="Execute"
-                        Grid.Row="3" Grid.Column="0"
-                        Click="ExecuteButton_Click" />
+                            Grid.Row="3" Grid.Column="0"
+                            Click="ExecuteButton_Click" />
                 </Grid>
             </Border>
 
