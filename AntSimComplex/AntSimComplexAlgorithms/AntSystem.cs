@@ -1,5 +1,7 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using TspLibNet;
 
 namespace AntSimComplexAlgorithms
@@ -15,6 +17,12 @@ namespace AntSimComplexAlgorithms
         public event EventHandler MoveNext = delegate { };
 
         public Ant[] Ants { get; }
+
+        /// <summary>
+        /// Pretty nasty-looking, but is simply a list of ALL the best tours per solution iteration
+        /// consisting of tuples of tour length and tour node IDs.
+        /// </summary>
+        public List<Tuple<double, List<int>>> BestTours { get; } = new List<Tuple<double, List<int>>>();
 
         private readonly int _nodeCount;
         private readonly ProblemContext _problemContext;
@@ -70,6 +78,18 @@ namespace AntSimComplexAlgorithms
 
             // Choice info matrix has to be updated after pheromone changes.
             _problemContext.DataStructures.UpdateChoiceInfoMatrix();
+
+            var best = Ants.Min();
+            BestTours.Add(new Tuple<double, List<int>>(best.TourLength, best.Tour));
+        }
+
+        /// <summary>
+        /// Resets the AntSystem internals.
+        /// </summary>
+        public void Reset()
+        {
+            BestTours.Clear();
+            _problemContext.ResetPheromone();
         }
 
         private void EvaporatePheromone()

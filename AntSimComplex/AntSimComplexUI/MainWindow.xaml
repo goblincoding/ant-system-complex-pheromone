@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="MainWindow"
         MinHeight="700" MinWidth="960"
-
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded"
         SizeChanged="Window_SizeChanged">

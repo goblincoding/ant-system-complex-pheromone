@@ -7,7 +7,7 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Ants are implemented predominantly as per "Ant Colony Optimisation" Dorigo and Stutzle (2004), Ch3.8, p103.
     /// </summary>
-    public class Ant
+    public class Ant : IComparable<Ant>
     {
         public double TourLength { get; private set; } = 0.0;
         public List<int> Tour { get; } = new List<int>();   // the indices of the nodes belonging to the current tour.
@@ -68,6 +68,11 @@ namespace AntSimComplexAlgorithms
             _currentNode = selectedNext;
             Tour.Add(_currentNode);
             _visited[_currentNode] = 1;
+        }
+
+        public int CompareTo(Ant other)
+        {
+            return (other != null) ? TourLength.CompareTo(other.TourLength) : 1;
         }
     }
 }

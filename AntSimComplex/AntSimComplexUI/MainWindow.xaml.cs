@@ -59,24 +59,18 @@ namespace AntSimComplexUI
 
         private void ExecuteButton_Click(object sender, RoutedEventArgs e)
         {
+            // Reset pheromone concentration.
+            _antSystem.Reset();
+
+            // Fire up a background worker so that we may execute the AS algorithm
+            // while blocking the UI from receiving any user input.
             var worker = new BackgroundWorker();
 
-            // Work has completed. you can now interact with the UI
-            worker.RunWorkerCompleted += (o, ea) =>
-            {
-                BusyIndicator.IsBusy = false;
+            // This method gets called as soon as work has completed. UI interaction
+            // is re-enabled.
+            worker.RunWorkerCompleted += OnExecutionBackgroundWorkerCompleted;
 
-                _tourItems.Clear();
-                AddOptimalTourToListView();
-                var count = 1;
-                foreach (var ant in _antSystem.Ants)
-                {
-                    var nodeTour = _tspInfoProvider.BuildNode2DTourFromZeroBasedIndices(ant.Tour);
-                    _tourItems.Add(new ListViewTourItem(nodeTour, ant.TourLength, $"Ant {count}"));
-                    count++;
-                }
-            };
-
+            // Are we executing by nr of iterations or time?
             if (RunCount.IsChecked == true)
             {
                 var runCount = RunCountInt.Value;
@@ -102,7 +96,6 @@ namespace AntSimComplexUI
                     {
                         timer.Elapsed += OnTimerElapsed;
                         timer.Start();
-
                         while (_timerRunning)
                         {
                             _antSystem.Execute();
@@ -111,9 +104,25 @@ namespace AntSimComplexUI
                 };
             }
 
-            // Set the IsBusy before we start the thread.
+            // Set IsBusy before we start the thread.
             BusyIndicator.IsBusy = true;
             worker.RunWorkerAsync();
+        }
+
+        private void OnExecutionBackgroundWorkerCompleted(object o, RunWorkerCompletedEventArgs ea)
+        {
+            BusyIndicator.IsBusy = false;
+
+            _tourItems.Clear();
+            AddOptimalTourToListView();
+
+            var count = 1;
+            foreach (var tour in _antSystem.BestTours)
+            {
+                var nodeTour = _tspInfoProvider.BuildNode2DTourFromZeroBasedIndices(tour.Item2);
+                _tourItems.Add(new ListViewTourItem(nodeTour, tour.Item1, $"Best Tour for Iteration {count}"));
+                count++;
+            }
         }
 
         private void OnTimerElapsed(object sender, ElapsedEventArgs e)
