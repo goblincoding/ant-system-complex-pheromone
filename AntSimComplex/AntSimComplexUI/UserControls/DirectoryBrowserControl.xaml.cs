@@ -1,14 +1,13 @@
 ﻿using AntSimComplexUI.Utilities;
 using System;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace AntSimComplexUI.UserControls
 {
   /// <summary>
   /// Interaction logic for DirectoryBrowser.xaml
   /// </summary>
-  public partial class DirectoryBrowserControl : UserControl
+  public partial class DirectoryBrowserControl
   {
     public event EventHandler<DirPathEventArgs> DirectoryAccepted = delegate { };
 
@@ -39,9 +38,7 @@ namespace AntSimComplexUI.UserControls
 
     private void BrowseButtonClick(object sender, RoutedEventArgs e)
     {
-      var dialog = new System.Windows.Forms.FolderBrowserDialog();
-      dialog.SelectedPath = StartDirectory;
-
+      var dialog = new System.Windows.Forms.FolderBrowserDialog { SelectedPath = StartDirectory };
       var result = dialog.ShowDialog();
       if (result == System.Windows.Forms.DialogResult.OK)
       {

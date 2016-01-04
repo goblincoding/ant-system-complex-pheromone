@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using TspLibNet;
 
@@ -16,7 +17,7 @@ namespace AntSimComplexUI.Utilities
     /// <summary>
     /// The list of names of all symmetric TSP problems loaded.
     /// </summary>
-    public List<string> ProblemNames { get; } = new List<string>();
+    public List<string> ProblemNames { get; }
 
     /// <summary>
     /// Constructor.  Exceptions thrown are from underlying TspLib95 instance.
@@ -31,14 +32,15 @@ namespace AntSimComplexUI.Utilities
     {
       var tspLib = new TspLib95(tspLibPath);
       var items = tspLib.LoadAllTSP();
-      Debug.Assert(items.Any());
+      var tspLib95Items = items as TspLib95Item[] ?? items.ToArray();
+      Debug.Assert(tspLib95Items.Any());
 
       // We only need to check one node for node type since it is not possible to
       // have different types in the same list.
-      _tspLibItems = (from i in items
+      _tspLibItems = (from i in tspLib95Items
                       where i.Problem.NodeProvider.CountNodes() <= maxNodes
                       where i.Problem.NodeProvider.GetNodes().First().GetType() == nodeType
-                      select i)?.ToList();
+                      select i).ToList();
 
       if (_tspLibItems?.Any() == false)
       {

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TspLibNet;
@@ -13,11 +15,11 @@ namespace AntSimComplexUI.Utilities
   /// </summary>
   public class SymmetricTspInfoProvider
   {
-    /// <returns>The name of the current TSP problem.
+    /// <returns>The name of the current TSP problem.</returns>
     public string ProblemName { get; }
 
     /// <returns>A list of problem graph Node2D objects.</returns>
-    public List<Node2D> Nodes2D { get; } = new List<Node2D>();
+    public List<Node2D> Nodes2D { get; }
 
     /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
     public List<Node2D> OptimalTourNodes2D { get; } = new List<Node2D>();
@@ -25,14 +27,14 @@ namespace AntSimComplexUI.Utilities
     /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
     public double OptimalTourLength { get; } = double.MaxValue;
 
-    public bool HasOptimalTour { get; } = false;
+    public bool HasOptimalTour { get; }
 
     /// <summary>
     /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
     /// the INode ID's and the zero-based indices used by <seealso cref="AntSimComplexAlgorithms"/>, the underlying
     /// <seealso cref="DataStructures"/> and <seealso cref="Ant"/>.
     /// </summary>
-    private int _zeroBasedOffset = 0;
+    private readonly int _zeroBasedOffset;
 
     /// <summary>
     /// Constructor.
@@ -49,17 +51,18 @@ namespace AntSimComplexUI.Utilities
 
       Nodes2D = (from n in item.Problem.NodeProvider.GetNodes()
                  where n is Node2D
-                 select n as Node2D)?.ToList();
+                 select n as Node2D).ToList();
 
       Nodes2D.RemoveAll(n => n == null);
       if (Nodes2D?.Any() == false)
       {
-        throw new ArgumentOutOfRangeException(nameof(item), "Selected problem node list does not contain Node2D objects.");
+        const string errMsg = "Selected problem node list does not contain Node2D objects.";
+        throw new ArgumentOutOfRangeException(nameof(item), errMsg);
       }
 
       _zeroBasedOffset = Nodes2D.Min(n => n.Id) - 0;
 
-      if (item?.OptimalTour != null)
+      if (item.OptimalTour != null)
       {
         var nodes = (from n in item.OptimalTour.Nodes
                      select item.Problem.NodeProvider.GetNode(n) as Node2D).ToList();
@@ -80,13 +83,7 @@ namespace AntSimComplexUI.Utilities
     /// <returns>A list of Node2D objects representing an Ant's constructed tour.</returns>
     public List<Node2D> BuildNode2DTourFromZeroBasedIndices(List<int> antTourIndices)
     {
-      var nodes = new List<Node2D>();
-      foreach (var index in antTourIndices)
-      {
-        var node = Nodes2D.First(n => n.Id == index + _zeroBasedOffset);
-        nodes.Add(node);
-      }
-      return nodes;
+      return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedOffset)).ToList();
     }
 
     /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
