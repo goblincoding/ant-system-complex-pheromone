@@ -9,8 +9,8 @@
         Title="MainWindow"
         MinHeight="700" MinWidth="960"
         WindowStartupLocation="CenterScreen"
-        Loaded="Window_Loaded"
-        SizeChanged="Window_SizeChanged">
+        Loaded="WindowLoaded"
+        SizeChanged="WindowSizeChanged">
 
     <xctk:BusyIndicator Name="BusyIndicator" IsBusy="False" BusyContent="Executing...">
         <Grid x:Name="PrimaryGrid">
@@ -82,12 +82,12 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Label Content="Select Symmetric TSP Problem:" Grid.Row="0" HorizontalAlignment="Left" />
-                            <ComboBox Name="TSPCombo" Grid.Row="1" SelectionChanged="TSPCombo_SelectionChanged" />
+                            <ComboBox Name="TspCombo" Grid.Row="1" SelectionChanged="TspComboSelectionChanged" />
                             <CheckBox Name="ShowOptimal"
                                       Content="Show Optimal Tour (if available)"
                                       Grid.Row="2"
-                                      Checked="ShowOptimal_Checked"
-                                      Unchecked="ShowOptimal_Unchecked" />
+                                      Checked="ShowOptimalChecked"
+                                      Unchecked="ShowOptimalUnchecked" />
                         </Grid>
                     </Border>
 
@@ -145,38 +145,38 @@
                             <Label Content="Select Parameters:" Grid.Row="0" HorizontalAlignment="Left" />
                             <Label Content="Alpha" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="AlphaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="1"
-                                                ValueChanged="AlphaInt_ValueChanged"
+                                                ValueChanged="AlphaIntValueChanged"
                                                 AllowTextInput="False" />
 
                             <Label Content="Beta" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="BetaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="2"
-                                                ValueChanged="BetaInt_ValueChanged"
+                                                ValueChanged="BetaIntValueChanged"
                                                 AllowTextInput="False" />
 
                             <Label Content="Evaporation Rate" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
                             <xctk:DoubleUpDown Name="EvapDouble" Value="0.5" Minimum="0.0" Maximum="1.0" Increment="0.1"
                                                Grid.Column="1" Grid.Row="3"
-                                               ValueChanged="EvapDouble_ValueChanged"
+                                               ValueChanged="EvapDoubleValueChanged"
                                                AllowTextInput="False" />
                         </Grid>
                     </Border>
 
                     <Button x:Name="ExecuteButton" Content="Execute"
                             Grid.Row="3" Grid.Column="0"
-                            Click="ExecuteButton_Click" />
+                            Click="ExecuteButtonClick" />
                 </Grid>
             </Border>
 
             <!-- Set up canvas. -->
             <Border Grid.Column="1" Grid.Row="0">
-                <Canvas Name="canvas" Background="LightGray" />
+                <Canvas Name="Canvas" Background="LightGray" />
             </Border>
 
             <!-- Set up tour display. -->
             <Border Grid.Column="1" Grid.Row="1">
                 <ListView Name="TourListView"
 
-                      SelectionChanged="TourListView_SelectionChanged">
+                      SelectionChanged="TourListViewSelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>

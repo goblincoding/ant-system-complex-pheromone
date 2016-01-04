@@ -11,6 +11,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <local:DirectoryBrowserControl x:Name="dirBrowser" Grid.Row="0" />
+        <local:DirectoryBrowserControl x:Name="DirBrowser" Grid.Row="0" />
     </Grid>
 </Window>

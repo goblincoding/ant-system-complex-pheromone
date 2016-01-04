@@ -10,7 +10,7 @@ namespace AntSimComplexTests.GUI
     public void TestTspLibItemNullConstructor()
     {
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentNullException>(() => new SymmetricTSPInfoProvider(null));
+      Assert.Throws<ArgumentNullException>(() => new SymmetricTspInfoProvider(null));
     }
   }
 }

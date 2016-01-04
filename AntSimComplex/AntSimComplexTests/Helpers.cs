@@ -5,6 +5,7 @@ namespace AntSimComplexTests
 {
   public static class Helpers
   {
+    private const int MaxNodesPerProblem = 100;
     private const string PackageRelPath = @"..\..\..\packages\TSPLib.Net.1.1.4\TSPLIB95";
     public static readonly string LibPath = System.IO.Path.GetFullPath(PackageRelPath);
 
@@ -13,9 +14,9 @@ namespace AntSimComplexTests
     /// 100 nodes and whose nodes are 2D coordinate sets.
     /// <returns>A SymmetricTSPItemSelector</returns>
     /// </summary>
-    public static SymmetricTSPItemSelector GetItemSelector(string path)
+    public static SymmetricTspItemSelector GetItemSelector(string path)
     {
-      return new SymmetricTSPItemSelector(path, 100, typeof(Node2D));
+      return new SymmetricTspItemSelector(path, MaxNodesPerProblem, typeof(Node2D));
     }
   }
 }

@@ -27,7 +27,7 @@ namespace AntSimComplexTests.GUI
     public void TestNoTspLibItemsLoadedConstructor()
     {
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new SymmetricTSPItemSelector(Helpers.LibPath, 10, typeof(Node3D)));
+      Assert.Throws<ArgumentOutOfRangeException>(() => new SymmetricTspItemSelector(Helpers.LibPath, 10, typeof(Node3D)));
     }
 
     [TestCase("")]

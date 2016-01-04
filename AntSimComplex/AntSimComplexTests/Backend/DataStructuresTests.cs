@@ -6,12 +6,12 @@ namespace AntSimComplexTests.Backend
 {
   internal class DataStructuresTests
   {
-    private const double _initialPheromoneDensity = 0.5;
+    private const double InitialPheromoneDensity = 0.5;
 
     [Test]
     public void TestNullProblemDataStructuresConstructorFail()
     {
-      Assert.Throws<ArgumentNullException>(() => new DataStructures(null, _initialPheromoneDensity));
+      Assert.Throws<ArgumentNullException>(() => new DataStructures(null, InitialPheromoneDensity));
     }
 
     [TestCase(0.0)]
@@ -26,7 +26,7 @@ namespace AntSimComplexTests.Backend
     public void TestDataStructuresConstructionSuccess()
     {
       var problem = new MockProblem();
-      var data = new DataStructures(problem, _initialPheromoneDensity);
+      var data = new DataStructures(problem, InitialPheromoneDensity);
       Assert.IsNotNull(data);
     }
 
@@ -34,7 +34,7 @@ namespace AntSimComplexTests.Backend
     public void TestDataStructuresDistanceIndexInvalid()
     {
       var problem = new MockProblem();
-      var data = new DataStructures(problem, _initialPheromoneDensity);
+      var data = new DataStructures(problem, InitialPheromoneDensity);
       Assert.Throws<IndexOutOfRangeException>(() => data.Distance(0, MockConstants.NrNodes));
     }
 
@@ -42,16 +42,16 @@ namespace AntSimComplexTests.Backend
     public void TestDataStructuresGetInterNodeDistanceSuccess()
     {
       var problem = new MockProblem();
-      var data = new DataStructures(problem, _initialPheromoneDensity);
+      var data = new DataStructures(problem, InitialPheromoneDensity);
       var nodes = problem.NodeProvider.GetNodes();
-      for (int i = 0; i < nodes.Count - 1; i++)
+      for (var i = 0; i < nodes.Count - 1; i++)
       {
         var distance = data.Distance(i, i + 1);
         Assert.AreEqual(distance, problem.GetWeight(i, i + 1));
       }
 
       nodes.Reverse();
-      for (int i = 0; i < nodes.Count - 1; i++)
+      for (var i = 0; i < nodes.Count - 1; i++)
       {
         var distance = data.Distance(i, i + 1);
         Assert.AreEqual(distance, problem.GetWeight(i, i + 1));
@@ -62,7 +62,7 @@ namespace AntSimComplexTests.Backend
     public void TestDataStructuresNearestNeighboursIndexInvalid()
     {
       var problem = new MockProblem();
-      var data = new DataStructures(problem, _initialPheromoneDensity);
+      var data = new DataStructures(problem, InitialPheromoneDensity);
       Assert.Throws<IndexOutOfRangeException>(() => data.NearestNeighbours(MockConstants.NrNodes));
     }
 
@@ -70,16 +70,16 @@ namespace AntSimComplexTests.Backend
     public void TestDataStructuresGetNearestNeighboursSuccess()
     {
       var problem = new MockProblem();
-      var data = new DataStructures(problem, _initialPheromoneDensity);
+      var data = new DataStructures(problem, InitialPheromoneDensity);
       var nodes = problem.NodeProvider.GetNodes();
-      for (int i = 0; i < nodes.Count; i++)
+      for (var i = 0; i < nodes.Count; i++)
       {
         var neighbours = data.NearestNeighbours(i);
 
         // -1 since nodes are not included in their own nearest neighbours lists.
         Assert.AreEqual(neighbours.Length, nodes.Count - 1);
 
-        for (int j = 0; j < neighbours.Length - 1; j++)
+        for (var j = 0; j < neighbours.Length - 1; j++)
         {
           Assert.IsTrue(data.Distance(i, neighbours[j]) <= data.Distance(i, neighbours[j + 1]));
         }

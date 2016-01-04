@@ -50,12 +50,12 @@
                 Margin="5,5,5,5"
                 Width="70"
                 Content="Browse"
-                Grid.Column="1" Click="BrowseButton_Click" />
-        <Button x:Name="OKButton"
+                Grid.Column="1" Click="BrowseButtonClick" />
+        <Button x:Name="OkButton"
                 HorizontalAlignment="Right"
                 Margin="5,5,5,5"
                 Width="70"
                 Content="OK"
-                Grid.Column="2" Click="OKButton_Click" />
+                Grid.Column="2" Click="OkButtonClick" />
     </Grid>
 </UserControl>
