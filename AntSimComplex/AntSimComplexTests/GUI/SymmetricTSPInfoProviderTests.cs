@@ -4,13 +4,13 @@ using System;
 
 namespace AntSimComplexTests.GUI
 {
-    public class SymmetricTSPInfoProviderTests
+  public class SymmetricTspInfoProviderTests
+  {
+    [Test]
+    public void TestTspLibItemNullConstructor()
     {
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestTspLibItemNullConstructor()
-        {
-            var infoProvider = new SymmetricTSPInfoProvider(null);
-        }
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentNullException>(() => new SymmetricTSPInfoProvider(null));
     }
+  }
 }

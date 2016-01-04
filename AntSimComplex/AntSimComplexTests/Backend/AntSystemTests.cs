@@ -4,13 +4,13 @@ using System;
 
 namespace AntSimComplexTests.Backend
 {
-    public class AntSystemTests
+  public class AntSystemTests
+  {
+    [Test]
+    public void TestNullProblemParametersConstructor()
     {
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestNullProblemParametersConstructor()
-        {
-            var antSystem = new AntSystem(null);
-        }
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentNullException>(() => new AntSystem(null));
     }
+  }
 }

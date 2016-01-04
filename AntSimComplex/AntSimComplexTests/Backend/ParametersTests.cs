@@ -4,21 +4,20 @@ using System;
 
 namespace AntSimComplexTests.Backend
 {
-    public class ParametersTests
+  public class ParametersTests
+  {
+    [Test]
+    public void TestNullProblemParametersConstructor()
     {
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestNullProblemParametersConstructor()
-        {
-            var parameters = new Parameters(null);
-        }
-
-        [Test]
-        public void TestParametersConstructionSuccess()
-        {
-            var problem = new MockProblem();
-            var parameters = new Parameters(problem);
-            Assert.IsTrue(parameters.InitialPheromone > 0.0);
-        }
+      Assert.Throws<ArgumentNullException>(() => new Parameters(null));
     }
+
+    [Test]
+    public void TestParametersConstructionSuccess()
+    {
+      var problem = new MockProblem();
+      var parameters = new Parameters(problem);
+      Assert.IsTrue(parameters.InitialPheromone > 0.0);
+    }
+  }
 }
