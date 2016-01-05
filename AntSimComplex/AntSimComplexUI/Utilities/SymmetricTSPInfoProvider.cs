@@ -3,6 +3,7 @@ using AntSimComplexAlgorithms.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
@@ -18,9 +19,6 @@ namespace AntSimComplexUI.Utilities
     /// <returns>The name of the current TSP problem.</returns>
     public string ProblemName { get; }
 
-    /// <returns>A list of problem graph Node2D objects.</returns>
-    public List<Node2D> Nodes2D { get; }
-
     /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
     public List<Node2D> OptimalTourNodes2D { get; } = new List<Node2D>();
 
@@ -28,6 +26,9 @@ namespace AntSimComplexUI.Utilities
     public double OptimalTourLength { get; } = double.MaxValue;
 
     public bool HasOptimalTour { get; }
+
+    /// <returns>A list of problem graph Node2D objects.</returns>
+    private List<Node2D> Nodes2D { get; }
 
     /// <summary>
     /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
@@ -39,7 +40,7 @@ namespace AntSimComplexUI.Utilities
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="item">The item to provide information for.</param>
+    /// <param name="item">The item to provide information for (must be symmetric TSP item with 2D nodes).</param>
     /// <exception cref="ArgumentNullException">Thrown when "item" is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if problem nodes are not Node2D types.</exception>
     public SymmetricTspInfoProvider(TspLib95Item item)
@@ -49,14 +50,11 @@ namespace AntSimComplexUI.Utilities
         throw new ArgumentNullException(nameof(item));
       }
 
-      Nodes2D = (from n in item.Problem.NodeProvider.GetNodes()
-                 where n is Node2D
-                 select n as Node2D).ToList();
-
-      Nodes2D.RemoveAll(n => n == null);
-      if (Nodes2D?.Any() == false)
+      var nodes2D = item.Problem.NodeProvider.GetNodes();
+      Nodes2D = nodes2D.OfType<Node2D>().ToList();
+      if (Nodes2D.Any() == false)
       {
-        const string errMsg = "Selected problem node list does not contain Node2D objects.";
+        string errMsg = $"Selected problem: {item.Problem.Name} does not contain Node2D objects.";
         throw new ArgumentOutOfRangeException(nameof(item), errMsg);
       }
 
@@ -64,10 +62,8 @@ namespace AntSimComplexUI.Utilities
 
       if (item.OptimalTour != null)
       {
-        var nodes = (from n in item.OptimalTour.Nodes
-                     select item.Problem.NodeProvider.GetNode(n) as Node2D).ToList();
-        nodes.RemoveAll(n => n == null);
-        OptimalTourNodes2D = nodes;
+        var nodes = item.OptimalTour.Nodes.Select(n => item.Problem.NodeProvider.GetNode(n));
+        OptimalTourNodes2D = nodes.OfType<Node2D>().ToList();
         OptimalTourLength = item.OptimalTourDistance;
         HasOptimalTour = true;
       }
@@ -89,29 +85,30 @@ namespace AntSimComplexUI.Utilities
     /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
     public double GetMaxX()
     {
-      var max = Nodes2D.Max(i => i.X);
-      return max;
+      return Nodes2D.Max(i => i.X);
     }
 
     /// <returns>The minimum "x" coordinate of all the nodes in the graph</returns>
     public double GetMinX()
     {
-      var min = Nodes2D.Min(i => i.X);
-      return min;
+      return Nodes2D.Min(i => i.X);
     }
 
     /// <returns>The maximum "y" coordinate of all the nodes in the graph</returns>
     public double GetMaxY()
     {
-      var max = Nodes2D.Max(i => i.Y);
-      return max;
+      return Nodes2D.Max(i => i.Y);
     }
 
     /// <returns>The minimum "y" coordinate of all the nodes in the graph</returns>
     public double GetMinY()
     {
-      var min = Nodes2D.Min(i => i.Y);
-      return min;
+      return Nodes2D.Min(i => i.Y);
+    }
+
+    public IEnumerable<Point> GetPoints()
+    {
+      return Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
     }
   }
 }

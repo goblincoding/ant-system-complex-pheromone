@@ -224,9 +224,7 @@ namespace AntSimComplexUI
 
     private void DrawNodes()
     {
-      var points = from n in _tspInfoProvider.Nodes2D
-                   select new Point { X = n.X, Y = n.Y };
-
+      var points = _tspInfoProvider.GetPoints();
       foreach (var point in points)
       {
         DrawNode(point, Brushes.Black);

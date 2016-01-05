@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using TspLibNet;
 
@@ -25,30 +23,30 @@ namespace AntSimComplexUI.Utilities
     /// <param name="tspLibPath">The directory path to the TSPLIB95 library.</param>
     /// <param name="maxNodes">The maximum number of nodes the selected TSP problems may contain.</param>
     /// <param name="nodeType">The derived node class (e.g. Node2D)</param>
-    /// <exception cref="ArgumentNullException">Thrown if path argument is null or empty</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if no TspLib95Items were loaded.</exception>
-    /// <exception cref="DirectoryNotFoundException">Thrown if TSP lib path does not point to TSPLIB95 or doesn't exist.</exception>
     public SymmetricTspItemSelector(string tspLibPath, uint maxNodes, Type nodeType)
     {
-      var tspLib = new TspLib95(tspLibPath);
-      var items = tspLib.LoadAllTSP();
-      var tspLib95Items = items as TspLib95Item[] ?? items.ToArray();
-      Debug.Assert(tspLib95Items.Any());
-
-      // We only need to check one node for node type since it is not possible to
-      // have different types in the same list.
-      _tspLibItems = (from i in tspLib95Items
-                      where i.Problem.NodeProvider.CountNodes() <= maxNodes
-                      where i.Problem.NodeProvider.GetNodes().First().GetType() == nodeType
-                      select i).ToList();
-
-      if (_tspLibItems?.Any() == false)
+      try
       {
-        throw new ArgumentOutOfRangeException($"No TspLib95Items were loaded for {tspLibPath} with max nodes {maxNodes} and node type {nodeType}");
-      }
+        var tspLib = new TspLib95(tspLibPath);
+        var items = tspLib.LoadAllTSP();
+        var tspLib95Items = items as TspLib95Item[] ?? items.ToArray();
 
-      ProblemNames = (from i in _tspLibItems
-                      select i.Problem.Name).ToList();
+        // We only need to check one node for node type since it is not possible to
+        // have different types in the same list.
+        _tspLibItems = (from i in tspLib95Items
+                        where i.Problem.NodeProvider.CountNodes() <= maxNodes
+                        where i.Problem.NodeProvider.GetNodes().First().GetType() == nodeType
+                        select i).ToList();
+
+        ProblemNames = (from i in _tspLibItems
+                        select i.Problem.Name).ToList();
+      }
+      catch (Exception e)
+      {
+        throw new ArgumentOutOfRangeException($"No TspLib95Items were loaded for {tspLibPath} " +
+                                              $"with max nodes {maxNodes} and node type {nodeType}", e);
+      }
     }
 
     /// <returns>The TSP library item corresponding to problemName.</returns>

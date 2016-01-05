@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Linq;
 using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexTests.GUI
@@ -11,43 +12,49 @@ namespace AntSimComplexTests.GUI
     [TestCase("")]
     [TestCase(" ")]
     [TestCase(null)]
-    public void TestNullPathConstructor(string path)
+    public void ConstructorGivenNullOrEmptyPathShouldThrowArgumentOutOfRangeException(string path)
     {
-      Assert.Throws<ArgumentNullException>(() => Helpers.GetItemSelector(path));
+      Assert.Throws<ArgumentOutOfRangeException>(() => GetItemSelector(path));
     }
 
     [Test]
-    public void TestInvalidTspLibPathConstructor()
+    public void ConstructorGivenInvalidTspLibPathShouldThrowArgumentOutOfRangeException()
     {
       // Select an arbitrary directory.
-      Assert.Throws<DirectoryNotFoundException>(() => Helpers.GetItemSelector(Directory.GetCurrentDirectory()));
-    }
-
-    [Test]
-    public void TestNoTspLibItemsLoadedConstructor()
-    {
-      // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new SymmetricTspItemSelector(Helpers.LibPath, 10, typeof(Node3D)));
+      Assert.Throws<ArgumentOutOfRangeException>(() => GetItemSelector(Directory.GetCurrentDirectory()));
     }
 
     [TestCase("")]
     [TestCase(" ")]
     [TestCase("invalid")]
-    public void TestGetItemInvalidProblemName(string problemName)
+    [TestCase(null)]
+    public void GetItemGivenInvalidProblemNameShouldThrowArgumentOutOfRangeException(string problemName)
     {
-      var itemSelector = Helpers.GetItemSelector(Helpers.LibPath);
+      var itemSelector = GetItemSelector(LibPath);
       Assert.Throws<ArgumentOutOfRangeException>(() => itemSelector.GetItem(problemName));
     }
 
     [Test]
-    public void TestGetItemValidForAll()
+    public void GetItemGivenValidNamesForAllProblemsMayNotBeNull()
     {
-      var itemSelector = Helpers.GetItemSelector(Helpers.LibPath);
-      foreach (var name in itemSelector.ProblemNames)
+      var itemSelector = GetItemSelector(LibPath);
+      foreach (var item in itemSelector.ProblemNames.Select(name => itemSelector.GetItem(name)))
       {
-        var item = itemSelector.GetItem(name);
         Assert.IsNotNull(item);
       }
+    }
+
+    private const string PackageRelPath = @"..\..\..\packages\TSPLib.Net.1.1.4\TSPLIB95";
+    private static string LibPath { get; } = Path.GetFullPath(PackageRelPath);
+
+    /// <summary>
+    /// For this application we are only ever interested in TSP problems with fewer than
+    /// 100 nodes and whose nodes are 2D coordinate sets.
+    /// <returns>A SymmetricTSPItemSelector</returns>
+    /// </summary>
+    private static SymmetricTspItemSelector GetItemSelector(string path)
+    {
+      return new SymmetricTspItemSelector(path, 100, typeof(Node2D));
     }
   }
 }
