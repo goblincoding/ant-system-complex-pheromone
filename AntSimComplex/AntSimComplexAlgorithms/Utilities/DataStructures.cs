@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using TspLibNet;
 
@@ -29,13 +28,6 @@ namespace AntSimComplexAlgorithms.Utilities
     /// nearest neighbour and pheromone density matrices.
     /// </summary>
     private readonly int _nodeCount;
-
-    /// <summary>
-    /// Represents the simple pheromone density trails between two nodes (graph arcs)
-    /// for the "standard" Ant System implementation. Pheromone is frequently updated
-    /// during the evaporation and deposit steps.
-    /// </summary>
-    public double[][] Pheromone;
 
     /// <summary>
     /// Represents ALL inter-city distances in a grid format, i.e. querying
@@ -70,6 +62,7 @@ namespace AntSimComplexAlgorithms.Utilities
     /// Constructor.
     /// </summary>
     /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
+    /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
     public DataStructures(IProblem problem, double initialPheromoneDensity)
@@ -85,11 +78,15 @@ namespace AntSimComplexAlgorithms.Utilities
       }
 
       _nodeCount = problem.NodeProvider.CountNodes();
-
-      // Order is important!
       BuildInfoMatrices(problem, initialPheromoneDensity);
-      BuildNearestNeighboursLists();
     }
+
+    /// <summary>
+    /// Represents the simple pheromone density trails between two nodes (graph arcs)
+    /// for the "standard" Ant System implementation. Pheromone is frequently updated
+    /// during the evaporation and deposit steps.
+    /// </summary>
+    public double[][] Pheromone;
 
     /// <summary>
     /// This method does not calculate the edge weight between two nodes, but references
@@ -145,13 +142,13 @@ namespace AntSimComplexAlgorithms.Utilities
       {
         for (var j = i; j < _nodeCount; j++)
         {
-          UpdateChoiceInfo(i, j);
-          UpdateChoiceInfo(j, i);
+          CalculateChoiceInfo(i, j);
+          CalculateChoiceInfo(j, i);
         }
       }
     }
 
-    private void UpdateChoiceInfo(int i, int j)
+    private void CalculateChoiceInfo(int i, int j)
     {
       _choiceInfo[i][j] = Math.Pow(Pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
     }
@@ -170,13 +167,11 @@ namespace AntSimComplexAlgorithms.Utilities
       _distances = new double[_nodeCount][];
       _heuristic = new double[_nodeCount][];
       _choiceInfo = new double[_nodeCount][];
+      _nearest = new int[_nodeCount][];
 
       // Ensure that the nodes are sorted by ID ascending
       // or else all matrix indices will be off.
-      var nodes = problem.NodeProvider.GetNodes()
-                                          .OrderBy(n => n.Id)
-                                          .ToArray();
-
+      var nodes = problem.NodeProvider.GetNodes().OrderBy(n => n.Id).ToArray();
       var weightsProvider = problem.EdgeWeightsProvider;
 
       for (var i = 0; i < _nodeCount; i++)
@@ -194,35 +189,30 @@ namespace AntSimComplexAlgorithms.Utilities
           _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
           _heuristic[i][j] = Math.Pow((1 / _distances[i][j]), Parameters.Beta);
           Pheromone[i][j] = initialPheromoneDensity;
-          UpdateChoiceInfo(i, j);
+          CalculateChoiceInfo(i, j);
         }
+
+        BuildNearestNeighboursList(i);
       }
     }
 
     /// <summary>
     /// From Ant Colony Optimization, Dorigo 2004 , p101.
     /// </summary>
-    private void BuildNearestNeighboursLists()
+    private void BuildNearestNeighboursList(int currentNodeIndex)
     {
-      _nearest = new int[_nodeCount][];
+      // Select distance/index pairs for all nodes so that we may
+      // know which index matched which distance after sorting.
+      var pairs = _distances[currentNodeIndex]
+                        .Select((distance, index) => new { Distance = distance, Index = index })
+                        .OrderBy(pair => pair.Distance);
 
-      for (var i = 0; i < _nodeCount; i++)
-      {
-        // -1 since nodes aren't included in their own nearest neighbours lists.
-        _nearest[i] = new int[_nodeCount - 1];
+      // Remove nodes from their own nearest neighbour lists.
+      var nearestIndices = pairs.Where(p => p.Index != currentNodeIndex).Select(p => p.Index).ToArray();
 
-        // Select all the distance/index pairs for all nodes OTHER than
-        // the current (i) (we need this so that we do not lose the position
-        // of the index once we sort by distance).  In this case, "key" is
-        // distance.
-        var pairs = _distances[i]
-                          .Select((distance, index) => new KeyValuePair<double, int>(distance, index))
-                          .OrderBy(pair => pair.Key).ToList();
-
-        // Remove nodes from their own nearest neighbour lists.
-        var nearestIndices = pairs.Where(p => p.Value != i).Select(p => p.Value).ToArray();
-        nearestIndices.CopyTo(_nearest[i], 0);
-      }
+      // -1 since nodes aren't included in their own nearest neighbours lists.
+      _nearest[currentNodeIndex] = new int[_nodeCount - 1];
+      nearestIndices.CopyTo(_nearest[currentNodeIndex], 0);
     }
   }
 }

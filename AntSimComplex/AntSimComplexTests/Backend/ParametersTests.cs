@@ -1,23 +1,34 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities;
+using NSubstitute;
 using NUnit.Framework;
 using System;
 
 namespace AntSimComplexTests.Backend
 {
+  [TestFixture]
   public class ParametersTests
   {
     [Test]
-    public void TestNullProblemParametersConstructor()
+    public void ParametersCtorGivenNullProblemShouldThrowArgumentNullException()
     {
-      Assert.Throws<ArgumentNullException>(() => new Parameters(null));
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentNullException>(() => new Parameters(null, ProblemContext.Random));
     }
 
     [Test]
-    public void TestParametersConstructionSuccess()
+    public void ParametersInitialPheromoneGivenMockProblemAndStartNode7ShouldReturn0Point5()
     {
+      // arrange
       var problem = new MockProblem();
-      var parameters = new Parameters(problem);
-      Assert.IsTrue(parameters.InitialPheromone > 0.0);
+      var random = Substitute.For<Random>();
+      random.Next(0, 9).Returns(7); // force start node to be 7
+
+      // act
+      var result = new Parameters(problem, random);
+
+      // assert
+      Assert.AreEqual(0.5, result.InitialPheromone);
     }
   }
 }

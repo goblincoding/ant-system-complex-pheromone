@@ -11,8 +11,46 @@ namespace AntSimComplexAlgorithms.Utilities
   /// </summary>
   public class RouletteWheelSelector
   {
-    private Random _random = null;
-    private DataStructures _dataStructures = null;
+    /// <summary>
+    /// Helper class representing a node and a probability of selection of that node from
+    /// a non-specified, other node.
+    ///
+    /// Compares on probability.
+    /// </summary>
+    private class ProbabilityNodeIndexPair : IComparable<ProbabilityNodeIndexPair>, IComparable
+    {
+      public double Probability { get; set; }
+      public int NodeIndex { get; set; }
+
+      public int CompareTo(ProbabilityNodeIndexPair other)
+      {
+        if (other == null)
+        {
+          throw new ArgumentNullException(nameof(other));
+        }
+
+        return Probability.CompareTo(other.Probability);
+      }
+
+      public int CompareTo(object obj)
+      {
+        if (obj == null)
+        {
+          return 1;
+        }
+
+        var other = obj as ProbabilityNodeIndexPair;
+        if (other == null)
+        {
+          throw new ArgumentException("Object is not of type 'ProbabilityNodeIndexPair'");
+        }
+
+        return Probability.CompareTo(other.Probability);
+      }
+    }
+
+    private readonly Random _random;
+    private readonly DataStructures _dataStructures;
 
     /// <summary>
     /// Constructor.
@@ -37,8 +75,8 @@ namespace AntSimComplexAlgorithms.Utilities
     {
       var selectedProbability = _random.NextDouble();
       var probabilities = Probabilities(notVisited, currentNode);
-      var probability = probabilities.First();
-      var sum = probability.Key;
+      var probabilityPair = probabilities.First();
+      var sum = probabilityPair.Probability;
       for (var i = 1; i < probabilities.Count; i++)
       {
         if (sum >= selectedProbability)
@@ -46,11 +84,11 @@ namespace AntSimComplexAlgorithms.Utilities
           break;
         }
 
-        probability = probabilities[i];
-        sum += probability.Key;
+        probabilityPair = probabilities[i];
+        sum += probabilityPair.Probability;
       }
 
-      return probability.Value;
+      return probabilityPair.NodeIndex;
     }
 
     /// <summary>
@@ -61,23 +99,19 @@ namespace AntSimComplexAlgorithms.Utilities
     /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
     /// <returns>A list of KeyValuePairs sorted by key (probability) with value being the index
     /// of the node corresponding to the probability of selection represented by the key.</returns>
-    private List<KeyValuePair<double, int>> Probabilities(int[] notVisited, int currentNode)
+    private IList<ProbabilityNodeIndexPair> Probabilities(IReadOnlyList<int> notVisited, int currentNode)
     {
       // Select all the probability/index pairs (we need this so that we do not
       // lose the position of the neighbour index once we sort by probability).
       // In this case, "key" is probability and "value" is the corresponding node index.
-      var pairs = new List<KeyValuePair<double, int>>();
       var denominator = notVisited.Sum(n => _dataStructures.ChoiceInfo(currentNode, n));
 
-      for (var i = 0; i < notVisited.Length; i++)
-      {
-        var neighbour = notVisited[i];
-        var numerator = _dataStructures.ChoiceInfo(currentNode, neighbour);
-        var probability = numerator / denominator;
-        pairs.Add(new KeyValuePair<double, int>(probability, neighbour));
-      }
+      var pairs = (from neighbour in notVisited
+                   let numerator = _dataStructures.ChoiceInfo(currentNode, neighbour)
+                   let probability = numerator / denominator
+                   select new ProbabilityNodeIndexPair { Probability = probability, NodeIndex = neighbour });
 
-      return pairs.OrderBy(pair => pair.Key).ToList();
+      return pairs.OrderBy(pair => pair).ToList();
     }
   }
 }

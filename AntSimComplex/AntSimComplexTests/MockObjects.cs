@@ -20,16 +20,17 @@ namespace AntSimComplexTests
     // Random edge weight values (10 * 10).
     private static readonly double[][] Weights =
     {
-            new double[]{ 0, 3, 7, 3, 4, 5, 6, 7, 8, 9 },
-            new double[]{ 3, 0, 3, 4, 5, 6, 7, 8, 9, 1 },
-            new double[]{ 7, 3, 0, 5, 6, 7, 8, 9, 1, 2 },
-            new double[]{ 3, 4, 5, 0, 7, 8, 9, 1, 2, 3 },
-            new double[]{ 4, 5, 6, 7, 0, 9, 1, 2, 3, 4 },
-            new double[]{ 5, 6, 7, 8, 9, 0, 2, 3, 4, 5 },
-            new double[]{ 6, 7, 8, 9, 1, 2, 0, 4, 5, 6 },
-            new double[]{ 7, 8, 9, 1, 2, 3, 4, 0, 6, 7 },
-            new double[]{ 8, 9, 1, 2, 3, 4, 5, 6, 0, 8 },
-            new double[]{ 9, 1, 2, 3, 4, 5, 6, 7, 8, 0 }
+            //            0  1  2  3  4  5  6  7  8  9
+            new double[]{ 0, 3, 7, 3, 4, 5, 6, 7, 8, 9 }, // 0
+            new double[]{ 3, 0, 3, 4, 5, 6, 7, 8, 9, 1 }, // 1
+            new double[]{ 7, 3, 0, 5, 6, 7, 8, 9, 1, 2 }, // 2
+            new double[]{ 3, 4, 5, 0, 7, 8, 9, 1, 2, 3 }, // 3
+            new double[]{ 4, 5, 6, 7, 0, 9, 1, 2, 3, 4 }, // 4
+            new double[]{ 5, 6, 7, 8, 9, 0, 2, 3, 4, 5 }, // 5
+            new double[]{ 6, 7, 8, 9, 1, 2, 0, 4, 5, 6 }, // 6
+            new double[]{ 7, 8, 9, 1, 2, 3, 4, 0, 6, 7 }, // 7
+            new double[]{ 8, 9, 1, 2, 3, 4, 5, 6, 0, 8 }, // 8
+            new double[]{ 9, 1, 2, 3, 4, 5, 6, 7, 8, 0 }  // 9
         };
 
     // Convenience method so we can work with indices directly.

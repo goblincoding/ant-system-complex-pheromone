@@ -1,118 +1,71 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities;
 using NUnit.Framework;
 using System;
 
 namespace AntSimComplexTests.Backend
 {
-  internal class DataStructuresTests
+  [TestFixture]
+  public class DataStructuresTests
   {
     private const double InitialPheromoneDensity = 0.5;
 
     [Test]
-    public void TestNullProblemDataStructuresConstructorFail()
+    public void DataStructuresCtorGivenNullProblemInstanceShouldThrowArgumentNullException()
     {
-      Assert.Throws<ArgumentNullException>(() => new DataStructures(null, InitialPheromoneDensity));
+      // assert
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentNullException>(() => { new DataStructures(null, InitialPheromoneDensity); });
     }
 
     [TestCase(0.0)]
     [TestCase(-1)]
-    public void TestInitialPheromoneOutOfRangeDataStructuresConstructorFail(double initialPheromone)
+    public void DataStructuresCtorGivenInitialPheromoneNotGreaterThan0ShouldThrowArgumentOutOfRangeException(double initialPheromone)
     {
+      // arrange
       var problem = new MockProblem();
+
+      // assert
+      // ReSharper disable once ObjectCreationAsStatement
       Assert.Throws<ArgumentOutOfRangeException>(() => new DataStructures(problem, initialPheromone));
     }
 
     [Test]
-    public void TestDataStructuresConstructionSuccess()
+    public void DataStructuresDistanceIndexInvalidShouldThrowIndexOutOfRangeException()
     {
-      var problem = new MockProblem();
-      var data = new DataStructures(problem, InitialPheromoneDensity);
-      Assert.IsNotNull(data);
-    }
+      // arrange
+      var data = CreateDefaultDataStructuresFromMockProblem();
 
-    [Test]
-    public void TestDataStructuresDistanceIndexInvalid()
-    {
-      var problem = new MockProblem();
-      var data = new DataStructures(problem, InitialPheromoneDensity);
+      // assert
       Assert.Throws<IndexOutOfRangeException>(() => data.Distance(0, MockConstants.NrNodes));
     }
 
     [Test]
-    public void TestDataStructuresGetInterNodeDistanceSuccess()
+    public void DataStructuresNearestNeighboursIndexInvalidShouldThrowIndexOutOfRangeException()
     {
-      var problem = new MockProblem();
-      var data = new DataStructures(problem, InitialPheromoneDensity);
-      var nodes = problem.NodeProvider.GetNodes();
-      for (var i = 0; i < nodes.Count - 1; i++)
-      {
-        var distance = data.Distance(i, i + 1);
-        Assert.AreEqual(distance, problem.GetWeight(i, i + 1));
-      }
+      // arrange
+      var data = CreateDefaultDataStructuresFromMockProblem();
 
-      nodes.Reverse();
-      for (var i = 0; i < nodes.Count - 1; i++)
-      {
-        var distance = data.Distance(i, i + 1);
-        Assert.AreEqual(distance, problem.GetWeight(i, i + 1));
-      }
-    }
-
-    [Test]
-    public void TestDataStructuresNearestNeighboursIndexInvalid()
-    {
-      var problem = new MockProblem();
-      var data = new DataStructures(problem, InitialPheromoneDensity);
+      // assert
       Assert.Throws<IndexOutOfRangeException>(() => data.NearestNeighbours(MockConstants.NrNodes));
     }
 
     [Test]
-    public void TestDataStructuresGetNearestNeighboursSuccess()
+    public void DataStructuresChoiceInfoIndexInvalidShouldThrowIndexOutOfRangeException()
     {
-      var problem = new MockProblem();
-      var data = new DataStructures(problem, InitialPheromoneDensity);
-      var nodes = problem.NodeProvider.GetNodes();
-      for (var i = 0; i < nodes.Count; i++)
-      {
-        var neighbours = data.NearestNeighbours(i);
+      // arrange
+      var data = CreateDefaultDataStructuresFromMockProblem();
 
-        // -1 since nodes are not included in their own nearest neighbours lists.
-        Assert.AreEqual(neighbours.Length, nodes.Count - 1);
-
-        for (var j = 0; j < neighbours.Length - 1; j++)
-        {
-          Assert.IsTrue(data.Distance(i, neighbours[j]) <= data.Distance(i, neighbours[j + 1]));
-        }
-      }
-    }
-
-    [Test]
-    public void TestDataStructuresGetChoiceInfoIndexInvalid()
-    {
-      var problem = new MockProblem();
-      var parameters = new Parameters(problem);
-      var data = new DataStructures(problem, parameters.InitialPheromone);
+      // assert
       Assert.Throws<IndexOutOfRangeException>(() => data.ChoiceInfo(0, MockConstants.NrNodes));
     }
 
-    [Test]
-    public void TestDataStructuresGetChoiceInfoSuccess()
+    private DataStructures CreateDefaultDataStructuresFromMockProblem()
     {
       var problem = new MockProblem();
-      var parameters = new Parameters(problem);
+      var parameters = new Parameters(problem, ProblemContext.Random);
       var data = new DataStructures(problem, parameters.InitialPheromone);
-
-      var random = new Random();
-      var nodeCount = problem.NodeProvider.CountNodes();
-
-      var i = random.Next(0, nodeCount);
-      var j = random.Next(0, nodeCount);
-      var heuristic = Math.Pow((1 / data.Distance(i, j)), Parameters.Beta);
-      var choiceInfo = Math.Pow(data.Pheromone[i][j], Parameters.Alpha) * heuristic;
-
-      var info = data.ChoiceInfo(i, j);
-      Assert.IsTrue(info > 0.0);
-      Assert.AreEqual(info, choiceInfo);
+      return data;
     }
   }
 }

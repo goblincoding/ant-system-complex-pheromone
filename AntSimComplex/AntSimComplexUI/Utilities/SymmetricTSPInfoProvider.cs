@@ -2,6 +2,7 @@
 using AntSimComplexAlgorithms.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using TspLibNet;
@@ -59,6 +60,7 @@ namespace AntSimComplexUI.Utilities
       }
 
       _zeroBasedOffset = Nodes2D.Min(n => n.Id) - 0;
+      Debug.Assert(_zeroBasedOffset != 0);  //not sure if any of these problems have a non-zero ID base
 
       if (item.OptimalTour != null)
       {

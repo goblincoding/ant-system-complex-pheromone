@@ -4,6 +4,7 @@ using System;
 
 namespace AntSimComplexTests.Backend
 {
+  [TestFixture]
   public class AntSystemTests
   {
     [Test]

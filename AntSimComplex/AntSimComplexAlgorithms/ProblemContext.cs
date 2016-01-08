@@ -42,7 +42,7 @@ namespace AntSimComplexAlgorithms
     /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
     public ProblemContext(IProblem problem)
     {
-      Parameters = new Parameters(problem);
+      Parameters = new Parameters(problem, Random);
       DataStructures = new DataStructures(problem, Parameters.InitialPheromone);
       RouletteWheelSelector = new RouletteWheelSelector(DataStructures, Random);
       NodeCount = problem.NodeProvider.CountNodes();
