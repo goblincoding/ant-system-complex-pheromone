@@ -22,7 +22,6 @@ namespace AntSimComplexUI
   /// </summary>
   public partial class MainWindow
   {
-    private const int MaxNodesPerProblem = 100;
     private const int CircleWidth = 10;
 
     private const string PackageRelPath = @"..\..\..\packages";
@@ -37,7 +36,7 @@ namespace AntSimComplexUI
 
     private readonly ObservableCollection<ListViewTourItem> _tourItems;
 
-    private SymmetricTspItemSelector _tspProblemSelector;
+    private SymmetricTspItemLoader _tspItemLoader;
     private SymmetricTspInfoProvider _tspInfoProvider;
     private AntSystem _antSystem;
 
@@ -57,8 +56,8 @@ namespace AntSimComplexUI
       var tspLibPath = BrowseTsplibPath();
 
       // Load all symmetric TSP instances.
-      _tspProblemSelector = new SymmetricTspItemSelector(tspLibPath, MaxNodesPerProblem, typeof(Node2D));
-      TspCombo.ItemsSource = _tspProblemSelector.ProblemNames;
+      _tspItemLoader = new SymmetricTspItemLoader(tspLibPath);
+      TspCombo.ItemsSource = _tspItemLoader.ProblemNames;
     }
 
     private void ExecuteButtonClick(object sender, RoutedEventArgs e)
@@ -283,7 +282,7 @@ namespace AntSimComplexUI
     private void TspComboSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var problemName = TspCombo.SelectedItem?.ToString();
-      var item = _tspProblemSelector.GetItem(problemName);
+      var item = _tspItemLoader.GetItem(problemName);
       _tspInfoProvider = new SymmetricTspInfoProvider(item);
       DrawTspLibItem();
 

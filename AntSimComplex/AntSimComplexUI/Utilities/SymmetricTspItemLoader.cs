@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using TspLibNet;
+using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexUI.Utilities
 {
   /// <summary>
-  /// This class selects a subset of symmetric TSP item instances based on the criteria passed in to its constructor.
+  /// This class is responsible for selecting the symmetrical TSP problems that we're interested in.
+  /// For the sake of this research application only problems with fewer than or equal to 100 nodes and
+  /// 2D coordinate sets are considered.
   /// </summary>
-  public class SymmetricTspItemSelector
+  public class SymmetricTspItemLoader
   {
     private readonly List<TspLib95Item> _tspLibItems;
 
@@ -18,34 +21,31 @@ namespace AntSimComplexUI.Utilities
     public List<string> ProblemNames { get; }
 
     /// <summary>
-    /// Constructor.  Exceptions thrown are from underlying TspLib95 instance.
+    /// Constructor.
     /// </summary>
     /// <param name="tspLibPath">The directory path to the TSPLIB95 library.</param>
-    /// <param name="maxNodes">The maximum number of nodes the selected TSP problems may contain.</param>
-    /// <param name="nodeType">The derived node class (e.g. Node2D)</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if no TspLib95Items were loaded.</exception>
-    public SymmetricTspItemSelector(string tspLibPath, uint maxNodes, Type nodeType)
+    public SymmetricTspItemLoader(string tspLibPath)
     {
       try
       {
         var tspLib = new TspLib95(tspLibPath);
         var items = tspLib.LoadAllTSP();
-        var tspLib95Items = items as TspLib95Item[] ?? items.ToArray();
 
-        // We only need to check one node for node type since it is not possible to
-        // have different types in the same list.
-        _tspLibItems = (from i in tspLib95Items
-                        where i.Problem.NodeProvider.CountNodes() <= maxNodes
-                        where i.Problem.NodeProvider.GetNodes().First().GetType() == nodeType
+        const int maxNodes = 100;
+        var nodeType = typeof(Node2D);
+
+        _tspLibItems = (from i in items
+                        let nodes = i.Problem.NodeProvider.GetNodes()
+                        where nodes.Count <= maxNodes
+                        where nodes.All(n => n.GetType() == nodeType)
                         select i).ToList();
 
-        ProblemNames = (from i in _tspLibItems
-                        select i.Problem.Name).ToList();
+        ProblemNames = _tspLibItems.Select(i => i.Problem.Name).ToList();
       }
       catch (Exception e)
       {
-        throw new ArgumentOutOfRangeException($"No TspLib95Items were loaded for {tspLibPath} " +
-                                              $"with max nodes {maxNodes} and node type {nodeType}", e);
+        throw new ArgumentOutOfRangeException($"No TspLib95Items were loaded for path: '{tspLibPath}'", e);
       }
     }
 
