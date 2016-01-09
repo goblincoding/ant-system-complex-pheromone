@@ -76,7 +76,8 @@
     <Compile Include="Backend\Utilities\ExtensionMethodTests.cs" />
     <Compile Include="Backend\Utilities\ParametersTests.cs" />
     <Compile Include="Backend\Utilities\RouletteWheelSelectorTests.cs" />
-    <Compile Include="GUI\SymmetricTSPInfoProviderTests.cs" />
+    <Compile Include="GUI\Helpers.cs" />
+    <Compile Include="GUI\SymmetricTspItemInfoProviderTests.cs" />
     <Compile Include="GUI\SymmetricTSPItemLoaderTests.cs" />
     <Compile Include="MockObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

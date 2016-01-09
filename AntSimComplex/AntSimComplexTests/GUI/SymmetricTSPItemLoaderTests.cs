@@ -7,9 +7,6 @@ namespace AntSimComplexTests.GUI
 {
   public class SymmetricTspItemLoaderTests
   {
-    private const string PackageRelPath = @"..\..\..\packages\TSPLib.Net.1.1.4\TSPLIB95";
-    private static string LibPath { get; } = Path.GetFullPath(PackageRelPath);
-
     [TestCase("")]
     [TestCase(" ")]
     [TestCase(null)]
@@ -34,7 +31,7 @@ namespace AntSimComplexTests.GUI
     public void GetItemGivenInvalidProblemNameShouldThrowArgumentOutOfRangeException(string problemName)
     {
       // arrange
-      var itemLoader = ItemLoader(LibPath);
+      var itemLoader = ItemLoader(Helpers.LibPath);
 
       // assert
       Assert.Throws<ArgumentOutOfRangeException>(() => itemLoader.GetItem(problemName));
@@ -46,7 +43,7 @@ namespace AntSimComplexTests.GUI
     public void GetItemGivenValidNamesForProblemsShouldReturnCorrectProblemItem(string problemName)
     {
       // arrange
-      var itemLoader = ItemLoader(LibPath);
+      var itemLoader = ItemLoader(Helpers.LibPath);
 
       // act
       var result = itemLoader.GetItem(problemName);

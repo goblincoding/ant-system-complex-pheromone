@@ -2,7 +2,6 @@
 using AntSimComplexAlgorithms.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using TspLibNet;
@@ -11,25 +10,21 @@ using TspLibNet.Graph.Nodes;
 namespace AntSimComplexUI.Utilities
 {
   /// <summary>
-  /// This class is responsible for selecting the symmetrical TSP problems that we're interested in.
-  /// For the sake of this research application only problems with fewer than or equal to 100 nodes and
-  /// 2D coordinate sets are considered.
+  /// This class is a wrapper for TspLib95Item objects representing symmetric TSP problems
+  /// that fit the research criteria of a hundred nodes or less and with 2D node coordinates.
   /// </summary>
-  public class SymmetricTspInfoProvider
+  public class SymmetricTspItemInfoProvider
   {
     /// <returns>The name of the current TSP problem.</returns>
     public string ProblemName { get; }
 
     /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
-    public List<Node2D> OptimalTourNodes2D { get; } = new List<Node2D>();
+    public List<Node2D> OptimalTour { get; } = new List<Node2D>();
 
     /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
     public double OptimalTourLength { get; } = double.MaxValue;
 
     public bool HasOptimalTour { get; }
-
-    /// <returns>A list of problem graph Node2D objects.</returns>
-    private List<Node2D> Nodes2D { get; }
 
     /// <summary>
     /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
@@ -38,13 +33,15 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     private readonly int _zeroBasedOffset;
 
+    private List<Node2D> Nodes2D { get; }
+
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="item">The item to provide information for (must be symmetric TSP item with 2D nodes).</param>
     /// <exception cref="ArgumentNullException">Thrown when "item" is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if problem nodes are not Node2D types.</exception>
-    public SymmetricTspInfoProvider(TspLib95Item item)
+    public SymmetricTspItemInfoProvider(TspLib95Item item)
     {
       if (item == null)
       {
@@ -60,12 +57,11 @@ namespace AntSimComplexUI.Utilities
       }
 
       _zeroBasedOffset = Nodes2D.Min(n => n.Id) - 0;
-      Debug.Assert(_zeroBasedOffset != 0);  //not sure if any of these problems have a non-zero ID base
 
       if (item.OptimalTour != null)
       {
         var nodes = item.OptimalTour.Nodes.Select(n => item.Problem.NodeProvider.GetNode(n));
-        OptimalTourNodes2D = nodes.OfType<Node2D>().ToList();
+        OptimalTour = nodes.OfType<Node2D>().ToList();
         OptimalTourLength = item.OptimalTourDistance;
         HasOptimalTour = true;
       }
@@ -82,6 +78,11 @@ namespace AntSimComplexUI.Utilities
     public List<Node2D> BuildNode2DTourFromZeroBasedIndices(List<int> antTourIndices)
     {
       return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedOffset)).ToList();
+    }
+
+    public IEnumerable<Point> GetPoints()
+    {
+      return Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
     }
 
     /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
@@ -106,11 +107,6 @@ namespace AntSimComplexUI.Utilities
     public double GetMinY()
     {
       return Nodes2D.Min(i => i.Y);
-    }
-
-    public IEnumerable<Point> GetPoints()
-    {
-      return Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
     }
   }
 }

@@ -37,7 +37,7 @@ namespace AntSimComplexUI
     private readonly ObservableCollection<ListViewTourItem> _tourItems;
 
     private SymmetricTspItemLoader _tspItemLoader;
-    private SymmetricTspInfoProvider _tspInfoProvider;
+    private SymmetricTspItemInfoProvider _currentTspItemInfoProvider;
     private AntSystem _antSystem;
 
     public MainWindow()
@@ -139,11 +139,11 @@ namespace AntSimComplexUI
 
     private void AddOptimalTourToListView()
     {
-      if (_tspInfoProvider.HasOptimalTour)
+      if (_currentTspItemInfoProvider.HasOptimalTour)
       {
-        _tourItems.Add(new ListViewTourItem(_tspInfoProvider.OptimalTourNodes2D,
-                                            _tspInfoProvider.OptimalTourLength,
-                                            $"Current Problem (Optimal): {_tspInfoProvider.ProblemName}"));
+        _tourItems.Add(new ListViewTourItem(_currentTspItemInfoProvider.OptimalTour,
+                                            _currentTspItemInfoProvider.OptimalTourLength,
+                                            $"Current Problem (Optimal): {_currentTspItemInfoProvider.ProblemName}"));
       }
     }
 
@@ -151,10 +151,10 @@ namespace AntSimComplexUI
 
     private void DrawTspLibItem()
     {
-      var worldMinX = _tspInfoProvider.GetMinX();
-      var worldMinY = _tspInfoProvider.GetMinY();
-      var worldMaxX = _tspInfoProvider.GetMaxX();
-      var worldMaxY = _tspInfoProvider.GetMaxY();
+      var worldMinX = _currentTspItemInfoProvider.GetMinX();
+      var worldMinY = _currentTspItemInfoProvider.GetMinY();
+      var worldMaxX = _currentTspItemInfoProvider.GetMaxX();
+      var worldMaxY = _currentTspItemInfoProvider.GetMaxY();
 
       const double margin = 20;
       const double canvasMinX = margin;
@@ -180,13 +180,13 @@ namespace AntSimComplexUI
 
     private void DrawOptimalTour()
     {
-      var nodes = _tspInfoProvider.OptimalTourNodes2D;
+      var nodes = _currentTspItemInfoProvider.OptimalTour;
       if (!nodes.Any())
       {
         return;
       }
 
-      var optimalLength = _tspInfoProvider.OptimalTourLength;
+      var optimalLength = _currentTspItemInfoProvider.OptimalTourLength;
       DrawTour(nodes, optimalLength, Brushes.Red, Brushes.Green);
     }
 
@@ -223,7 +223,7 @@ namespace AntSimComplexUI
 
     private void DrawNodes()
     {
-      var points = _tspInfoProvider.GetPoints();
+      var points = _currentTspItemInfoProvider.GetPoints();
       foreach (var point in points)
       {
         DrawNode(point, Brushes.Black);
@@ -283,7 +283,7 @@ namespace AntSimComplexUI
     {
       var problemName = TspCombo.SelectedItem?.ToString();
       var item = _tspItemLoader.GetItem(problemName);
-      _tspInfoProvider = new SymmetricTspInfoProvider(item);
+      _currentTspItemInfoProvider = new SymmetricTspItemInfoProvider(item);
       DrawTspLibItem();
 
       _antSystem = new AntSystem(item.Problem);
@@ -301,7 +301,7 @@ namespace AntSimComplexUI
       var count = 1;
       foreach (var tour in _antSystem.BestTours)
       {
-        var nodeTour = _tspInfoProvider.BuildNode2DTourFromZeroBasedIndices(tour.Item2);
+        var nodeTour = _currentTspItemInfoProvider.BuildNode2DTourFromZeroBasedIndices(tour.Item2);
         _tourItems.Add(new ListViewTourItem(nodeTour, tour.Item1, $"Best Tour for Iteration {count}"));
         count++;
       }
