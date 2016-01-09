@@ -54,11 +54,11 @@ namespace AntSimComplexAlgorithms
     public void ResetPheromone()
     {
       var pheromone = DataStructures.Pheromone;
-      for (var i = 0; i < pheromone.Length; i++)
+      foreach (var p in pheromone)
       {
-        for (var j = 0; j < pheromone[i].Length; j++)
+        for (var j = 0; j < p.Length; j++)
         {
-          pheromone[i][j] = Parameters.InitialPheromone;
+          p[j] = Parameters.InitialPheromone;
         }
       }
 

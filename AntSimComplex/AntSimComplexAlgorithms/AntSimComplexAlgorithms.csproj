@@ -50,6 +50,7 @@
     <Compile Include="Ant.cs" />
     <Compile Include="AntSystem.cs" />
     <Compile Include="ProblemContext.cs" />
+    <Compile Include="Utilities\BestTour.cs" />
     <Compile Include="Utilities\DataStructures.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\Parameters.cs" />

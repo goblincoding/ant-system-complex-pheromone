@@ -9,14 +9,15 @@ namespace AntSimComplexUI.Utilities
     public string Type { get; set; }
     public string NodeSequence { get; set; }
     public double Length { get; set; }
-    public List<Node2D> Nodes { get; set; }
+    public IEnumerable<Node2D> Nodes { get; set; }
 
-    public ListViewTourItem(List<Node2D> nodes, double tourLength, string type)
+    public ListViewTourItem(IEnumerable<Node2D> nodes, double tourLength, string type)
     {
-      var ids = from n in nodes
+      var node2Ds = nodes as Node2D[] ?? nodes.ToArray();
+      var ids = from n in node2Ds
                 select n.Id.ToString();
       NodeSequence = ids.Aggregate((a, b) => a + "," + b);
-      Nodes = nodes;
+      Nodes = node2Ds;
       Length = tourLength;
       Type = type;
     }

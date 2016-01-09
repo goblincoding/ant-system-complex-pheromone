@@ -72,6 +72,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Backend\AntSystemTests.cs" />
+    <Compile Include="Backend\Utilities\BestTourTests.cs" />
     <Compile Include="Backend\Utilities\DataStructuresTests.cs" />
     <Compile Include="Backend\Utilities\ExtensionMethodTests.cs" />
     <Compile Include="Backend\Utilities\ParametersTests.cs" />

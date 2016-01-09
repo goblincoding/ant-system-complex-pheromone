@@ -75,9 +75,9 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     /// <param name="antTourIndices">A list of zero-based node indices.</param>
     /// <returns>A list of Node2D objects representing an Ant's constructed tour.</returns>
-    public List<Node2D> BuildNode2DTourFromZeroBasedIndices(List<int> antTourIndices)
+    public IEnumerable<Node2D> BuildNode2DTourFromZeroBasedIndices(IEnumerable<int> antTourIndices)
     {
-      return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedOffset)).ToList();
+      return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedOffset));
     }
 
     public IEnumerable<Point> GetPoints()

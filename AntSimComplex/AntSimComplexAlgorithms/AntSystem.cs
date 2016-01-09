@@ -16,13 +16,12 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public event EventHandler MoveNext = delegate { };
 
-    public Ant[] Ants { get; }
+    public Ant[] Ants { get; private set; }
 
     /// <summary>
-    /// Pretty nasty-looking, but is simply a list of ALL the best tours per solution iteration
-    /// consisting of tuples of tour length and tour node IDs.
+    /// A list of ALL the best tours per solution iteration.
     /// </summary>
-    public List<Tuple<double, List<int>>> BestTours { get; } = new List<Tuple<double, List<int>>>();
+    public List<BestTour> BestTours { get; } = new List<BestTour>();
 
     private readonly int _nodeCount;
     private readonly ProblemContext _problemContext;
@@ -36,7 +35,7 @@ namespace AntSimComplexAlgorithms
     {
       if (problem == null)
       {
-        throw new ArgumentNullException(nameof(problem), "The AntSystem constructor needs a valid problem instance argument");
+        throw new ArgumentNullException(nameof(problem), $"The {nameof(AntSystem)} constructor needs a valid problem instance argument");
       }
 
       _problemContext = new ProblemContext(problem);
@@ -80,7 +79,7 @@ namespace AntSimComplexAlgorithms
       _problemContext.DataStructures.UpdateChoiceInfoMatrix();
 
       var best = Ants.Min();
-      BestTours.Add(new Tuple<double, List<int>>(best.TourLength, best.Tour));
+      BestTours.Add(new BestTour { TourLength = best.TourLength, Tour = best.Tour });
     }
 
     /// <summary>

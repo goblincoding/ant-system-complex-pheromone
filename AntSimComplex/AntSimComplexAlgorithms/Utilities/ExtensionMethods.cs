@@ -11,7 +11,7 @@ namespace AntSimComplexAlgorithms.Utilities
   {
     /// <summary>
     /// Helper class representing a node and an edge weight to that node from
-    /// a non-specified, other node.
+    /// an unspecified, other node.
     ///
     /// Compares on weight.
     ///

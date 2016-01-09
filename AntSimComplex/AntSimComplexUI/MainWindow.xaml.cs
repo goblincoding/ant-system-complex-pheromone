@@ -301,8 +301,8 @@ namespace AntSimComplexUI
       var count = 1;
       foreach (var tour in _antSystem.BestTours)
       {
-        var nodeTour = _currentTspItemInfoProvider.BuildNode2DTourFromZeroBasedIndices(tour.Item2);
-        _tourItems.Add(new ListViewTourItem(nodeTour, tour.Item1, $"Best Tour for Iteration {count}"));
+        var nodeTour = _currentTspItemInfoProvider.BuildNode2DTourFromZeroBasedIndices(tour.Tour);
+        _tourItems.Add(new ListViewTourItem(nodeTour, tour.TourLength, $"Best Tour for Iteration {count}"));
         count++;
       }
     }
