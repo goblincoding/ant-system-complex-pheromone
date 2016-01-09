@@ -72,10 +72,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Backend\AntSystemTests.cs" />
-    <Compile Include="Backend\DataStructuresTests.cs" />
-    <Compile Include="Backend\ExtensionMethodTests.cs" />
-    <Compile Include="Backend\ParametersTests.cs" />
-    <Compile Include="Backend\RouletteWheelSelectorTests.cs" />
+    <Compile Include="Backend\Utilities\DataStructuresTests.cs" />
+    <Compile Include="Backend\Utilities\ExtensionMethodTests.cs" />
+    <Compile Include="Backend\Utilities\ParametersTests.cs" />
+    <Compile Include="Backend\Utilities\RouletteWheelSelectorTests.cs" />
     <Compile Include="GUI\SymmetricTSPInfoProviderTests.cs" />
     <Compile Include="GUI\SymmetricTSPItemSelectorTests.cs" />
     <Compile Include="MockObjects.cs" />

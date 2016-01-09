@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 
-namespace AntSimComplexTests.Backend
+namespace AntSimComplexTests.Backend.Utilities
 {
   [TestFixture]
   public class ExtensionMethodTests

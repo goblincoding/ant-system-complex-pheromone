@@ -3,7 +3,7 @@ using NSubstitute;
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests.Backend
+namespace AntSimComplexTests.Backend.Utilities
 {
   [TestFixture]
   public class RouletteWheelSelectorTests
