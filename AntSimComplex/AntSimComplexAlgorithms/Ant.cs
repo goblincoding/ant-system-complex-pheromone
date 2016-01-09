@@ -61,7 +61,7 @@ namespace AntSimComplexAlgorithms
 
       // If we've visited all nodes, return to the starting node.
       var selectedNext = notVisited.Any() ?
-                              _problemContext.RouletteWheelSelector.MakeSelection(notVisited, _currentNode) : _startNode;
+                              _problemContext.RouletteWheelSelector.SelectNextNode(notVisited, _currentNode) : _startNode;
 
       // Update tour information and move to the next node.
       TourLength += _problemContext.DataStructures.Distance(_currentNode, selectedNext);

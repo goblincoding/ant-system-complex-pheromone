@@ -11,7 +11,7 @@ namespace AntSimComplexTests.Backend
     private const double InitialPheromoneDensity = 0.5;
 
     [Test]
-    public void DataStructuresCtorGivenNullProblemInstanceShouldThrowArgumentNullException()
+    public void CtorGivenNullProblemInstanceShouldThrowArgumentNullException()
     {
       // assert
       // ReSharper disable once ObjectCreationAsStatement
@@ -20,7 +20,7 @@ namespace AntSimComplexTests.Backend
 
     [TestCase(0.0)]
     [TestCase(-1)]
-    public void DataStructuresCtorGivenInitialPheromoneNotGreaterThan0ShouldThrowArgumentOutOfRangeException(double initialPheromone)
+    public void CtorGivenInitialPheromoneNotGreaterThan0ShouldThrowArgumentOutOfRangeException(double initialPheromone)
     {
       // arrange
       var problem = new MockProblem();
@@ -31,7 +31,7 @@ namespace AntSimComplexTests.Backend
     }
 
     [Test]
-    public void DataStructuresDistanceIndexInvalidShouldThrowIndexOutOfRangeException()
+    public void DistanceIndexInvalidShouldThrowIndexOutOfRangeException()
     {
       // arrange
       var data = CreateDefaultDataStructuresFromMockProblem();
@@ -41,7 +41,7 @@ namespace AntSimComplexTests.Backend
     }
 
     [Test]
-    public void DataStructuresNearestNeighboursIndexInvalidShouldThrowIndexOutOfRangeException()
+    public void NearestNeighboursIndexInvalidShouldThrowIndexOutOfRangeException()
     {
       // arrange
       var data = CreateDefaultDataStructuresFromMockProblem();
@@ -51,7 +51,7 @@ namespace AntSimComplexTests.Backend
     }
 
     [Test]
-    public void DataStructuresChoiceInfoIndexInvalidShouldThrowIndexOutOfRangeException()
+    public void ChoiceInfoIndexInvalidShouldThrowIndexOutOfRangeException()
     {
       // arrange
       var data = CreateDefaultDataStructuresFromMockProblem();

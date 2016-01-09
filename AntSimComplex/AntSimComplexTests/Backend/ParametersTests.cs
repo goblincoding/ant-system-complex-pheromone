@@ -10,14 +10,14 @@ namespace AntSimComplexTests.Backend
   public class ParametersTests
   {
     [Test]
-    public void ParametersCtorGivenNullProblemShouldThrowArgumentNullException()
+    public void CtorGivenNullProblemShouldThrowArgumentNullException()
     {
       // ReSharper disable once ObjectCreationAsStatement
       Assert.Throws<ArgumentNullException>(() => new Parameters(null, ProblemContext.Random));
     }
 
     [Test]
-    public void ParametersInitialPheromoneGivenMockProblemAndStartNode7ShouldReturn0Point5()
+    public void InitialPheromoneGivenMockProblemAndStartNode7ShouldReturn0Point5()
     {
       // arrange
       var problem = new MockProblem();
