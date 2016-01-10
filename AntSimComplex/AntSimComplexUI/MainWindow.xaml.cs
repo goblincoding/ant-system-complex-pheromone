@@ -44,6 +44,8 @@ namespace AntSimComplexUI
     {
       InitializeComponent();
       _tourItems = new ObservableCollection<ListViewTourItem>();
+
+      // Automatically sort tour items by length when adding to the ListView
       TourListView.Items.SortDescriptions.Add(new SortDescription("Length", ListSortDirection.Ascending));
       TourListView.ItemsSource = _tourItems;
     }
@@ -60,9 +62,15 @@ namespace AntSimComplexUI
       TspCombo.ItemsSource = _tspItemLoader.ProblemNames;
     }
 
+    /// <summary>
+    /// Runs the algorithm against the selected problem and for the chosen number of iterations
+    /// or seconds.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void ExecuteButtonClick(object sender, RoutedEventArgs e)
     {
-      // Reset pheromone concentration.
+      // Clear previous results.
       _antSystem.Reset();
 
       // Fire up a background worker so that we may execute the AS algorithm
@@ -113,11 +121,15 @@ namespace AntSimComplexUI
       worker.RunWorkerAsync();
     }
 
+    /// <summary>
+    /// Browse to the TSPLIB95 directory.
+    /// </summary>
+    /// <returns></returns>
     private string BrowseTsplibPath()
     {
       var tspLibPath = (string)Registry.GetValue(LibPathRegistryKey, "", "");
-      bool tspPathExists;
       var startDirectory = System.IO.Path.GetFullPath(PackageRelPath);
+      bool tspPathExists;
 
       do
       {
@@ -149,6 +161,9 @@ namespace AntSimComplexUI
 
     #region drawing
 
+    /// <summary>
+    /// Draw everything we know about the selected TSP problem item.
+    /// </summary>
     private void DrawTspLibItem()
     {
       var worldMinX = _currentTspItemInfoProvider.GetMinX();
@@ -166,10 +181,16 @@ namespace AntSimComplexUI
       // system (top-left is 0,0).  This "flips" the coordinate system along the Y
       // axis by making the Y scale value negative so that we have bottom-left at 0,0.
       PrepareTransformationMatrices(worldMinX, worldMaxX, worldMinY, worldMaxY,
-        canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
+                                    canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
 
       Canvas.Children.Clear();
-      DrawNodes();
+
+      var points = _currentTspItemInfoProvider.GetPoints();
+      foreach (var point in points)
+      {
+        DrawNode(point, Brushes.Black);
+      }
+
       DrawSelectedTour();
 
       if (_drawOptimal)
@@ -178,6 +199,9 @@ namespace AntSimComplexUI
       }
     }
 
+    /// <summary>
+    /// Draws the optimal tour for the selected problem (if it is known).
+    /// </summary>
     private void DrawOptimalTour()
     {
       var nodes = _currentTspItemInfoProvider.OptimalTour;
@@ -190,6 +214,9 @@ namespace AntSimComplexUI
       DrawTour(nodes, optimalLength, Brushes.Red, Brushes.Green);
     }
 
+    /// <summary>
+    /// Draws the tour currently selected in the ListView.
+    /// </summary>
     private void DrawSelectedTour()
     {
       var item = TourListView.SelectedItem as ListViewTourItem;
@@ -221,15 +248,11 @@ namespace AntSimComplexUI
       Canvas.Children.Add(poly);
     }
 
-    private void DrawNodes()
-    {
-      var points = _currentTspItemInfoProvider.GetPoints();
-      foreach (var point in points)
-      {
-        DrawNode(point, Brushes.Black);
-      }
-    }
-
+    /// <summary>
+    /// Draws a single problem node at its relative position within the world.
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="brush"></param>
     private void DrawNode(Point point, Brush brush)
     {
       var ellipse = new Ellipse
@@ -249,8 +272,19 @@ namespace AntSimComplexUI
 
     #region matrixtransformations
 
+    /// <summary>
+    /// Sets up the transformation matrices so that we can transform from world to canvas coordinates and back.
+    /// </summary>
+    /// <param name="worldMinX">The mininum x coordinate of the "world"</param>
+    /// <param name="worldMaxX">The maximum x coordinate of the "world"</param>
+    /// <param name="worldMinY">The mininum y coordinate of the "world"</param>
+    /// <param name="worldMaxY">The maximum y coordinate of the "world"</param>
+    /// <param name="canvasMinX">The mininum x coordinate of the canvas</param>
+    /// <param name="canvasMaxX">The maximum x coordinate of the canvas</param>
+    /// <param name="canvasMinY">The mininum y coordinate of the canvas</param>
+    /// <param name="canvasMaxY">The maximum y coordinate of the canvas</param>
     private void PrepareTransformationMatrices(double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
-      double canvasMinX, double canvasMaxX, double canvasMinY, double canvasMaxY)
+                                               double canvasMinX, double canvasMaxX, double canvasMinY, double canvasMaxY)
     {
       _worldToCanvasMatrix = Matrix.Identity;
       _worldToCanvasMatrix.Translate(-worldMinX, -worldMinY);
@@ -279,6 +313,12 @@ namespace AntSimComplexUI
 
     #region eventhandlers
 
+    /// <summary>
+    /// Loads the TspLib95 item for the selected problem and instantiates a corresponding
+    /// AntSystem object for it.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void TspComboSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       var problemName = TspCombo.SelectedItem?.ToString();
@@ -291,6 +331,11 @@ namespace AntSimComplexUI
       AddOptimalTourToListView();
     }
 
+    /// <summary>
+    /// Called once the AS algorithm has finished executing. Loads the best toure of each iteration into the ListView.
+    /// </summary>
+    /// <param name="o"></param>
+    /// <param name="ea"></param>
     private void OnExecutionBackgroundWorkerCompleted(object o, RunWorkerCompletedEventArgs ea)
     {
       BusyIndicator.IsBusy = false;

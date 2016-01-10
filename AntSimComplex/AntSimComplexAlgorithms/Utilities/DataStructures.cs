@@ -20,6 +20,10 @@ namespace AntSimComplexAlgorithms.Utilities
   /// distances, it is more efficient to use an n^2 matrix to avoid performing
   /// additional operations to check whether, when accessing a generic distance
   /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
+  ///
+  /// The values of only two matrices get updated after creation, those of the pheromone
+  /// matrix and the choice info matrix (since the choice info heuristic is directly
+  /// dependent on pheromone density).
   /// </summary>
   public class DataStructures
   {
@@ -28,6 +32,11 @@ namespace AntSimComplexAlgorithms.Utilities
     /// nearest neighbour and pheromone density matrices.
     /// </summary>
     private readonly int _nodeCount;
+
+    /// <summary>
+    /// The initial pheromone density with which to initialise the pheromone matrix values.
+    /// </summary>
+    private readonly double _initialPheromoneDensity;
 
     /// <summary>
     /// Represents ALL inter-city distances in a grid format, i.e. querying
@@ -77,8 +86,9 @@ namespace AntSimComplexAlgorithms.Utilities
         throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
       }
 
+      _initialPheromoneDensity = initialPheromoneDensity;
       _nodeCount = problem.NodeProvider.CountNodes();
-      BuildInfoMatrices(problem, initialPheromoneDensity);
+      PopulateDataStructures(problem);
     }
 
     /// <summary>
@@ -87,6 +97,24 @@ namespace AntSimComplexAlgorithms.Utilities
     /// during the evaporation and deposit steps.
     /// </summary>
     public double[][] Pheromone;
+
+    /// <summary>
+    /// Resets all pheromone densities to the initial pheromone density the pheromone
+    /// matrix values were initialised with and updates the choice info matrix.
+    /// </summary>
+    public void ResetPheromone()
+    {
+      var pheromone = Pheromone;
+      foreach (var p in pheromone)
+      {
+        for (var j = 0; j < p.Length; j++)
+        {
+          p[j] = _initialPheromoneDensity;
+        }
+      }
+
+      UpdateChoiceInfoMatrix();
+    }
 
     /// <summary>
     /// This method does not calculate the edge weight between two nodes, but references
@@ -159,8 +187,7 @@ namespace AntSimComplexAlgorithms.Utilities
     /// Choice info matrix - p102
     /// </summary>
     /// <param name="problem"></param>
-    /// <param name="initialPheromoneDensity"></param>
-    private void BuildInfoMatrices(IProblem problem, double initialPheromoneDensity)
+    private void PopulateDataStructures(IProblem problem)
     {
       // Initialise rows.
       Pheromone = new double[_nodeCount][];
@@ -188,18 +215,18 @@ namespace AntSimComplexAlgorithms.Utilities
           // is HIGHLY unlikely to be selected.
           _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
           _heuristic[i][j] = Math.Pow(1 / _distances[i][j], Parameters.Beta);
-          Pheromone[i][j] = initialPheromoneDensity;
+          Pheromone[i][j] = _initialPheromoneDensity;
           CalculateChoiceInfo(i, j);
         }
 
-        BuildNearestNeighboursList(i);
+        PopulateNearestNeighboursList(i);
       }
     }
 
     /// <summary>
     /// From Ant Colony Optimization, Dorigo 2004 , p101.
     /// </summary>
-    private void BuildNearestNeighboursList(int currentNodeIndex)
+    private void PopulateNearestNeighboursList(int currentNodeIndex)
     {
       // Select distance/index pairs for all nodes so that we may
       // know which index matched which distance after sorting.

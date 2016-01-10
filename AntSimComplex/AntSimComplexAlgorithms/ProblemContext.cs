@@ -47,22 +47,5 @@ namespace AntSimComplexAlgorithms
       RouletteWheelSelector = new RouletteWheelSelector(DataStructures, Random);
       NodeCount = problem.NodeProvider.CountNodes();
     }
-
-    /// <summary>
-    /// Resets the internal state of the pheromone (to initial amounts) and choice info matrices.
-    /// </summary>
-    public void ResetPheromone()
-    {
-      var pheromone = DataStructures.Pheromone;
-      foreach (var p in pheromone)
-      {
-        for (var j = 0; j < p.Length; j++)
-        {
-          p[j] = Parameters.InitialPheromone;
-        }
-      }
-
-      DataStructures.UpdateChoiceInfoMatrix();
-    }
   }
 }

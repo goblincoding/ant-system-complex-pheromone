@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AntSimComplexUI"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:utilities="clr-namespace:AntSimComplexUI.Utilities"
         mc:Ignorable="d"
         Title="MainWindow"
         MinHeight="700" MinWidth="960"
@@ -175,14 +175,13 @@
             <!-- Set up tour display. -->
             <Border Grid.Column="1" Grid.Row="1">
                 <ListView Name="TourListView"
-
                       SelectionChanged="TourListViewSelectionChanged">
                     <ListView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="utilities:ListViewTourItem">
                             <StackPanel>
                                 <WrapPanel>
-                                    <TextBlock Text="Tour Type: " />
-                                    <TextBlock Text="{Binding Type}" FontWeight="Bold" />
+                                    <TextBlock Text="Tour Info: " />
+                                    <TextBlock Text="{Binding TourInfo}" FontWeight="Bold" />
                                 </WrapPanel>
                                 <WrapPanel>
                                     <TextBlock Text="Tour Length: " />

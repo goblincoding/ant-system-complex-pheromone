@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AntSimComplexAlgorithms.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,13 +10,20 @@ namespace AntSimComplexAlgorithms
   /// </summary>
   public class Ant : IComparable<Ant>
   {
-    public double TourLength { get; private set; } = 0.0;
-    public List<int> Tour { get; } = new List<int>();   // the indices of the nodes belonging to the current tour.
+    /// <summary>
+    /// Length of the ant's completed tour.
+    /// </summary>
+    public double TourLength { get; private set; }
+
+    /// <summary>
+    /// The node indices corresponding to the ant's tour.
+    /// </summary>
+    public List<int> Tour { get; } = new List<int>();
 
     private int _startNode;
     private int _currentNode;
 
-    private readonly int[] _visited;     // the indices of the nodes the Ant has already visited.
+    private readonly int[] _visited; // the indices of the nodes the Ant has already visited.
     private readonly ProblemContext _problemContext;
 
     /// <summary>
@@ -23,7 +31,6 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     /// <param name="problemContext">Provides access to the problem-specific parameters and information matrices
     /// used in applying the random proportional rule.</param>
-    /// <param name="nrNodes">The nr of nodes in the TSP graph.</param>
     public Ant(ProblemContext problemContext)
     {
       _problemContext = problemContext;
@@ -33,11 +40,13 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Initialises the internal state of the Ant (discards constructed tour information if it exists).
     /// </summary>
+    /// <param name="startNode">The node the ant starts its tour on.</param>
     public void Initialise(int startNode)
     {
       _startNode = startNode;
       _currentNode = _startNode;
 
+      // Set all nodes to "not visited" except for current (start) node.
       for (var i = 0; i < _visited.Length; i++)
       {
         _visited[i] = 0;
@@ -59,17 +68,22 @@ namespace AntSimComplexAlgorithms
       var neighbours = _problemContext.DataStructures.NearestNeighbours(_currentNode);
       var notVisited = neighbours.Where(n => _visited[n] != 1).ToArray();
 
-      // If we've visited all nodes, return to the starting node.
+      // Select the next node to visit ("start" if all nodes have been visited).
       var selectedNext = notVisited.Any() ?
                               _problemContext.RouletteWheelSelector.SelectNextNode(notVisited, _currentNode) : _startNode;
 
-      // Update tour information and move to the next node.
+      // Update tour information and move to the next selected node.
       TourLength += _problemContext.DataStructures.Distance(_currentNode, selectedNext);
       _currentNode = selectedNext;
       Tour.Add(_currentNode);
       _visited[_currentNode] = 1;
     }
 
+    /// <summary>
+    /// Ants are compared on TourLength.
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
     public int CompareTo(Ant other)
     {
       return (other != null) ? TourLength.CompareTo(other.TourLength) : 1;

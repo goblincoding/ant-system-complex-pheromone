@@ -16,7 +16,7 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public event EventHandler MoveNext = delegate { };
 
-    public Ant[] Ants { get; private set; }
+    public Ant[] Ants { get; }
 
     /// <summary>
     /// A list of ALL the best tours per solution iteration.
@@ -65,7 +65,7 @@ namespace AntSimComplexAlgorithms
       }
 
       // Construct solutions (iterate through nr of nodes since
-      // each ant has to visit each node).
+      // each ant has to visit each node once).
       for (var i = 0; i < _nodeCount; i++)
       {
         MoveNext(this, EventArgs.Empty);
@@ -78,8 +78,8 @@ namespace AntSimComplexAlgorithms
       // Choice info matrix has to be updated after pheromone changes.
       _problemContext.DataStructures.UpdateChoiceInfoMatrix();
 
-      var best = Ants.Min();
-      BestTours.Add(new BestTour { TourLength = best.TourLength, Tour = best.Tour });
+      var bestAnt = Ants.Min();
+      BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ namespace AntSimComplexAlgorithms
     public void Reset()
     {
       BestTours.Clear();
-      _problemContext.ResetPheromone();
+      _problemContext.DataStructures.ResetPheromone();
     }
 
     private void EvaporatePheromone()
@@ -100,7 +100,7 @@ namespace AntSimComplexAlgorithms
           // Matrix is symmetric.
           var pher = _problemContext.DataStructures.Pheromone[i][j] * Parameters.EvaporationRate;
           _problemContext.DataStructures.Pheromone[i][j] = pher;
-          _problemContext.DataStructures.Pheromone[i][j] = pher;
+          _problemContext.DataStructures.Pheromone[j][i] = pher;
         }
       }
     }
@@ -114,7 +114,7 @@ namespace AntSimComplexAlgorithms
         {
           var j = ant.Tour[i];
           var l = ant.Tour[i + 1]; // stays within array bounds since Tour = n + 1 (returns to starting node)
-          var pher = _problemContext.DataStructures.Pheromone[i][j] + deposit;
+          var pher = _problemContext.DataStructures.Pheromone[j][l] + deposit;
           _problemContext.DataStructures.Pheromone[j][l] = pher;  // matrix is symmetric
           _problemContext.DataStructures.Pheromone[l][j] = pher;
         }

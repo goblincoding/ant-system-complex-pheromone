@@ -19,7 +19,7 @@ namespace AntSimComplexAlgorithms.Utilities
         throw new ArgumentNullException(nameof(other));
       }
 
-      return TourLength.CompareTo(other);
+      return TourLength.CompareTo(other.TourLength);
     }
 
     public int CompareTo(object obj)
