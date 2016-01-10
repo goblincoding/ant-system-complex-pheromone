@@ -7,7 +7,7 @@ namespace AntSimComplexAlgorithms
   /// <summary>
   /// Wraps all of the Utility classes containing information related to a specific TSP problem.
   /// </summary>
-  public class ProblemContext
+  internal class ProblemContext
   {
     /// <summary>
     /// Use a single, static random variable so that we do not end up with roughly

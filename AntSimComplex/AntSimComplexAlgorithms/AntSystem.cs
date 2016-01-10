@@ -16,13 +16,12 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public event EventHandler MoveNext = delegate { };
 
-    public Ant[] Ants { get; }
-
     /// <summary>
     /// A list of ALL the best tours per solution iteration.
     /// </summary>
     public List<BestTour> BestTours { get; } = new List<BestTour>();
 
+    private Ant[] Ants { get; }
     private readonly int _nodeCount;
     private readonly ProblemContext _problemContext;
 

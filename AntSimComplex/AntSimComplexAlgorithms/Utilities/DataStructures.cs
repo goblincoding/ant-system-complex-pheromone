@@ -25,7 +25,7 @@ namespace AntSimComplexAlgorithms.Utilities
   /// matrix and the choice info matrix (since the choice info heuristic is directly
   /// dependent on pheromone density).
   /// </summary>
-  public class DataStructures
+  internal class DataStructures
   {
     /// <summary>
     /// Nr of nodes is used everywhere as it determines the dimensions of the distance,

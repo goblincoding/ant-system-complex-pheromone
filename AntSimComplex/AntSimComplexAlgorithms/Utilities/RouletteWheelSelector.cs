@@ -9,7 +9,7 @@ namespace AntSimComplexAlgorithms.Utilities
   /// roulette wheel selection procedure: https://en.wikipedia.org/wiki/Fitness_proportionate_selection
   /// (ACO p107)
   /// </summary>
-  public class RouletteWheelSelector
+  internal class RouletteWheelSelector
   {
     /// <summary>
     /// Helper class representing a node and a probability of selection of that node from

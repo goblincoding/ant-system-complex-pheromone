@@ -8,7 +8,7 @@ namespace AntSimComplexAlgorithms
   /// <summary>
   /// Ants are implemented predominantly as per "Ant Colony Optimisation" Dorigo and Stutzle (2004), Ch3.8, p103.
   /// </summary>
-  public class Ant : IComparable<Ant>
+  internal class Ant : IComparable<Ant>
   {
     /// <summary>
     /// Length of the ant's completed tour.
