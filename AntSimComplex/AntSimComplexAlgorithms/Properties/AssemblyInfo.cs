@@ -37,3 +37,4 @@ using System.Runtime.InteropServices;
 
 // Make the internal classes available to the unit test project for testing.
 [assembly: InternalsVisibleTo("AntSimComplexTests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
