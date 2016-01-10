@@ -7,12 +7,12 @@ using System.Linq;
 namespace AntSimComplexTests.Backend.Utilities
 {
   [TestFixture]
-  public class ExtensionMethodTests
+  internal class ExtensionMethodTests
   {
     [TestCase(4, 5, -1)]
     [TestCase(4, 2, 1)]
     [TestCase(1, 1, 0)]
-    public void NodeWeightPairCompareToShouldCompareOnWeight(int weight1, int weight2, int expected)
+    public void NodeWeightPairShouldCompareOnWeight(int weight1, int weight2, int expected)
     {
       // arrange
       var nodeProvider = new MockNodeProvider();

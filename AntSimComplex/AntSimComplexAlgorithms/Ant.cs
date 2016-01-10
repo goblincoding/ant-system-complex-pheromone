@@ -1,4 +1,5 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms.ProblemContext;
+using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +25,14 @@ namespace AntSimComplexAlgorithms
     private int _currentNode;
 
     private readonly int[] _visited; // the indices of the nodes the Ant has already visited.
-    private readonly ProblemContext _problemContext;
+    private readonly IProblemContext _problemContext;
 
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="problemContext">Provides access to the problem-specific parameters and information matrices
     /// used in applying the random proportional rule.</param>
-    public Ant(ProblemContext problemContext)
+    public Ant(IProblemContext problemContext)
     {
       _problemContext = problemContext;
       _visited = new int[_problemContext.NodeCount];
@@ -60,20 +61,20 @@ namespace AntSimComplexAlgorithms
 
     /// <summary>
     /// Applies the random proportional rule on non-visited neighbours and moves the ant
-    /// to the node selected by the <seealso cref="RouletteWheelSelector"/>.
+    /// to the node selected by the <seealso cref="RouletteWheel"/>.
     /// </summary>
     public void MoveNext(object sender, EventArgs args)
     {
       // Find the neighbours we haven't visited yet.
-      var neighbours = _problemContext.DataStructures.NearestNeighbours(_currentNode);
+      var neighbours = _problemContext.NearestNeighbours(_currentNode);
       var notVisited = neighbours.Where(n => _visited[n] != 1).ToArray();
 
       // Select the next node to visit ("start" if all nodes have been visited).
       var selectedNext = notVisited.Any() ?
-                              _problemContext.RouletteWheelSelector.SelectNextNode(notVisited, _currentNode) : _startNode;
+                              _problemContext.SelectNextNode(notVisited, _currentNode) : _startNode;
 
       // Update tour information and move to the next selected node.
-      TourLength += _problemContext.DataStructures.Distance(_currentNode, selectedNext);
+      TourLength += _problemContext.Distance(_currentNode, selectedNext);
       _currentNode = selectedNext;
       Tour.Add(_currentNode);
       _visited[_currentNode] = 1;

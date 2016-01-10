@@ -1,15 +1,16 @@
-﻿using System;
+﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntSimComplexAlgorithms.Utilities
+namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
 {
   /// <summary>
   /// The probabilistic selection of the next node to be visited is done in accordance to the
   /// roulette wheel selection procedure: https://en.wikipedia.org/wiki/Fitness_proportionate_selection
   /// (ACO p107)
   /// </summary>
-  internal class RouletteWheelSelector
+  internal class RouletteWheel : IRouletteWheelSelector
   {
     /// <summary>
     /// Helper class representing a node and a probability of selection of that node from
@@ -50,15 +51,15 @@ namespace AntSimComplexAlgorithms.Utilities
     }
 
     private readonly Random _random;
-    private readonly DataStructures _dataStructures;
+    private readonly IDataStructures _dataStructures;
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="dataStructures">The problem specific <seealso cref="DataStructures"/> object containing distance,
+    /// <param name="dataStructures">The problem specific <seealso cref="Data"/> object containing distance,
     /// pheromone, heuristic and choice info information.</param>
     /// <param name="random">The global random number generator object.</param>
-    public RouletteWheelSelector(DataStructures dataStructures, Random random)
+    public RouletteWheel(IDataStructures dataStructures, Random random)
     {
       _dataStructures = dataStructures;
       _random = random;

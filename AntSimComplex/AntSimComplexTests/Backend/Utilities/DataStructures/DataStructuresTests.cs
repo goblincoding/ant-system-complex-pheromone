@@ -1,12 +1,12 @@
-﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests.Backend.Utilities
+namespace AntSimComplexTests.Backend.Utilities.DataStructures
 {
   [TestFixture]
-  public class DataStructuresTests
+  internal class DataStructuresTests
   {
     private const double InitialPheromoneDensity = 0.5;
 
@@ -15,7 +15,7 @@ namespace AntSimComplexTests.Backend.Utilities
     {
       // assert
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentNullException>(() => { new DataStructures(null, InitialPheromoneDensity); });
+      Assert.Throws<ArgumentNullException>(() => { new Data(null, InitialPheromoneDensity); });
     }
 
     [TestCase(0.0)]
@@ -27,7 +27,7 @@ namespace AntSimComplexTests.Backend.Utilities
 
       // assert
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new DataStructures(problem, initialPheromone));
+      Assert.Throws<ArgumentOutOfRangeException>(() => new Data(problem, initialPheromone));
     }
 
     [Test]
@@ -60,11 +60,11 @@ namespace AntSimComplexTests.Backend.Utilities
       Assert.Throws<IndexOutOfRangeException>(() => data.ChoiceInfo(0, MockConstants.NrNodes));
     }
 
-    private DataStructures CreateDefaultDataStructuresFromMockProblem()
+    private static Data CreateDefaultDataStructuresFromMockProblem()
     {
       var problem = new MockProblem();
-      var parameters = new Parameters(problem, ProblemContext.Random);
-      var data = new DataStructures(problem, parameters.InitialPheromone);
+      var parameters = new Parameters(problem, new Random());
+      var data = new Data(problem, parameters.InitialPheromone);
       return data;
     }
   }

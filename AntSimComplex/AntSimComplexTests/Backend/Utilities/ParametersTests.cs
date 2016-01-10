@@ -1,5 +1,4 @@
-﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -7,13 +6,13 @@ using System;
 namespace AntSimComplexTests.Backend.Utilities
 {
   [TestFixture]
-  public class ParametersTests
+  internal class ParametersTests
   {
     [Test]
     public void CtorGivenNullProblemShouldThrowArgumentNullException()
     {
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentNullException>(() => new Parameters(null, ProblemContext.Random));
+      Assert.Throws<ArgumentNullException>(() => new Parameters(null, new Random()));
     }
 
     [Test]

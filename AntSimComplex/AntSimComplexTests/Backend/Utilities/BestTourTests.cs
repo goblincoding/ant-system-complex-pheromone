@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace AntSimComplexTests.Backend.Utilities
 {
   [TestFixture]
-  public class BestTourTests
+  internal class BestTourTests
   {
     [TestCase(5.0, 4.0, 1)]
     [TestCase(2, 4.0, -1)]

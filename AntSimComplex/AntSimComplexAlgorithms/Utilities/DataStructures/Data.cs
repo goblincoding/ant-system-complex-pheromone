@@ -2,7 +2,7 @@
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplexAlgorithms.Utilities
+namespace AntSimComplexAlgorithms.Utilities.DataStructures
 {
   // Note:  Might have to change distance matrix to integers: ACO p101
 
@@ -25,7 +25,7 @@ namespace AntSimComplexAlgorithms.Utilities
   /// matrix and the choice info matrix (since the choice info heuristic is directly
   /// dependent on pheromone density).
   /// </summary>
-  internal class DataStructures
+  internal class Data : IDataStructures
   {
     /// <summary>
     /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
@@ -74,11 +74,11 @@ namespace AntSimComplexAlgorithms.Utilities
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
-    public DataStructures(IProblem problem, double initialPheromoneDensity)
+    public Data(IProblem problem, double initialPheromoneDensity)
     {
       if (problem == null)
       {
-        throw new ArgumentNullException(nameof(problem), $"The {nameof(DataStructures)} constructor needs a valid problem instance argument");
+        throw new ArgumentNullException(nameof(problem), $"The {nameof(Data)} constructor needs a valid problem instance argument");
       }
 
       if (initialPheromoneDensity <= 0.0)
@@ -91,17 +91,10 @@ namespace AntSimComplexAlgorithms.Utilities
       PopulateDataStructures(problem);
     }
 
-    /// <summary>
-    /// Represents the simple pheromone density trails between two nodes (graph arcs)
-    /// for the "standard" Ant System implementation. Pheromone is frequently updated
-    /// during the evaporation and deposit steps.
-    /// </summary>
-    public double[][] Pheromone;
+    #region IDataStructures
 
-    /// <summary>
-    /// Resets all pheromone densities to the initial pheromone density the pheromone
-    /// matrix values were initialised with and updates the choice info matrix.
-    /// </summary>
+    public double[][] Pheromone { get; private set; }
+
     public void ResetPheromone()
     {
       var pheromone = Pheromone;
@@ -116,53 +109,21 @@ namespace AntSimComplexAlgorithms.Utilities
       UpdateChoiceInfoMatrix();
     }
 
-    /// <summary>
-    /// This method does not calculate the edge weight between two nodes, but references
-    /// the weights obtained from the original problem with which the <seealso cref="DataStructures"/>
-    /// object was constructed.
-    /// </summary>
-    /// <param name="node1">The index of the first node</param>
-    /// <param name="node2">The index of the second node</param>
-    /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
-    /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
     public double Distance(int node1, int node2)
     {
       return _distances[node1][node2];
     }
 
-    /// <summary>
-    /// This method does not create the nearest neighbours list, but references
-    /// the lists obtained from the original problem with which the <seealso cref="DataStructures"/>
-    /// object was constructed.
-    /// </summary>
-    /// <param name="node">The node index whose neighbours should be returned.</param>
-    /// <returns>Returns an array of neighbouring node indices, ordered by ascending distance.</returns>
-    /// <exception cref="IndexOutOfRangeException">Thrown when the node index falls outside the expected range.</exception>
     public int[] NearestNeighbours(int node)
     {
       return _nearest[node];
     }
 
-    /// <summary>
-    /// Represents the [t_ij]^A [n_ij]^B heuristic values for each edge [i][j] where t_ij is the
-    /// pheromone density, n_ij = 1/d_ij, and 'A' and 'B' are the Alpha and Beta parameter values.
-    /// This method does not calculate the choice info heuristics, but references values in a matrix
-    /// of dimensions dependent on the original problem with which the <seealso cref="DataStructures"/>
-    /// object was constructed.
-    /// </summary>
-    /// <param name="node1">The index of the first node</param>
-    /// <param name="node2">The index of the second node</param>
-    /// <returns>Returns the "choice info" heuristic for two nodes.</returns>
-    /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
     public double ChoiceInfo(int node1, int node2)
     {
       return _choiceInfo[node1][node2];
     }
 
-    /// <summary>
-    /// Updates the ChoiceInfo matrix with the latest pheromone values.  Should be called after the pheromone update
-    /// process is completed.
-    /// </summary>
     public void UpdateChoiceInfoMatrix()
     {
       // Matrix is symmetric.
@@ -175,6 +136,8 @@ namespace AntSimComplexAlgorithms.Utilities
         }
       }
     }
+
+    #endregion IDataStructures
 
     private void CalculateChoiceInfo(int i, int j)
     {

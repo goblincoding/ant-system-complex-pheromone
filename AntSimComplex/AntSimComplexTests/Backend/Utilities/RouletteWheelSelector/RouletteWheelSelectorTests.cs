@@ -1,12 +1,13 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
+using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using NSubstitute;
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests.Backend.Utilities
+namespace AntSimComplexTests.Backend.Utilities.RouletteWheelSelector
 {
   [TestFixture]
-  public class RouletteWheelSelectorTests
+  internal class RouletteWheelSelectorTests
   {
     [TestCase(0.00, 4)]  // probability of 5 - 4 is 0.20
     [TestCase(0.10, 4)]  // probability of 5 - 4 is 0.20
@@ -23,8 +24,8 @@ namespace AntSimComplexTests.Backend.Utilities
       var random = Substitute.For<Random>();
       random.NextDouble().Returns(next);
 
-      var data = new DataStructures(new MockProblem(), 0.5);
-      var selector = new RouletteWheelSelector(data, random);
+      var data = new Data(new MockProblem(), 0.5);
+      var selector = new RouletteWheel(data, random);
 
       // act
       var result = selector.SelectNextNode(new[] { 4, 1, 2 }, 5);

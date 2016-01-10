@@ -5,7 +5,7 @@ using System;
 namespace AntSimComplexTests.Backend
 {
   [TestFixture]
-  public class AntSystemTests
+  internal class AntSystemTests
   {
     [Test]
     public void TestNullProblemParametersConstructor()

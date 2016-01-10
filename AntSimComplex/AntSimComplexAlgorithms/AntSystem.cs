@@ -1,4 +1,5 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms.ProblemContext;
+using AntSimComplexAlgorithms.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,13 @@ namespace AntSimComplexAlgorithms
 
     private Ant[] Ants { get; }
     private readonly int _nodeCount;
-    private readonly ProblemContext _problemContext;
+    private readonly IProblemContext _problemContext;
+
+    /// <summary>
+    /// Use a single, static random variable so that we do not end up with roughly
+    /// the same number generation sequences with fast clock cycles.
+    /// </summary>
+    private static readonly Random Random = new Random();
 
     /// <summary>
     /// Constructor.
@@ -37,7 +44,7 @@ namespace AntSimComplexAlgorithms
         throw new ArgumentNullException(nameof(problem), $"The {nameof(AntSystem)} constructor needs a valid problem instance argument");
       }
 
-      _problemContext = new ProblemContext(problem);
+      _problemContext = new Context(problem, Random);
       _nodeCount = _problemContext.NodeCount;
 
       Ants = new Ant[_nodeCount];
@@ -59,7 +66,7 @@ namespace AntSimComplexAlgorithms
       // Initialise the ants at random start nodes.
       foreach (var ant in Ants)
       {
-        var startNode = ProblemContext.Random.Next(0, _nodeCount);
+        var startNode = _problemContext.Random.Next(0, _nodeCount);
         ant.Initialise(startNode);
       }
 
@@ -75,7 +82,7 @@ namespace AntSimComplexAlgorithms
       DepositPheromone();
 
       // Choice info matrix has to be updated after pheromone changes.
-      _problemContext.DataStructures.UpdateChoiceInfoMatrix();
+      _problemContext.UpdateChoiceInfoMatrix();
 
       var bestAnt = Ants.Min();
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
@@ -87,7 +94,7 @@ namespace AntSimComplexAlgorithms
     public void Reset()
     {
       BestTours.Clear();
-      _problemContext.DataStructures.ResetPheromone();
+      _problemContext.ResetPheromone();
     }
 
     private void EvaporatePheromone()
@@ -97,9 +104,9 @@ namespace AntSimComplexAlgorithms
         for (var j = i; j < _nodeCount; j++)
         {
           // Matrix is symmetric.
-          var pher = _problemContext.DataStructures.Pheromone[i][j] * Parameters.EvaporationRate;
-          _problemContext.DataStructures.Pheromone[i][j] = pher;
-          _problemContext.DataStructures.Pheromone[j][i] = pher;
+          var pher = _problemContext.Pheromone[i][j] * Parameters.EvaporationRate;
+          _problemContext.Pheromone[i][j] = pher;
+          _problemContext.Pheromone[j][i] = pher;
         }
       }
     }
@@ -113,9 +120,9 @@ namespace AntSimComplexAlgorithms
         {
           var j = ant.Tour[i];
           var l = ant.Tour[i + 1]; // stays within array bounds since Tour = n + 1 (returns to starting node)
-          var pher = _problemContext.DataStructures.Pheromone[j][l] + deposit;
-          _problemContext.DataStructures.Pheromone[j][l] = pher;  // matrix is symmetric
-          _problemContext.DataStructures.Pheromone[l][j] = pher;
+          var pher = _problemContext.Pheromone[j][l] + deposit;
+          _problemContext.Pheromone[j][l] = pher;  // matrix is symmetric
+          _problemContext.Pheromone[l][j] = pher;
         }
       }
     }
