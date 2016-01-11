@@ -77,12 +77,7 @@ namespace AntSimComplexAlgorithms
         MoveNext(this, EventArgs.Empty);
       }
 
-      // Update pheromone trails.
-      EvaporatePheromone();
-      DepositPheromone();
-
-      // Choice info matrix has to be updated after pheromone changes.
-      _problemContext.UpdateChoiceInfoMatrix();
+      UpdatePheromoneTrails();
 
       var bestAnt = Ants.Min();
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
@@ -97,34 +92,20 @@ namespace AntSimComplexAlgorithms
       _problemContext.ResetPheromone();
     }
 
-    private void EvaporatePheromone()
+    private void UpdatePheromoneTrails()
     {
-      for (var i = 0; i < _nodeCount; i++)
-      {
-        for (var j = i; j < _nodeCount; j++)
-        {
-          // Matrix is symmetric.
-          var pher = _problemContext.Pheromone[i][j] * Parameters.EvaporationRate;
-          _problemContext.Pheromone[i][j] = pher;
-          _problemContext.Pheromone[j][i] = pher;
-        }
-      }
-    }
+      // Update pheromone trails.
+      _problemContext.EvaporatePheromone();
 
-    private void DepositPheromone()
-    {
+      // Deposit new pheromone.
       foreach (var ant in Ants)
       {
         var deposit = 1 / ant.TourLength;
-        for (var i = 0; i < _nodeCount; i++)
-        {
-          var j = ant.Tour[i];
-          var l = ant.Tour[i + 1]; // stays within array bounds since Tour = n + 1 (returns to starting node)
-          var pher = _problemContext.Pheromone[j][l] + deposit;
-          _problemContext.Pheromone[j][l] = pher;  // matrix is symmetric
-          _problemContext.Pheromone[l][j] = pher;
-        }
+        _problemContext.DepositPheromone(ant.Tour, deposit);
       }
+
+      // Choice info matrix has to be updated after pheromone changes.
+      _problemContext.UpdateChoiceInfoMatrix();
     }
   }
 }

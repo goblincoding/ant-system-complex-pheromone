@@ -2,6 +2,7 @@
 using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using System;
+using System.Collections.Generic;
 using TspLibNet;
 
 namespace AntSimComplexAlgorithms.ProblemContext
@@ -24,8 +25,6 @@ namespace AntSimComplexAlgorithms.ProblemContext
     /// nearest neighbour and pheromone density matrices.
     /// </summary>
     public int NodeCount { get; }
-
-    public double[][] Pheromone => _dataStructures.Pheromone;
 
     public int[] NearestNeighbours(int node)
     {
@@ -50,6 +49,16 @@ namespace AntSimComplexAlgorithms.ProblemContext
     public void ResetPheromone()
     {
       _dataStructures.ResetPheromone();
+    }
+
+    public void EvaporatePheromone()
+    {
+      _dataStructures.EvaporatePheromone();
+    }
+
+    public void DepositPheromone(IEnumerable<int> tour, double deposit)
+    {
+      _dataStructures.DepositPheromone(tour, deposit);
     }
 
     public int SelectNextNode(int[] notVisited, int currentNode)

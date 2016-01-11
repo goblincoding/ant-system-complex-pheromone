@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TspLibNet;
 
@@ -37,6 +38,13 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// The initial pheromone density with which to initialise the pheromone matrix values.
     /// </summary>
     private readonly double _initialPheromoneDensity;
+
+    /// <summary>
+    /// Represents the simple pheromone density trails between two nodes (graph arcs)
+    /// for the "standard" Ant System implementation. Pheromone is frequently updated
+    /// during the evaporation and deposit steps.
+    /// </summary>
+    private double[][] _pheromone;
 
     /// <summary>
     /// Represents ALL inter-city distances in a grid format, i.e. querying
@@ -93,11 +101,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     #region IDataStructures
 
-    public double[][] Pheromone { get; private set; }
-
     public void ResetPheromone()
     {
-      var pheromone = Pheromone;
+      var pheromone = _pheromone;
       foreach (var p in pheromone)
       {
         for (var j = 0; j < p.Length; j++)
@@ -107,6 +113,32 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
 
       UpdateChoiceInfoMatrix();
+    }
+
+    public void EvaporatePheromone()
+    {
+      for (var i = 0; i < _nodeCount; i++)
+      {
+        for (var j = i; j < _nodeCount; j++)
+        {
+          var pher = _pheromone[i][j] * Parameters.EvaporationRate;
+          _pheromone[i][j] = pher;  // matrix is symmetric
+          _pheromone[j][i] = pher;
+        }
+      }
+    }
+
+    public void DepositPheromone(IEnumerable<int> tour, double deposit)
+    {
+      var tourArray = tour.ToArray();
+      for (var i = 0; i < tourArray.Length - 1; i++)
+      {
+        var j = tourArray[i];
+        var l = tourArray[i + 1];
+        var pher = _pheromone[j][l] + deposit;
+        _pheromone[j][l] = pher;  // matrix is symmetric
+        _pheromone[l][j] = pher;
+      }
     }
 
     public double Distance(int node1, int node2)
@@ -141,7 +173,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     private void CalculateChoiceInfo(int i, int j)
     {
-      _choiceInfo[i][j] = Math.Pow(Pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
+      _choiceInfo[i][j] = Math.Pow(_pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
     }
 
     /// <summary>
@@ -153,7 +185,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     private void PopulateDataStructures(IProblem problem)
     {
       // Initialise rows.
-      Pheromone = new double[_nodeCount][];
+      _pheromone = new double[_nodeCount][];
       _distances = new double[_nodeCount][];
       _heuristic = new double[_nodeCount][];
       _choiceInfo = new double[_nodeCount][];
@@ -167,7 +199,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       for (var i = 0; i < _nodeCount; i++)
       {
         // Initialise columns.
-        Pheromone[i] = new double[_nodeCount];
+        _pheromone[i] = new double[_nodeCount];
         _distances[i] = new double[_nodeCount];
         _heuristic[i] = new double[_nodeCount];
         _choiceInfo[i] = new double[_nodeCount];
@@ -178,7 +210,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           // is HIGHLY unlikely to be selected.
           _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
           _heuristic[i][j] = Math.Pow(1 / _distances[i][j], Parameters.Beta);
-          Pheromone[i][j] = _initialPheromoneDensity;
+          _pheromone[i][j] = _initialPheromoneDensity;
           CalculateChoiceInfo(i, j);
         }
 
