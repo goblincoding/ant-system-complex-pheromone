@@ -11,6 +11,40 @@ namespace AntSimComplexTests.Backend
   internal class AntTests
   {
     [Test]
+    public void TourLengthShouldBeZeroAfterInitialisation()
+    {
+      // arrange
+      const int startNode = 5;
+
+      var context = Substitute.For<IProblemContext>();
+      context.NodeCount.Returns(10);
+      var ant = new Ant(context);
+
+      // act
+      ant.Initialise(startNode);
+
+      // assert
+      Assert.AreEqual(0.0, ant.TourLength);
+    }
+
+    [Test]
+    public void TourShouldHaveOnlyStartNodeAfterInitialisation()
+    {
+      // arrange
+      const int startNode = 5;
+
+      var context = Substitute.For<IProblemContext>();
+      context.NodeCount.Returns(10);
+      var ant = new Ant(context);
+
+      // act
+      ant.Initialise(startNode);
+
+      // assert
+      Assert.AreEqual(new List<int> { startNode }, ant.Tour);
+    }
+
+    [Test]
     public void MoveNextShouldBuildAccurateTourLength()
     {
       // arrange
