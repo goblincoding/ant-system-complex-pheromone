@@ -208,7 +208,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         {
           // Set the distance from a node to itself as sufficiently large that it
           // is HIGHLY unlikely to be selected.
-          _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : int.MaxValue;
+          _distances[i][j] = (i != j) ? weightsProvider.GetWeight(nodes[i], nodes[j]) : double.MaxValue;
           _heuristic[i][j] = Math.Pow(1 / _distances[i][j], Parameters.Beta);
           _pheromone[i][j] = _initialPheromoneDensity;
           CalculateChoiceInfo(i, j);

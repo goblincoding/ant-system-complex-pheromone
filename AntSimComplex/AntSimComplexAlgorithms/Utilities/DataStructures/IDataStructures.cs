@@ -22,7 +22,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// </summary>
     /// <param name="node1">The index of the first node</param>
     /// <param name="node2">The index of the second node</param>
-    /// <returns>Returns the distance (weight of the edge) between two nodes.</returns>
+    /// <returns>Returns the distance (weight of the edge) between two nodes (double.MaxValue if to node indices are the same).</returns>
     /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
     double Distance(int node1, int node2);
 
