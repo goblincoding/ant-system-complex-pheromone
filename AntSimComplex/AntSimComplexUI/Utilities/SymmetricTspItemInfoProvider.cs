@@ -1,5 +1,5 @@
 ﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Utilities;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,7 @@ namespace AntSimComplexUI.Utilities
     /// <summary>
     /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
     /// the INode ID's and the zero-based indices used by <seealso cref="AntSimComplexAlgorithms"/>, the underlying
-    /// <seealso cref="DataStructures"/> and <seealso cref="Ant"/>.
+    /// <seealso cref="Data"/> and <seealso cref="Ant"/>.
     /// </summary>
     private readonly int _zeroBasedOffset;
 

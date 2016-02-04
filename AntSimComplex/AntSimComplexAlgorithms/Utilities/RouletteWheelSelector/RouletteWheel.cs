@@ -100,10 +100,10 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
       var denominator = notVisited.Sum(n => _dataStructures.ChoiceInfo(currentNode, n));
 
-      var pairs = (from neighbour in notVisited
-                   let numerator = _dataStructures.ChoiceInfo(currentNode, neighbour)
-                   let probability = numerator / denominator
-                   select new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour });
+      var pairs = from neighbour in notVisited
+                  let numerator = _dataStructures.ChoiceInfo(currentNode, neighbour)
+                  let probability = numerator / denominator
+                  select new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour };
 
       return pairs.OrderBy(pair => pair).ToList();
     }

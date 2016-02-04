@@ -1,11 +1,9 @@
-﻿using System.Windows;
-
-namespace AntSimComplexUI
+﻿namespace AntSimComplexUI
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
-    {
-    }
+  /// <summary>
+  /// Interaction logic for App.xaml
+  /// </summary>
+  public partial class App
+  {
+  }
 }

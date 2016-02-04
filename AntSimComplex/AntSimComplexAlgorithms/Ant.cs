@@ -87,7 +87,7 @@ namespace AntSimComplexAlgorithms
     /// <returns></returns>
     public int CompareTo(Ant other)
     {
-      return (other != null) ? TourLength.CompareTo(other.TourLength) : 1;
+      return other != null ? TourLength.CompareTo(other.TourLength) : 1;
     }
   }
 }
