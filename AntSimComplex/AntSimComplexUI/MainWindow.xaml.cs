@@ -3,6 +3,7 @@ using AntSimComplexAlgorithms.Utilities;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -289,11 +290,28 @@ namespace AntSimComplexUI
       _worldToCanvasMatrix = Matrix.Identity;
       _worldToCanvasMatrix.Translate(-worldMinX, -worldMinY);
 
-      var xscale = (canvasMaxX - canvasMinX) / (worldMaxX - worldMinX);
-      var yscale = (canvasMaxY - canvasMinY) / (worldMaxY - worldMinY);
+      var canvasXRange = Math.Abs(canvasMaxX - canvasMinX);
+      var canvasYRange = Math.Abs(canvasMaxY - canvasMinY);
+      var canvasXDiff = 0.0;
+      var canvasYDiff = 0.0;
+
+      double canvasRange;
+      if (canvasYRange > canvasXRange)
+      {
+        canvasRange = canvasXRange;
+        canvasYDiff = (canvasYRange - canvasXRange) * 0.5;
+      }
+      else
+      {
+        canvasRange = canvasYRange;
+        canvasXDiff = (canvasXRange - canvasYRange) * 0.5;
+      }
+
+      var xscale = canvasRange / (worldMaxX - worldMinX);
+      var yscale = -canvasRange / (worldMaxY - worldMinY);
       _worldToCanvasMatrix.Scale(xscale, yscale);
 
-      _worldToCanvasMatrix.Translate(canvasMinX, canvasMinY);
+      _worldToCanvasMatrix.Translate(canvasMinX + canvasXDiff, canvasMinY + canvasYDiff);
 
       _canvasToWorldMatrix = _worldToCanvasMatrix;
       _canvasToWorldMatrix.Invert();
