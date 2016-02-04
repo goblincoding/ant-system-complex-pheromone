@@ -23,7 +23,7 @@ namespace AntSimComplexUI
   /// </summary>
   public partial class MainWindow
   {
-    private const int CircleWidth = 10;
+    private const int CircleWidth = 6;
 
     private const string PackageRelPath = @"..\..\..\packages";
     private const string LibPathRegistryKey = @"HKEY_CURRENT_USER\Software\AntSim\TSPLIB95Path";
@@ -311,7 +311,7 @@ namespace AntSimComplexUI
       var yscale = -canvasRange / (worldMaxY - worldMinY);
       _worldToCanvasMatrix.Scale(xscale, yscale);
 
-      _worldToCanvasMatrix.Translate(canvasMinX + canvasXDiff, canvasMinY + canvasYDiff);
+      _worldToCanvasMatrix.Translate(canvasMinX + canvasXDiff, canvasMinY - canvasYDiff);
 
       _canvasToWorldMatrix = _worldToCanvasMatrix;
       _canvasToWorldMatrix.Invert();
