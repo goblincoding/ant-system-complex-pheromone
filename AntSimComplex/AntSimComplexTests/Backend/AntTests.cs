@@ -68,10 +68,10 @@ namespace AntSimComplexTests.Backend
 
       // act
       ant.Initialise(7);
-      ant.MoveNext(new object(), new EventArgs());
-      ant.MoveNext(new object(), new EventArgs());
-      ant.MoveNext(new object(), new EventArgs());
-      ant.MoveNext(new object(), new EventArgs());
+      ant.MoveNext();
+      ant.MoveNext();
+      ant.MoveNext();
+      ant.MoveNext();
 
       // assert
       Assert.AreEqual(8, ant.TourLength);

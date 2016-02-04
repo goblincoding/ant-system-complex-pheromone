@@ -13,11 +13,6 @@ namespace AntSimComplexAlgorithms
   public class AntSystem
   {
     /// <summary>
-    /// Emitted when ants have to move to the next node.
-    /// </summary>
-    public event EventHandler MoveNext = delegate { };
-
-    /// <summary>
     /// A list of ALL the best tours per solution iteration.
     /// </summary>
     public List<BestTour> BestTours { get; } = new List<BestTour>();
@@ -51,7 +46,6 @@ namespace AntSimComplexAlgorithms
       for (var i = 0; i < _nodeCount; i++)
       {
         var ant = new Ant(_problemContext);
-        MoveNext += ant.MoveNext;
         Ants[i] = ant;
       }
     }
@@ -72,9 +66,9 @@ namespace AntSimComplexAlgorithms
 
       // Construct solutions (iterate through nr of nodes since
       // each ant has to visit each node once).
-      for (var i = 0; i < _nodeCount; i++)
+      foreach (var ant in Ants)
       {
-        MoveNext(this, EventArgs.Empty);
+        ant.MoveNext();
       }
 
       UpdatePheromoneTrails();

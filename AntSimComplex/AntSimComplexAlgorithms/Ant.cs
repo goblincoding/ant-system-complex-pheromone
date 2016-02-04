@@ -63,7 +63,7 @@ namespace AntSimComplexAlgorithms
     /// Applies the random proportional rule on non-visited neighbours and moves the ant
     /// to the node selected by the <seealso cref="RouletteWheel"/>.
     /// </summary>
-    public void MoveNext(object sender, EventArgs args)
+    public void MoveNext()
     {
       // Find the neighbours we haven't visited yet.
       var neighbours = _problemContext.NearestNeighbours(_currentNode);
