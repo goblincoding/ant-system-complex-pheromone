@@ -17,8 +17,7 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public List<BestTour> BestTours { get; } = new List<BestTour>();
 
-    private Ant[] Ants { get; }
-    private readonly int _nodeCount;
+    private Ant[] Ants { get; set; }
     private readonly IProblemContext _problemContext;
 
     /// <summary>
@@ -26,6 +25,15 @@ namespace AntSimComplexAlgorithms
     /// the same number generation sequences with fast clock cycles.
     /// </summary>
     private static readonly Random Random = new Random();
+
+    /// <summary>
+    /// Resets the AntSystem internals.
+    /// </summary>
+    public void Reset()
+    {
+      BestTours.Clear();
+      _problemContext.ResetPheromone();
+    }
 
     /// <summary>
     /// Constructor.
@@ -40,14 +48,7 @@ namespace AntSimComplexAlgorithms
       }
 
       _problemContext = new Context(problem, Random);
-      _nodeCount = _problemContext.NodeCount;
-
-      Ants = new Ant[_nodeCount];
-      for (var i = 0; i < _nodeCount; i++)
-      {
-        var ant = new Ant(_problemContext);
-        Ants[i] = ant;
-      }
+      CreateAnts();
     }
 
     /// <summary>
@@ -57,33 +58,46 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public void Execute()
     {
-      // Initialise the ants at random start nodes.
-      foreach (var ant in Ants)
-      {
-        var startNode = _problemContext.Random.Next(0, _nodeCount);
-        ant.Initialise(startNode);
-      }
-
-      // Construct solutions (iterate through nr of nodes since
-      // each ant has to visit each node once).
-      foreach (var ant in Ants)
-      {
-        ant.MoveNext();
-      }
-
+      InitialiseAnts();
+      ConstructSolutions();
       UpdatePheromoneTrails();
 
       var bestAnt = Ants.Min();
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
 
-    /// <summary>
-    /// Resets the AntSystem internals.
-    /// </summary>
-    public void Reset()
+    private void CreateAnts()
     {
-      BestTours.Clear();
-      _problemContext.ResetPheromone();
+      var nodeCount = _problemContext.NodeCount;
+      Ants = new Ant[nodeCount];
+      for (var i = 0; i < nodeCount; i++)
+      {
+        var ant = new Ant(_problemContext);
+        Ants[i] = ant;
+      }
+    }
+
+    private void InitialiseAnts()
+    {
+      // Initialise the ants at random start nodes.
+      foreach (var ant in Ants)
+      {
+        var startNode = Random.Next(0, _problemContext.NodeCount);
+        ant.Initialise(startNode);
+      }
+    }
+
+    private void ConstructSolutions()
+    {
+      // Construct solutions (iterate through nr of nodes since
+      // each ant has to visit each node once).
+      for (var i = 0; i < _problemContext.NodeCount; i++)
+      {
+        foreach (var ant in Ants)
+        {
+          ant.MoveNext();
+        }
+      }
     }
 
     private void UpdatePheromoneTrails()
