@@ -59,6 +59,7 @@
     <Compile Include="Utilities\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\RouletteWheelSelector\RouletteWheel.cs" />
+    <Compile Include="Utilities\StatsAggregator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

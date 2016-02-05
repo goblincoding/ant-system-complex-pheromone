@@ -19,6 +19,8 @@ namespace AntSimComplexAlgorithms
 
     private Ant[] Ants { get; set; }
     private readonly IProblemContext _problemContext;
+    private readonly StatsAggregator _statsAggregator;
+    private int _currentIteration;
 
     /// <summary>
     /// Use a single, static random variable so that we do not end up with roughly
@@ -33,6 +35,8 @@ namespace AntSimComplexAlgorithms
     {
       BestTours.Clear();
       _problemContext.ResetPheromone();
+      _statsAggregator.ClearStats();
+      _currentIteration = 0;
     }
 
     /// <summary>
@@ -48,6 +52,7 @@ namespace AntSimComplexAlgorithms
       }
 
       _problemContext = new Context(problem, Random);
+      _statsAggregator = new StatsAggregator();
       CreateAnts();
     }
 
@@ -58,9 +63,11 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public void Execute()
     {
+      _statsAggregator.StartIteration(_currentIteration++);
       InitialiseAnts();
       ConstructSolutions();
       UpdatePheromoneTrails();
+      _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
       var bestAnt = Ants.Min();
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });

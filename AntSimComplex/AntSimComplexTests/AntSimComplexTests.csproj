@@ -78,6 +78,7 @@
     <Compile Include="Backend\Utilities\ExtensionMethodTests.cs" />
     <Compile Include="Backend\Utilities\ParametersTests.cs" />
     <Compile Include="Backend\Utilities\RouletteWheelSelector\RouletteWheelSelectorTests.cs" />
+    <Compile Include="Backend\Utilities\StatsAggregatorTests.cs" />
     <Compile Include="GUI\Helpers.cs" />
     <Compile Include="GUI\SymmetricTspItemInfoProviderTests.cs" />
     <Compile Include="GUI\SymmetricTSPItemLoaderTests.cs" />
