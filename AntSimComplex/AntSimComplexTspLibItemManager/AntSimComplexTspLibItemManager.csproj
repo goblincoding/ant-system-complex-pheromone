@@ -44,6 +44,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\SymmetricTspItemInfoProvider.cs" />
     <Compile Include="Utilities\SymmetricTspItemLoader.cs" />
+    <Compile Include="Utilities\TspNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

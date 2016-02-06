@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AntSimComplexTspLibItemManager.Utilities;
+using System.Collections.Generic;
 using System.Linq;
-using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexUI.Utilities
 {
@@ -12,23 +12,23 @@ namespace AntSimComplexUI.Utilities
     /// <summary>
     /// What tour does this item represent?
     /// </summary>
-    public string TourInfo { get; set; }
+    public string TourInfo { get; }
 
     /// <summary>
     /// A comma-separated list of the node ID's corresponding to the tour (in the
     /// sequence traversed).
     /// </summary>
-    public string NodeSequence { get; set; }
+    public string NodeSequence { get; }
 
     /// <summary>
     /// The length of the tour.
     /// </summary>
-    public double Length { get; set; }
+    public double Length { get; }
 
     /// <summary>
     /// The actual nodes the tour consists of.
     /// </summary>
-    public IEnumerable<Node2D> Nodes { get; set; }
+    public IEnumerable<TspNode> Nodes { get; }
 
     /// <summary>
     /// Constructor.
@@ -36,13 +36,13 @@ namespace AntSimComplexUI.Utilities
     /// <param name="nodes">The nodes the tour consists of.</param>
     /// <param name="tourLength">The length of the tour.</param>
     /// <param name="tourInfo">Information about the tour (what tour does this item represent)</param>
-    public ListViewTourItem(IEnumerable<Node2D> nodes, double tourLength, string tourInfo)
+    public ListViewTourItem(IEnumerable<TspNode> nodes, double tourLength, string tourInfo)
     {
-      var node2Ds = nodes as Node2D[] ?? nodes.ToArray();
-      var ids = from n in node2Ds
+      var tspNodes = nodes as TspNode[] ?? nodes.ToArray();
+      var ids = from n in tspNodes
                 select n.Id.ToString();
       NodeSequence = ids.Aggregate((a, b) => a + "," + b);
-      Nodes = node2Ds;
+      Nodes = tspNodes;
       Length = tourLength;
       TourInfo = tourInfo;
     }

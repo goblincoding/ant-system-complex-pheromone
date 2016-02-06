@@ -185,7 +185,7 @@ namespace AntSimComplexUI
 
       DrawTspLibItem();
 
-      _antSystem = new AntSystem(_tspLibItemManager.CurrentProblem());
+      _antSystem = new AntSystem(_tspLibItemManager);
       _tourItems.Clear();
       AddOptimalTourToListView();
     }

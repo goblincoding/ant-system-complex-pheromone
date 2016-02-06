@@ -80,10 +80,12 @@
     <Compile Include="Backend\Utilities\RouletteWheelSelector\RouletteWheelSelectorTests.cs" />
     <Compile Include="Backend\Utilities\StatsAggregatorTests.cs" />
     <Compile Include="GUI\Helpers.cs" />
-    <Compile Include="GUI\SymmetricTspItemInfoProviderTests.cs" />
-    <Compile Include="GUI\SymmetricTSPItemLoaderTests.cs" />
+    <Compile Include="GUI\ListViewTourItemTests.cs" />
+    <Compile Include="TspLibManager\SymmetricTspItemInfoProviderTests.cs" />
+    <Compile Include="TspLibManager\SymmetricTSPItemLoaderTests.cs" />
     <Compile Include="MockObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TspLibManager\TspNodeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

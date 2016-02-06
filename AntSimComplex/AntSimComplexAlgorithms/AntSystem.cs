@@ -1,5 +1,6 @@
 ﻿using AntSimComplexAlgorithms.ProblemContext;
 using AntSimComplexAlgorithms.Utilities;
+using AntSimComplexTspLibItemManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,15 +33,16 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
+    /// <param name="manager">The TSP problem instance to which Ant System is to be applied.</param>
     /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
-    public AntSystem(IProblem problem)
+    public AntSystem(TspLibItemManager manager)
     {
-      if (problem == null)
+      if (manager == null)
       {
-        throw new ArgumentNullException(nameof(problem), $"The {nameof(AntSystem)} constructor needs a valid problem instance argument");
+        throw new ArgumentNullException(nameof(manager), $"The {nameof(AntSystem)} constructor needs a valid problem instance argument");
       }
 
+      var problem = manager.CurrentProblem();
       _problemContext = new Context(problem, Random);
       StatsAggregator = new StatsAggregator();
       CreateAnts();

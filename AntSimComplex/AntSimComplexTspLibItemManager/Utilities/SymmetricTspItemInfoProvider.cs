@@ -33,8 +33,8 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
     public double OptimalTourLength { get; } = double.MaxValue;
 
-    /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
-    public List<Node2D> OptimalTour { get; } = new List<Node2D>();
+    /// <returns>A list of TspNode objects corresponding to the optimal tour for the problem (if it is known).</returns>
+    public List<TspNode> OptimalTour { get; } = new List<TspNode>();
 
     /// <returns>A list of Points corresponding to the current nodes' coordinates.</returns>
     public IEnumerable<Point> NodeCoordinatesAsPoints { get; }
@@ -45,7 +45,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// </summary>
     private readonly int _zeroBasedIdOffset;
 
-    private List<Node2D> Nodes2D { get; }
+    private List<TspNode> TspNodes { get; }
 
     /// <summary>
     /// Constructor.
@@ -61,8 +61,8 @@ namespace AntSimComplexTspLibItemManager.Utilities
       }
 
       var nodes2D = item.Problem.NodeProvider.GetNodes();
-      Nodes2D = nodes2D.OfType<Node2D>().ToList();
-      if (Nodes2D.Any() == false)
+      TspNodes = nodes2D.OfType<Node2D>().Select(n => new TspNode(n.Id, n.X, n.Y)).ToList();
+      if (TspNodes.Any() == false)
       {
         string errMsg = $"Selected problem: {item.Problem.Name} does not contain Node2D objects.";
         throw new ArgumentOutOfRangeException(nameof(item), errMsg);
@@ -70,32 +70,32 @@ namespace AntSimComplexTspLibItemManager.Utilities
 
       ProblemName = item.Problem.Name;
 
-      _zeroBasedIdOffset = Nodes2D.Min(n => n.Id) - 0;
+      _zeroBasedIdOffset = TspNodes.Min(n => n.Id) - 0;
 
-      MaxXCoordinate = Nodes2D.Max(i => i.X);
-      MinXCoordinate = Nodes2D.Min(i => i.X);
-      MaxYCoordinate = Nodes2D.Max(i => i.Y);
-      MinYCoordinate = Nodes2D.Min(i => i.Y);
-      NodeCoordinatesAsPoints = Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
+      MaxXCoordinate = TspNodes.Max(i => i.X);
+      MinXCoordinate = TspNodes.Min(i => i.X);
+      MaxYCoordinate = TspNodes.Max(i => i.Y);
+      MinYCoordinate = TspNodes.Min(i => i.Y);
+      NodeCoordinatesAsPoints = TspNodes.Select(n => new Point { X = n.X, Y = n.Y });
 
       if (item.OptimalTour != null)
       {
         var nodes = item.OptimalTour.Nodes.Select(n => item.Problem.NodeProvider.GetNode(n));
-        OptimalTour = nodes.OfType<Node2D>().ToList();
+        OptimalTour = nodes.OfType<Node2D>().Select(n => new TspNode(n.Id, n.X, n.Y)).ToList();
         OptimalTourLength = item.OptimalTourDistance;
         HasOptimalTour = true;
       }
     }
 
     /// <summary>
-    /// Constructs a tour consisting of Node2D elements from the zero based tour indices
+    /// Constructs a tour consisting of TspNode elements from the zero based tour indices
     /// representing an Ant's tour of the TSP graph.
     /// </summary>
     /// <param name="antTourIndices">A list of zero-based node indices.</param>
-    /// <returns>A list of Node2D objects representing an Ant's constructed tour.</returns>
-    public IEnumerable<Node2D> BuildNode2DTourFromZeroBasedIndices(IEnumerable<int> antTourIndices)
+    /// <returns>A list of TspNode objects representing an Ant's constructed tour.</returns>
+    public IEnumerable<TspNode> BuildNode2DTourFromZeroBasedIndices(IEnumerable<int> antTourIndices)
     {
-      return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedIdOffset));
+      return antTourIndices.Select(index => TspNodes.First(n => n.Id == index + _zeroBasedIdOffset));
     }
   }
 }

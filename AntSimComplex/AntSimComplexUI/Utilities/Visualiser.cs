@@ -1,11 +1,11 @@
 ﻿using AntSimComplexTspLibItemManager;
+using AntSimComplexTspLibItemManager.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using TspLibNet.Graph.Nodes;
 
 namespace AntSimComplexUI.Utilities
 {
@@ -87,7 +87,7 @@ namespace AntSimComplexUI.Utilities
       }
     }
 
-    private void DrawTour(IEnumerable<Node2D> nodes, double tourLength, Brush startNodeBrush, Brush lineBrush)
+    private void DrawTour(IEnumerable<TspNode> nodes, double tourLength, Brush startNodeBrush, Brush lineBrush)
     {
       var points = (from n in nodes
                     select _transformer.TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();

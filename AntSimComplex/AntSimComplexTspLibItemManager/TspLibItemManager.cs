@@ -35,8 +35,8 @@ namespace AntSimComplexTspLibItemManager
     /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
     public double OptimalTourLength => _infoProvider.OptimalTourLength;
 
-    /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
-    public List<Node2D> OptimalTour => _infoProvider.OptimalTour;
+    /// <returns>A list of TspNode objects corresponding to the optimal tour for the problem (if it is known).</returns>
+    public List<TspNode> OptimalTour => _infoProvider.OptimalTour;
 
     /// <returns>A list of Points corresponding to the current nodes' coordinates.</returns>
     public IEnumerable<Point> NodeCoordinatesAsPoints => _infoProvider.NodeCoordinatesAsPoints;
@@ -57,7 +57,7 @@ namespace AntSimComplexTspLibItemManager
       return _currentItem.Problem;
     }
 
-    public IEnumerable<Node2D> ConvertTourIndicesToNodes(IEnumerable<int> tour)
+    public IEnumerable<TspNode> ConvertTourIndicesToNodes(IEnumerable<int> tour)
     {
       return _infoProvider.BuildNode2DTourFromZeroBasedIndices(tour);
     }

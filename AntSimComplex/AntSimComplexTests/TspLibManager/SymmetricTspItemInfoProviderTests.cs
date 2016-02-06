@@ -1,10 +1,11 @@
-﻿using AntSimComplexTspLibItemManager.Utilities;
+﻿using AntSimComplexTests.GUI;
+using AntSimComplexTspLibItemManager.Utilities;
 using NUnit.Framework;
 using System;
 using System.Linq;
 using TspLibNet;
 
-namespace AntSimComplexTests.GUI
+namespace AntSimComplexTests.TspLibManager
 {
   [TestFixture]
   public class SymmetricTspItemInfoProviderTests

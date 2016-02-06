@@ -1,9 +1,10 @@
-﻿using AntSimComplexTspLibItemManager.Utilities;
+﻿using AntSimComplexTests.GUI;
+using AntSimComplexTspLibItemManager.Utilities;
 using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace AntSimComplexTests.GUI
+namespace AntSimComplexTests.TspLibManager
 {
   public class SymmetricTspItemLoaderTests
   {

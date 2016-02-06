@@ -64,7 +64,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\AntSimComplexTspLibItemManager\AntSimComplexTspLibItemManager.csproj">
+      <Project>{03f7fbc8-b72b-4322-afd5-015767bcc1be}</Project>
+      <Name>AntSimComplexTspLibItemManager</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
