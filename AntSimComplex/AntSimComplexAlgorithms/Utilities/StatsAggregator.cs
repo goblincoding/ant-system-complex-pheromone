@@ -8,7 +8,7 @@ namespace AntSimComplexAlgorithms.Utilities
   /// <summary>
   /// Keeps track of performance statistics for each execution of the algorithm.
   /// </summary>
-  internal class StatsAggregator
+  public class StatsAggregator
   {
     public struct IterationStatsItem : IComparable<IterationStatsItem>
     {

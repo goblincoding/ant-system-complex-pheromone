@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AntSimComplexUI.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="PackageRelPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">..\..\..\packages</Value>
+    </Setting>
+    <Setting Name="LibPathRegistryKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">HKEY_CURRENT_USER\Software\AntSim\TSPLIB95Path</Value>
+    </Setting>
+    <Setting Name="NodeCircleWidth" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -90,13 +90,20 @@
     <Compile Include="Dialogs\DirectoryBrowserDialog.xaml.cs">
       <DependentUpon>DirectoryBrowserDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\DirectoryBrowserControl.xaml.cs">
       <DependentUpon>DirectoryBrowserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CoordinateTransformer.cs" />
     <Compile Include="Utilities\ListViewTourItem.cs" />
     <Compile Include="Utilities\CustomEventArgs.cs" />
     <Compile Include="Utilities\SymmetricTspItemInfoProvider.cs" />
     <Compile Include="Utilities\SymmetricTspItemLoader.cs" />
+    <Compile Include="Utilities\Visualiser.cs" />
     <Page Include="Dialogs\DirectoryBrowserDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -125,6 +132,10 @@
     <None Include="AntSimComplex.ruleset" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

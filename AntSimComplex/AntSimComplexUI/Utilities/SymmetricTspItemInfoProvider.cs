@@ -80,31 +80,31 @@ namespace AntSimComplexUI.Utilities
       return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedOffset));
     }
 
-    public IEnumerable<Point> GetPoints()
+    public IEnumerable<Point> GetNodeCoordinatesAsPoints()
     {
       return Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
     }
 
     /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
-    public double GetMaxX()
+    public double GetMaxXCoordinate()
     {
       return Nodes2D.Max(i => i.X);
     }
 
     /// <returns>The minimum "x" coordinate of all the nodes in the graph</returns>
-    public double GetMinX()
+    public double GetMinXCoordinate()
     {
       return Nodes2D.Min(i => i.X);
     }
 
     /// <returns>The maximum "y" coordinate of all the nodes in the graph</returns>
-    public double GetMaxY()
+    public double GetMaxYCoordinate()
     {
       return Nodes2D.Max(i => i.Y);
     }
 
     /// <returns>The minimum "y" coordinate of all the nodes in the graph</returns>
-    public double GetMinY()
+    public double GetMinYCoordinate()
     {
       return Nodes2D.Min(i => i.Y);
     }

@@ -82,7 +82,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Label Content="Select Symmetric TSP Problem:" Grid.Row="0" HorizontalAlignment="Left" />
-                            <ComboBox Name="TspCombo" Grid.Row="1" SelectionChanged="TspComboSelectionChanged" />
+                            <ComboBox Name="TspCombo" Grid.Row="1" SelectionChanged="InitialiseSystemForSelectedTspItem" />
                             <CheckBox Name="ShowOptimal"
                                       Content="Show Optimal Tour (if available)"
                                       Grid.Row="2"
