@@ -101,8 +101,6 @@
     <Compile Include="Utilities\CoordinateTransformer.cs" />
     <Compile Include="Utilities\ListViewTourItem.cs" />
     <Compile Include="Utilities\CustomEventArgs.cs" />
-    <Compile Include="Utilities\SymmetricTspItemInfoProvider.cs" />
-    <Compile Include="Utilities\SymmetricTspItemLoader.cs" />
     <Compile Include="Utilities\Visualiser.cs" />
     <Page Include="Dialogs\DirectoryBrowserDialog.xaml">
       <SubType>Designer</SubType>
@@ -147,6 +145,10 @@
     <ProjectReference Include="..\AntSimComplexAlgorithms\AntSimComplexAlgorithms.csproj">
       <Project>{c8dab661-49ea-44cf-8799-e18e70f4b103}</Project>
       <Name>AntSimComplexAlgorithms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AntSimComplexTspLibItemManager\AntSimComplexTspLibItemManager.csproj">
+      <Project>{03f7fbc8-b72b-4322-afd5-015767bcc1be}</Project>
+      <Name>AntSimComplexTspLibItemManager</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

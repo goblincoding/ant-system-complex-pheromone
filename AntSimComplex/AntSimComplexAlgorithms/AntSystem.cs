@@ -30,17 +30,6 @@ namespace AntSimComplexAlgorithms
     private static readonly Random Random = new Random();
 
     /// <summary>
-    /// Resets the AntSystem internals.
-    /// </summary>
-    public void Reset()
-    {
-      BestTours.Clear();
-      _problemContext.ResetPheromone();
-      StatsAggregator.ClearStats();
-      _currentIteration = 0;
-    }
-
-    /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
@@ -55,6 +44,17 @@ namespace AntSimComplexAlgorithms
       _problemContext = new Context(problem, Random);
       StatsAggregator = new StatsAggregator();
       CreateAnts();
+    }
+
+    /// <summary>
+    /// Resets the AntSystem internals.
+    /// </summary>
+    public void Reset()
+    {
+      BestTours.Clear();
+      _problemContext.ResetPheromone();
+      StatsAggregator.ClearStats();
+      _currentIteration = 0;
     }
 
     /// <summary>

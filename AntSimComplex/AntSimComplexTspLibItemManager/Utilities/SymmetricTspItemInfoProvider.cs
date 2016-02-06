@@ -1,37 +1,49 @@
-﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Utilities.DataStructures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
-namespace AntSimComplexUI.Utilities
+namespace AntSimComplexTspLibItemManager.Utilities
 {
   /// <summary>
   /// This class is a wrapper for TspLib95Item objects representing symmetric TSP problems
   /// that fit the research criteria of a hundred nodes or less and with 2D node coordinates.
   /// </summary>
-  public class SymmetricTspItemInfoProvider
+  internal class SymmetricTspItemInfoProvider
   {
     /// <returns>The name of the current TSP problem.</returns>
     public string ProblemName { get; }
 
-    /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
-    public List<Node2D> OptimalTour { get; } = new List<Node2D>();
+    /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
+    public double MaxXCoordinate { get; }
+
+    /// <returns>The minimum "x" coordinate of all the nodes in the graph</returns>
+    public double MinXCoordinate { get; }
+
+    /// <returns>The maximum "y" coordinate of all the nodes in the graph</returns>
+    public double MaxYCoordinate { get; }
+
+    /// <returns>The minimum "y" coordinate of all the nodes in the graph</returns>
+    public double MinYCoordinate { get; }
+
+    public bool HasOptimalTour { get; }
 
     /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
     public double OptimalTourLength { get; } = double.MaxValue;
 
-    public bool HasOptimalTour { get; }
+    /// <returns>A list of Node2D objects corresponding to the optimal tour for the problem (if it is known).</returns>
+    public List<Node2D> OptimalTour { get; } = new List<Node2D>();
+
+    /// <returns>A list of Points corresponding to the current nodes' coordinates.</returns>
+    public IEnumerable<Point> NodeCoordinatesAsPoints { get; }
 
     /// <summary>
     /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
-    /// the INode ID's and the zero-based indices used by <seealso cref="AntSimComplexAlgorithms"/>, the underlying
-    /// <seealso cref="Data"/> and <seealso cref="Ant"/>.
+    /// the INode ID's and the zero-based indices used everywhere else.
     /// </summary>
-    private readonly int _zeroBasedOffset;
+    private readonly int _zeroBasedIdOffset;
 
     private List<Node2D> Nodes2D { get; }
 
@@ -56,7 +68,15 @@ namespace AntSimComplexUI.Utilities
         throw new ArgumentOutOfRangeException(nameof(item), errMsg);
       }
 
-      _zeroBasedOffset = Nodes2D.Min(n => n.Id) - 0;
+      ProblemName = item.Problem.Name;
+
+      _zeroBasedIdOffset = Nodes2D.Min(n => n.Id) - 0;
+
+      MaxXCoordinate = Nodes2D.Max(i => i.X);
+      MinXCoordinate = Nodes2D.Min(i => i.X);
+      MaxYCoordinate = Nodes2D.Max(i => i.Y);
+      MinYCoordinate = Nodes2D.Min(i => i.Y);
+      NodeCoordinatesAsPoints = Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
 
       if (item.OptimalTour != null)
       {
@@ -65,8 +85,6 @@ namespace AntSimComplexUI.Utilities
         OptimalTourLength = item.OptimalTourDistance;
         HasOptimalTour = true;
       }
-
-      ProblemName = item.Problem.Name;
     }
 
     /// <summary>
@@ -77,36 +95,7 @@ namespace AntSimComplexUI.Utilities
     /// <returns>A list of Node2D objects representing an Ant's constructed tour.</returns>
     public IEnumerable<Node2D> BuildNode2DTourFromZeroBasedIndices(IEnumerable<int> antTourIndices)
     {
-      return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedOffset));
-    }
-
-    public IEnumerable<Point> GetNodeCoordinatesAsPoints()
-    {
-      return Nodes2D.Select(n => new Point { X = n.X, Y = n.Y });
-    }
-
-    /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
-    public double GetMaxXCoordinate()
-    {
-      return Nodes2D.Max(i => i.X);
-    }
-
-    /// <returns>The minimum "x" coordinate of all the nodes in the graph</returns>
-    public double GetMinXCoordinate()
-    {
-      return Nodes2D.Min(i => i.X);
-    }
-
-    /// <returns>The maximum "y" coordinate of all the nodes in the graph</returns>
-    public double GetMaxYCoordinate()
-    {
-      return Nodes2D.Max(i => i.Y);
-    }
-
-    /// <returns>The minimum "y" coordinate of all the nodes in the graph</returns>
-    public double GetMinYCoordinate()
-    {
-      return Nodes2D.Min(i => i.Y);
+      return antTourIndices.Select(index => Nodes2D.First(n => n.Id == index + _zeroBasedIdOffset));
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AntSimComplexTspLibItemManager;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,18 +12,18 @@ namespace AntSimComplexUI.Utilities
   internal class Visualiser
   {
     private readonly Canvas _canvas;
-    private readonly SymmetricTspItemInfoProvider _currentTspItemInfoProvider;
+    private readonly TspLibItemManager _currentTspItemManager;
     private readonly CoordinateTransformer _transformer;
 
-    public Visualiser(Canvas canvas, SymmetricTspItemInfoProvider currentTspItemInfoProvider)
+    public Visualiser(Canvas canvas, TspLibItemManager currentTspItemManager)
     {
       _canvas = canvas;
-      _currentTspItemInfoProvider = currentTspItemInfoProvider;
+      _currentTspItemManager = currentTspItemManager;
 
-      var worldMinX = currentTspItemInfoProvider.GetMinXCoordinate();
-      var worldMinY = currentTspItemInfoProvider.GetMinYCoordinate();
-      var worldMaxX = currentTspItemInfoProvider.GetMaxXCoordinate();
-      var worldMaxY = currentTspItemInfoProvider.GetMaxYCoordinate();
+      var worldMinX = _currentTspItemManager.MinXCoordinate;
+      var worldMinY = _currentTspItemManager.MinYCoordinate;
+      var worldMaxX = _currentTspItemManager.MaxXCoordinate;
+      var worldMaxY = _currentTspItemManager.MaxYCoordinate;
 
       const double margin = 20;
       const double canvasMinX = margin;
@@ -37,11 +38,16 @@ namespace AntSimComplexUI.Utilities
                                                canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
     }
 
+    /// <summary>
+    /// Draw the tour item and, optionally, the optimal tour.
+    /// </summary>
+    /// <param name="tourItem">The tour item to draw.</param>
+    /// <param name="drawOptimal">Draw the optimal tour as well (if available).</param>
     public void DrawTspLibItem(ListViewTourItem tourItem, bool drawOptimal)
     {
       _canvas.Children.Clear();
 
-      var points = _currentTspItemInfoProvider.GetNodeCoordinatesAsPoints();
+      var points = _currentTspItemManager.NodeCoordinatesAsPoints;
       foreach (var point in points)
       {
         DrawNode(point, Brushes.Black);
@@ -60,13 +66,13 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     private void DrawOptimalTour()
     {
-      var nodes = _currentTspItemInfoProvider.OptimalTour;
+      var nodes = _currentTspItemManager.OptimalTour;
       if (!nodes.Any())
       {
         return;
       }
 
-      var optimalLength = _currentTspItemInfoProvider.OptimalTourLength;
+      var optimalLength = _currentTspItemManager.OptimalTourLength;
       DrawTour(nodes, optimalLength, Brushes.Red, Brushes.Green);
     }
 

@@ -1,5 +1,6 @@
 ﻿using AntSimComplexAlgorithms;
 using AntSimComplexAlgorithms.Utilities;
+using AntSimComplexTspLibItemManager;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
@@ -23,8 +24,7 @@ namespace AntSimComplexUI
 
     private readonly ObservableCollection<ListViewTourItem> _tourItems;
 
-    private SymmetricTspItemLoader _tspItemLoader;
-    private SymmetricTspItemInfoProvider _currentTspItemInfoProvider;
+    private TspLibItemManager _tspLibItemManager;
     private Visualiser _visualiser;
     private AntSystem _antSystem;
 
@@ -46,8 +46,8 @@ namespace AntSimComplexUI
       var tspLibPath = BrowseTsplibPath();
 
       // Load all symmetric TSP instances.
-      _tspItemLoader = new SymmetricTspItemLoader(tspLibPath);
-      TspCombo.ItemsSource = _tspItemLoader.ProblemNames;
+      _tspLibItemManager = new TspLibItemManager(tspLibPath);
+      TspCombo.ItemsSource = _tspLibItemManager.AllProblemNames;
     }
 
     /// <summary>
@@ -152,11 +152,11 @@ namespace AntSimComplexUI
 
     private void AddOptimalTourToListView()
     {
-      if (_currentTspItemInfoProvider.HasOptimalTour)
+      if (_tspLibItemManager.HasOptimalTour)
       {
-        _tourItems.Add(new ListViewTourItem(_currentTspItemInfoProvider.OptimalTour,
-                                            _currentTspItemInfoProvider.OptimalTourLength,
-                                            $"Current Problem (Optimal): {_currentTspItemInfoProvider.ProblemName}"));
+        _tourItems.Add(new ListViewTourItem(_tspLibItemManager.OptimalTour,
+                                            _tspLibItemManager.OptimalTourLength,
+                                            $"Current Problem (Optimal): {_tspLibItemManager.ProblemName}"));
       }
     }
 
@@ -180,13 +180,12 @@ namespace AntSimComplexUI
     private void InitialiseSystemForSelectedTspItem(object sender, SelectionChangedEventArgs e)
     {
       var problemName = TspCombo.SelectedItem?.ToString();
-      var item = _tspItemLoader.GetItem(problemName);
-      _currentTspItemInfoProvider = new SymmetricTspItemInfoProvider(item);
-      _visualiser = new Visualiser(Canvas, _currentTspItemInfoProvider);
+      _tspLibItemManager.LoadItem(problemName);
+      _visualiser = new Visualiser(Canvas, _tspLibItemManager);
 
       DrawTspLibItem();
 
-      _antSystem = new AntSystem(item.Problem);
+      _antSystem = new AntSystem(_tspLibItemManager.CurrentProblem());
       _tourItems.Clear();
       AddOptimalTourToListView();
     }
@@ -206,7 +205,7 @@ namespace AntSimComplexUI
       var count = 1;
       foreach (var tour in _antSystem.BestTours)
       {
-        var nodeTour = _currentTspItemInfoProvider.BuildNode2DTourFromZeroBasedIndices(tour.Tour);
+        var nodeTour = _tspLibItemManager.ConvertTourIndicesToNodes(tour.Tour);
         _tourItems.Add(new ListViewTourItem(nodeTour, tour.TourLength, $"Best Tour for Iteration {count}"));
         count++;
       }
