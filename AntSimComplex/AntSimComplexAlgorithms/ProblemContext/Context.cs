@@ -3,7 +3,6 @@ using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using System;
 using System.Collections.Generic;
-using TspLibNet;
 
 namespace AntSimComplexAlgorithms.ProblemContext
 {
@@ -69,15 +68,17 @@ namespace AntSimComplexAlgorithms.ProblemContext
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
+    /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
+    /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
+    /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     /// <param name="random">The application global random object instance.</param>
-    public Context(IProblem problem, Random random)
+    public Context(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances, Random random)
     {
       Random = random;
-      NodeCount = problem.NodeProvider.CountNodes();
+      NodeCount = nodeCount;
 
-      var parameters = new Parameters(problem, Random);
-      _dataStructures = new Data(problem, parameters.InitialPheromone);
+      var parameters = new Parameters(NodeCount, nearestNeighbourTourLength);
+      _dataStructures = new Data(NodeCount, parameters.InitialPheromone, distances);
       _rouletteWheelSelector = new RouletteWheel(_dataStructures, Random);
     }
   }

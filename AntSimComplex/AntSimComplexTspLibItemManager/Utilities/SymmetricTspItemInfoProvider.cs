@@ -13,31 +13,44 @@ namespace AntSimComplexTspLibItemManager.Utilities
   /// </summary>
   internal class SymmetricTspItemInfoProvider
   {
+    /// <returns>The number of nodes in the TSP graph.</returns>
+    public int NodeCount { get; }
+
     /// <returns>The name of the current TSP problem.</returns>
     public string ProblemName { get; }
 
     /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
-    public double MaxXCoordinate { get; }
+    public double MaxXCoordinate { get; private set; }
 
     /// <returns>The minimum "x" coordinate of all the nodes in the graph</returns>
-    public double MinXCoordinate { get; }
+    public double MinXCoordinate { get; private set; }
 
     /// <returns>The maximum "y" coordinate of all the nodes in the graph</returns>
-    public double MaxYCoordinate { get; }
+    public double MaxYCoordinate { get; private set; }
 
     /// <returns>The minimum "y" coordinate of all the nodes in the graph</returns>
-    public double MinYCoordinate { get; }
-
-    public bool HasOptimalTour { get; }
-
-    /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
-    public double OptimalTourLength { get; } = double.MaxValue;
-
-    /// <returns>A list of TspNode objects corresponding to the optimal tour for the problem (if it is known).</returns>
-    public List<TspNode> OptimalTour { get; } = new List<TspNode>();
+    public double MinYCoordinate { get; private set; }
 
     /// <returns>A list of Points corresponding to the current nodes' coordinates.</returns>
-    public IEnumerable<Point> NodeCoordinatesAsPoints { get; }
+    public IEnumerable<Point> NodeCoordinatesAsPoints { get; private set; }
+
+    /// <returns>Returns a distance matrix of edge weights between nodes.  I.e. Distances[i][j]
+    /// will return the distance between node i and j.</returns>
+    public IReadOnlyList<IReadOnlyList<double>> Distances => _distances;
+
+    private double[][] _distances;
+
+    /// <returns>Returns the tour length constructed by the nearest neighbour heuristic (ACO Dorigo Ch3, p70).</returns>
+    public double NearestNeighbourTourLength { get; private set; }
+
+    /// <returns>Returns true if the TSP instance has a known optimal tour.</returns>
+    public bool HasOptimalTour { get; private set; }
+
+    /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
+    public double OptimalTourLength { get; private set; } = double.MaxValue;
+
+    /// <returns>A list of TspNode objects corresponding to the optimal tour for the problem (if it is known).</returns>
+    public List<TspNode> OptimalTour { get; private set; } = new List<TspNode>();
 
     /// <summary>
     /// INode ID's aren't necessarily zero-based.  This integer keeps track of the difference between
@@ -68,16 +81,42 @@ namespace AntSimComplexTspLibItemManager.Utilities
         throw new ArgumentOutOfRangeException(nameof(item), errMsg);
       }
 
-      ProblemName = item.Problem.Name;
-
       _zeroBasedIdOffset = TspNodes.Min(n => n.Id) - 0;
 
+      var problem = item.Problem;
+      NodeCount = problem.NodeProvider.CountNodes();
+      ProblemName = problem.Name;
+
+      var random = new Random(Guid.NewGuid().GetHashCode());
+      NearestNeighbourTourLength = problem.GetNearestNeighbourTourLength(random);
+
+      SetCoordinateProperties();
+      SetOptimalTourProperties(item);
+      CalculateDistances(problem);
+    }
+
+    /// <summary>
+    /// Constructs a tour consisting of TspNode elements from zero based tour indices.
+    /// </summary>
+    /// <param name="tourIndices">A list of zero-based node indices.</param>
+    /// <returns>A list of TspNode objects representing an Ant's constructed tour.</returns>
+    public IEnumerable<TspNode> BuildTspNodeTourFromZeroBasedIndices(IEnumerable<int> tourIndices)
+    {
+      return tourIndices.Select(index => TspNodes.First(n => n.Id == index + _zeroBasedIdOffset));
+    }
+
+    private void SetCoordinateProperties()
+    {
       MaxXCoordinate = TspNodes.Max(i => i.X);
       MinXCoordinate = TspNodes.Min(i => i.X);
       MaxYCoordinate = TspNodes.Max(i => i.Y);
       MinYCoordinate = TspNodes.Min(i => i.Y);
-      NodeCoordinatesAsPoints = TspNodes.Select(n => new Point { X = n.X, Y = n.Y });
 
+      NodeCoordinatesAsPoints = TspNodes.Select(n => new Point { X = n.X, Y = n.Y });
+    }
+
+    private void SetOptimalTourProperties(TspLib95Item item)
+    {
       if (item.OptimalTour != null)
       {
         var nodes = item.OptimalTour.Nodes.Select(n => item.Problem.NodeProvider.GetNode(n));
@@ -87,15 +126,25 @@ namespace AntSimComplexTspLibItemManager.Utilities
       }
     }
 
-    /// <summary>
-    /// Constructs a tour consisting of TspNode elements from the zero based tour indices
-    /// representing an Ant's tour of the TSP graph.
-    /// </summary>
-    /// <param name="antTourIndices">A list of zero-based node indices.</param>
-    /// <returns>A list of TspNode objects representing an Ant's constructed tour.</returns>
-    public IEnumerable<TspNode> BuildNode2DTourFromZeroBasedIndices(IEnumerable<int> antTourIndices)
+    private void CalculateDistances(IProblem problem)
     {
-      return antTourIndices.Select(index => TspNodes.First(n => n.Id == index + _zeroBasedIdOffset));
+      _distances = new double[NodeCount][];
+
+      // Ensure that the nodes are sorted by ID ascending
+      // or else all matrix indices will be off.
+      var nodes = problem.NodeProvider.GetNodes().OrderBy(n => n.Id).ToArray();
+      var weightsProvider = problem.EdgeWeightsProvider;
+
+      for (var i = 0; i < NodeCount; i++)
+      {
+        // Initialise columns.
+        _distances[i] = new double[NodeCount];
+
+        for (var j = 0; j < NodeCount; j++)
+        {
+          _distances[i][j] = weightsProvider.GetWeight(nodes[i], nodes[j]);
+        }
+      }
     }
   }
 }

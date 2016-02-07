@@ -6,28 +6,20 @@ using System;
 namespace AntSimComplexTests.Backend.Utilities.DataStructures
 {
   [TestFixture]
-  internal class DataStructuresTests
+  internal class DataTests
   {
     private const double InitialPheromoneDensity = 0.5;
 
     [Test]
-    public void CtorGivenNullProblemInstanceShouldThrowArgumentNullException()
-    {
-      // assert
-      // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentNullException>(() => { new Data(null, InitialPheromoneDensity); });
-    }
-
-    [TestCase(0.0)]
-    [TestCase(-1)]
-    public void CtorGivenInitialPheromoneNotGreaterThan0ShouldThrowArgumentOutOfRangeException(double initialPheromone)
+    public void CtorGivenNegativeInitialPheromoneShouldThrowArgumentOutOfRangeException()
     {
       // arrange
       var problem = new MockProblem();
+      var distances = problem.Distances;
 
       // assert
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new Data(problem, initialPheromone));
+      Assert.Throws<ArgumentOutOfRangeException>(() => new Data(problem.NodeProvider.CountNodes(), -1, distances));
     }
 
     [Test]
@@ -125,7 +117,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
     }
 
     [Test]
-    public void ChoiceInfoShouldUpdateCorrectlyAfterPheromoneDeposit()
+    public void DepositPheromoneUpdateChoiceInfoMatrixShouldUpdateCorrectly()
     {
       // arrange
       const int node1 = 4;
@@ -147,7 +139,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
     }
 
     [Test]
-    public void ChoiceInfoShouldUpdateCorrectlyAfterPheromoneEvaporation()
+    public void EvaporatePheromoneUpdateChoiceInfoMatrixShouldUpdateCorrectly()
     {
       const int node1 = 1;
       const int node2 = 6;
@@ -167,7 +159,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
     }
 
     [Test]
-    public void ChoiceInfoShouldUpdateCorrectlyAfterPheromoneReset()
+    public void ResetPheromoneUpdateChoiceInfoMatrixShouldUpdateCorrectly()
     {
       // arrange
       const int node1 = 0;
@@ -191,8 +183,12 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
     private static Data CreateDefaultDataStructuresFromMockProblem()
     {
+      const int nodeCount = 10;
+
       var problem = new MockProblem();
-      var data = new Data(problem, InitialPheromoneDensity);
+      var distances = problem.Distances;
+
+      var data = new Data(nodeCount, InitialPheromoneDensity, distances);
       return data;
     }
   }

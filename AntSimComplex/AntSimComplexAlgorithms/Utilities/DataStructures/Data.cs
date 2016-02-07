@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TspLibNet;
 
 namespace AntSimComplexAlgorithms.Utilities.DataStructures
 {
@@ -48,7 +47,8 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     /// <summary>
     /// Represents ALL inter-city distances in a grid format, i.e. querying
-    /// _distances[3][5] will return the distance from node 3 to node 5.
+    /// _distances[i][j] will return the distance from node i to node j.
+    /// If i == j, the distance is set to double.MaxValue
     /// Once initialised, the values in this matrix do not change.
     /// </summary>
     private double[][] _distances;
@@ -78,25 +78,20 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="problem">The TSP problem instance to which Ant System is to be applied.</param>
+    /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
-    /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
+    /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
-    public Data(IProblem problem, double initialPheromoneDensity)
+    public Data(int nodeCount, double initialPheromoneDensity, IReadOnlyList<IReadOnlyList<double>> distances)
     {
-      if (problem == null)
-      {
-        throw new ArgumentNullException(nameof(problem), $"The {nameof(Data)} constructor needs a valid problem instance argument");
-      }
-
       if (initialPheromoneDensity <= 0.0)
       {
         throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
       }
 
       _initialPheromoneDensity = initialPheromoneDensity;
-      _nodeCount = problem.NodeProvider.CountNodes();
-      PopulateDataStructures(problem);
+      _nodeCount = nodeCount;
+      PopulateDataStructures(distances);
     }
 
     #region IDataStructures
@@ -181,8 +176,8 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// Heuristics matrix - p102
     /// Choice info matrix - p102
     /// </summary>
-    /// <param name="problem"></param>
-    private void PopulateDataStructures(IProblem problem)
+    /// <param name="distances"></param>
+    private void PopulateDataStructures(IReadOnlyList<IReadOnlyList<double>> distances)
     {
       // Initialise rows.
       _pheromone = new double[_nodeCount][];
@@ -190,11 +185,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       _heuristic = new double[_nodeCount][];
       _choiceInfo = new double[_nodeCount][];
       _nearest = new int[_nodeCount][];
-
-      // Ensure that the nodes are sorted by ID ascending
-      // or else all matrix indices will be off.
-      var nodes = problem.NodeProvider.GetNodes().OrderBy(n => n.Id).ToArray();
-      var weightsProvider = problem.EdgeWeightsProvider;
 
       for (var i = 0; i < _nodeCount; i++)
       {
@@ -208,7 +198,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         {
           // Set the distance from a node to itself as sufficiently large that it
           // is HIGHLY unlikely to be selected.
-          _distances[i][j] = i != j ? weightsProvider.GetWeight(nodes[i], nodes[j]) : double.MaxValue;
+          _distances[i][j] = i != j ? distances[i][j] : double.MaxValue;
           _heuristic[i][j] = Math.Pow(1 / _distances[i][j], Parameters.Beta);
           _pheromone[i][j] = _initialPheromoneDensity;
           CalculateChoiceInfo(i, j);

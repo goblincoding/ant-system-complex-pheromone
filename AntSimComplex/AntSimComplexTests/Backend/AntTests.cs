@@ -2,7 +2,6 @@
 using AntSimComplexAlgorithms.ProblemContext;
 using NSubstitute;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 
 namespace AntSimComplexTests.Backend

@@ -1,7 +1,4 @@
-﻿using System;
-using TspLibNet;
-
-namespace AntSimComplexAlgorithms.Utilities
+﻿namespace AntSimComplexAlgorithms.Utilities
 {
   /// <summary>
   /// These parameters are for the random proportional rule (probability of selection, formula given on p70 of
@@ -33,18 +30,11 @@ namespace AntSimComplexAlgorithms.Utilities
     /// </summary>
     public double InitialPheromone { get; }
 
-    /// <param name="problem">A TSPLib.Net problem instance</param>
-    /// <param name="random">Random number generator instance</param>
-    /// <exception cref="ArgumentNullException">Thrown if an null problem instance was provided.</exception>
-    public Parameters(IProblem problem, Random random)
+    /// <param name="numberOfAnts">The number of ants that were spawned (corresponding to nr of nodes).</param>
+    /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
+    public Parameters(int numberOfAnts, double nearestNeighbourTourLength)
     {
-      if (problem == null)
-      {
-        throw new ArgumentNullException(nameof(problem), $"The {nameof(Parameters)} constructor needs a valid problem instance argument");
-      }
-
-      var numberOfAnts = problem.NodeProvider.CountNodes();
-      InitialPheromone = numberOfAnts / problem.GetNearestNeighbourTourLength(random);
+      InitialPheromone = numberOfAnts / nearestNeighbourTourLength;
     }
   }
 }

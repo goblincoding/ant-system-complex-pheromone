@@ -1,6 +1,8 @@
-﻿namespace AntSimComplexTspLibItemManager.Utilities
+﻿using System;
+
+namespace AntSimComplexTspLibItemManager.Utilities
 {
-  public class TspNode
+  public sealed class TspNode : IEquatable<TspNode>
   {
     public int Id { get; }
     public double X { get; }
@@ -11,6 +13,13 @@
       Id = id;
       X = x;
       Y = y;
+    }
+
+    public bool Equals(TspNode other)
+    {
+      return Id == other.Id &&
+             X.Equals(other.X) &&
+             Y.Equals(other.Y);
     }
   }
 }

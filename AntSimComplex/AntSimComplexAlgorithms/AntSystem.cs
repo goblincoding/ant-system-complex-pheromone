@@ -1,10 +1,8 @@
 ﻿using AntSimComplexAlgorithms.ProblemContext;
 using AntSimComplexAlgorithms.Utilities;
-using AntSimComplexTspLibItemManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TspLibNet;
 
 namespace AntSimComplexAlgorithms
 {
@@ -28,22 +26,17 @@ namespace AntSimComplexAlgorithms
     /// Use a single, static random variable so that we do not end up with roughly
     /// the same number generation sequences with fast clock cycles.
     /// </summary>
-    private static readonly Random Random = new Random();
+    private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="manager">The TSP problem instance to which Ant System is to be applied.</param>
-    /// <exception cref="ArgumentNullException">Thrown when "problem" is null.</exception>
-    public AntSystem(TspLibItemManager manager)
+    /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
+    /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
+    /// <param name="distances">The distance matrix containing node to node edge weights.</param>
+    public AntSystem(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
-      if (manager == null)
-      {
-        throw new ArgumentNullException(nameof(manager), $"The {nameof(AntSystem)} constructor needs a valid problem instance argument");
-      }
-
-      var problem = manager.CurrentProblem();
-      _problemContext = new Context(problem, Random);
+      _problemContext = new Context(nodeCount, nearestNeighbourTourLength, distances, Random);
       StatsAggregator = new StatsAggregator();
       CreateAnts();
     }

@@ -1,4 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
+using AntSimComplexTspLibItemManager.Utilities;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -9,13 +10,6 @@ namespace AntSimComplexTests.Backend.Utilities
   internal class ParametersTests
   {
     [Test]
-    public void CtorGivenNullProblemShouldThrowArgumentNullException()
-    {
-      // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentNullException>(() => new Parameters(null, new Random()));
-    }
-
-    [Test]
     public void InitialPheromoneGivenMockProblemAndStartNode7ShouldReturn0Point5()
     {
       // arrange
@@ -24,7 +18,7 @@ namespace AntSimComplexTests.Backend.Utilities
       random.Next(0, 9).Returns(7); // force start node to be 7
 
       // act
-      var result = new Parameters(problem, random);
+      var result = new Parameters(problem.NodeProvider.CountNodes(), problem.GetNearestNeighbourTourLength(random));
 
       // assert
       Assert.AreEqual(0.5, result.InitialPheromone);

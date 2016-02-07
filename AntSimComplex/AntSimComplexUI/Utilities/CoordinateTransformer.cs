@@ -24,10 +24,10 @@ namespace AntSimComplexUI.Utilities
     /// <param name="canvasMinY">The mininum y coordinate of the canvas</param>
     /// <param name="canvasMaxY">The maximum y coordinate of the canvas</param>
     public CoordinateTransformer(double worldMinX, double worldMaxX, double worldMinY, double worldMaxY,
-                                 double canvasMinX, double canvasMaxX, double canvasMaxY, double canvasMinY)
+                                 double canvasMinX, double canvasMaxX, double canvasMinY, double canvasMaxY)
     {
       PrepareTransformationMatrices(worldMinX, worldMaxX, worldMinY, worldMaxY,
-                                    canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
+                                    canvasMinX, canvasMaxX, canvasMinY, canvasMaxY);
     }
 
     public Point TransformWorldToCanvas(Point point)

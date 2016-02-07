@@ -10,6 +10,10 @@ using TspLibNet.Tours;
 
 namespace AntSimComplexTests
 {
+  internal static class Extensions
+  {
+  }
+
   internal static class MockConstants
   {
     public const int NrNodes = 10;
@@ -18,6 +22,8 @@ namespace AntSimComplexTests
   internal class MockEdgeWeightsProvider : IEdgeWeightsProvider
   {
     // Random edge weight values (10 * 10).
+    public IReadOnlyList<double[]> Distances => Weights;
+
     private static readonly double[][] Weights =
     {
             //            0  1  2  3  4  5  6  7  8  9
@@ -50,7 +56,7 @@ namespace AntSimComplexTests
   internal class MockNodeProvider : INodeProvider
   {
     // 10 nodes.
-    private static readonly int[] XCoords = { 2, 4, 6, 7, 4, 3, 8, 9, 1, 0 };
+    private static readonly int[] XCoords = { 2, 4, 6, 7, 4, 3, 8, 9, 1, 10 };
 
     private static readonly int[] YCoords = { 3, 5, 6, 2, 5, 8, 4, 0, 1, 7 };
 
@@ -89,6 +95,10 @@ namespace AntSimComplexTests
     public IEdgeWeightsProvider EdgeWeightsProvider { get; } = new MockEdgeWeightsProvider();
     public INodeProvider NodeProvider { get; } = new MockNodeProvider();
 
+    public IReadOnlyList<double[]> Distances => ((MockEdgeWeightsProvider)EdgeWeightsProvider).Distances;
+
+    public string Name => "MockProblem";
+
     /// <summary>
     /// Convenience method to bypass IEdgeWeightsProvider GetWeight(INode,INode) method
     /// </summary>
@@ -116,14 +126,6 @@ namespace AntSimComplexTests
     }
 
     public IFixedEdgesProvider FixedEdgesProvider
-    {
-      get
-      {
-        throw new NotImplementedException();
-      }
-    }
-
-    public string Name
     {
       get
       {

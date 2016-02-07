@@ -21,10 +21,15 @@ namespace AntSimComplexTests.Backend.Utilities.RouletteWheelSelector
     public void SelectNextNodeGivenMockProblemShouldReturnCorrectIndex(double next, int expectedIndex)
     {
       // arrange
+      const int nodeCount = 10;
+
       var random = Substitute.For<Random>();
       random.NextDouble().Returns(next);
 
-      var data = new Data(new MockProblem(), 0.5);
+      var problem = new MockProblem();
+      var distances = problem.Distances;
+
+      var data = new Data(nodeCount, 0.5, distances);
       var selector = new RouletteWheel(data, random);
 
       // act

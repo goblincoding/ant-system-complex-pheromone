@@ -7,11 +7,5 @@ namespace AntSimComplexTests.Backend
   [TestFixture]
   internal class AntSystemTests
   {
-    [Test]
-    public void TestNullProblemParametersConstructor()
-    {
-      // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentNullException>(() => new AntSystem(null));
-    }
   }
 }

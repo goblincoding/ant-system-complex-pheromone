@@ -11,7 +11,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
   /// For the sake of this research application only problems with fewer than or equal to 100 nodes and
   /// 2D coordinate sets are considered.
   /// </summary>
-  public class SymmetricTspItemLoader
+  internal class SymmetricTspItemLoader
   {
     private readonly List<TspLib95Item> _tspLibItems;
 

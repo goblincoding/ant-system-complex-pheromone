@@ -4,6 +4,7 @@ using AntSimComplexTspLibItemManager;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -185,7 +186,9 @@ namespace AntSimComplexUI
 
       DrawTspLibItem();
 
-      _antSystem = new AntSystem(_tspLibItemManager);
+      _antSystem = new AntSystem(_tspLibItemManager.NodeCount,
+                                 _tspLibItemManager.NearestNeighbourTourLength,
+                                 _tspLibItemManager.Distances);
       _tourItems.Clear();
       AddOptimalTourToListView();
     }

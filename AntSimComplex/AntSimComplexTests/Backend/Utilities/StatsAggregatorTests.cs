@@ -19,7 +19,7 @@ namespace AntSimComplexTests.Backend.Utilities
     [TestCase(0)]
     [TestCase(-1)]
     [TestCase(5)]
-    public void StartTimerShouldNotThrow(int iteration)
+    public void StartIterationShouldNotThrow(int iteration)
     {
       // arrange
       var statsAggregator = new StatsAggregator();
@@ -29,7 +29,7 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void StopTimerGivenNullTourLengthArrayShouldThrowArgumentNullException()
+    public void StopIterationGivenNullTourLengthArrayShouldThrowArgumentNullException()
     {
       // arrange
       var statsAggregator = new StatsAggregator();
@@ -40,7 +40,7 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void StopGivenEmptyTourLengthArrayShouldThrowArgumentOutofRangeException()
+    public void StopIterationGivenEmptyTourLengthArrayShouldThrowArgumentOutofRangeException()
     {
       // arrange
       var tourLengths = new double[0];
@@ -52,7 +52,7 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void CallingStopTimerWithoutHavingCalledStartTimerShouldThrowInvalidOperationException()
+    public void CallingStopIterationWithoutHavingCalledStartIterationShouldThrowInvalidOperationException()
     {
       // arrange
       var tourLengths = new[] { 0.0 };
@@ -64,7 +64,7 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void IterationStatsAfterSingleStartTimerSleepStopTimerShouldHaveOnlyOneItem()
+    public void IterationStatsAfterSingleStartSleepStopShouldHaveOnlyOneItem()
     {
       // arrange
       const int iteration = 1;
@@ -82,7 +82,7 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void IterationStatsItemAfterSingleStartTimerSleepStopTimerShouldReturnCorrectIteration()
+    public void IterationStatsItemAfterSingleStartSleepStopShouldReturnCorrectIteration()
     {
       // arrange
       const int iteration = 1;
@@ -101,7 +101,7 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void IterationStatsItemAfterSingleStartTimerSleepStopTimerShouldReturnCorrectTourLengthAverage()
+    public void IterationStatsItemAfterSingleStartSleepStopShouldReturnCorrectTourLengthAverage()
     {
       // arrange
       const int iteration = 1;
