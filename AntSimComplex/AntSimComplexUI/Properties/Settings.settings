@@ -11,5 +11,8 @@
     <Setting Name="NodeCircleWidth" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">6</Value>
     </Setting>
+    <Setting Name="LogPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">..\..\..\logs</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

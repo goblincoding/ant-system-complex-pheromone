@@ -16,9 +16,11 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public List<BestTour> BestTours { get; } = new List<BestTour>();
 
-    public StatsAggregator StatsAggregator { get; }
+    public List<IterationStatsItem> IterationStats => _statsAggregator.IterationStats;
 
     private Ant[] Ants { get; set; }
+
+    private readonly StatsAggregator _statsAggregator;
     private readonly IProblemContext _problemContext;
     private int _currentIteration;
 
@@ -37,7 +39,7 @@ namespace AntSimComplexAlgorithms
     public AntSystem(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       _problemContext = new Context(nodeCount, nearestNeighbourTourLength, distances, Random);
-      StatsAggregator = new StatsAggregator();
+      _statsAggregator = new StatsAggregator();
       CreateAnts();
     }
 
@@ -48,7 +50,7 @@ namespace AntSimComplexAlgorithms
     {
       BestTours.Clear();
       _problemContext.ResetPheromone();
-      StatsAggregator.ClearStats();
+      _statsAggregator.ClearStats();
       _currentIteration = 0;
     }
 
@@ -59,11 +61,11 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     public void Execute()
     {
-      StatsAggregator.StartIteration(_currentIteration++);
+      _statsAggregator.StartIteration(_currentIteration++);
       InitialiseAnts();
       ConstructSolutions();
       UpdatePheromoneTrails();
-      StatsAggregator.StopIteration(Ants.Select(a => a.TourLength));
+      _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
       var bestAnt = Ants.Min();
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -67,7 +68,7 @@ namespace AntSimComplexUI
       var worker = new BackgroundWorker();
 
       // This method gets called as soon as work has completed. UI interaction is re-enabled.
-      worker.RunWorkerCompleted += LoadBestToursIntoListView;
+      worker.RunWorkerCompleted += ExecutionCompleted;
 
       // Are we executing by nr of iterations or time?
       if (RunCount.IsChecked == true)
@@ -118,6 +119,18 @@ namespace AntSimComplexUI
           _antSystem.Execute();
         }
       };
+    }
+
+    private void LogStats()
+    {
+      var logMessages = new List<string>
+      {
+        $"Results for problem: {_tspLibItemManager.ProblemName}",
+        IterationStatsItem.CsvHeader
+      };
+
+      logMessages.AddRange(_antSystem.IterationStats.Select(s => s.CsvString));
+      StatsLogger.Logger.Log(logMessages);
     }
 
     /// <summary>
@@ -194,14 +207,19 @@ namespace AntSimComplexUI
     }
 
     /// <summary>
-    /// Called once the AS algorithm has finished executing. Loads the best tour of each iteration into the ListView.
+    /// Called once the AS algorithm has finished executing.
     /// </summary>
     /// <param name="o"></param>
     /// <param name="ea"></param>
-    private void LoadBestToursIntoListView(object o, RunWorkerCompletedEventArgs ea)
+    private void ExecutionCompleted(object o, RunWorkerCompletedEventArgs ea)
     {
       BusyIndicator.IsBusy = false;
+      LoadBestToursIntoListView();
+      LogStats();
+    }
 
+    private void LoadBestToursIntoListView()
+    {
       _tourItems.Clear();
       AddOptimalTourToListView();
 

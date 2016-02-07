@@ -97,6 +97,7 @@
     <Compile Include="Utilities\CoordinateTransformer.cs" />
     <Compile Include="Utilities\ListViewTourItem.cs" />
     <Compile Include="Utilities\CustomEventArgs.cs" />
+    <Compile Include="Utilities\StatsLogger.cs" />
     <Compile Include="Utilities\Visualiser.cs" />
     <Page Include="Dialogs\DirectoryBrowserDialog.xaml">
       <SubType>Designer</SubType>

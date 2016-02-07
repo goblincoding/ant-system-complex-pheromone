@@ -8,27 +8,8 @@ namespace AntSimComplexAlgorithms.Utilities
   /// <summary>
   /// Keeps track of performance statistics for each execution of the algorithm.
   /// </summary>
-  public class StatsAggregator
+  internal class StatsAggregator
   {
-    public struct IterationStatsItem : IComparable<IterationStatsItem>
-    {
-      public int Iteration { get; set; }
-      public long TimeElapsed { get; set; }
-      public double AverageTourLength { get; set; }
-
-      public IterationStatsItem(int iteration, long timeElapsed, double averageTourLength)
-      {
-        Iteration = iteration;
-        TimeElapsed = timeElapsed;
-        AverageTourLength = averageTourLength;
-      }
-
-      public int CompareTo(IterationStatsItem other)
-      {
-        return Iteration.CompareTo(other.Iteration);
-      }
-    }
-
     private readonly Stopwatch _stopWatch;
     private int _currentIteration;
     private bool _startTimerCalled;
