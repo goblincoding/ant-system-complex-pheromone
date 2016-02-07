@@ -164,10 +164,10 @@ namespace AntSimComplexUI
     /// <summary>
     /// Draw everything we know about the selected TSP problem item.
     /// </summary>
-    private void DrawTspLibItem()
+    private void DrawTspLibItem(bool windowSizeChanged = false)
     {
       var item = TourListView.SelectedItem as ListViewTourItem;
-      _visualiser.DrawTspLibItem(item, _drawOptimal);
+      _visualiser.DrawTspLibItem(item, _drawOptimal, windowSizeChanged);
     }
 
     #region eventhandlers
@@ -229,7 +229,7 @@ namespace AntSimComplexUI
     {
       if (_initialised)
       {
-        DrawTspLibItem();
+        DrawTspLibItem(true);
       }
     }
 

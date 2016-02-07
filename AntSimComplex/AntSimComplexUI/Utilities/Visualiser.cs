@@ -13,29 +13,14 @@ namespace AntSimComplexUI.Utilities
   {
     private readonly Canvas _canvas;
     private readonly TspLibItemManager _currentTspItemManager;
-    private readonly CoordinateTransformer _transformer;
+    private CoordinateTransformer _transformer;
 
     public Visualiser(Canvas canvas, TspLibItemManager currentTspItemManager)
     {
       _canvas = canvas;
       _currentTspItemManager = currentTspItemManager;
 
-      var worldMinX = _currentTspItemManager.MinXCoordinate;
-      var worldMinY = _currentTspItemManager.MinYCoordinate;
-      var worldMaxX = _currentTspItemManager.MaxXCoordinate;
-      var worldMaxY = _currentTspItemManager.MaxYCoordinate;
-
-      const double margin = 20;
-      const double canvasMinX = margin;
-      const double canvasMinY = margin;
-      var canvasMaxX = _canvas.ActualWidth - margin;
-      var canvasMaxY = _canvas.ActualHeight - margin;
-
-      // Order of canvas Y min and max arguments are swapped due to canvas coordinate
-      // system (top-left is 0,0).  This "flips" the coordinate system along the Y
-      // axis by making the Y scale value negative so that we have bottom-left at 0,0.
-      _transformer = new CoordinateTransformer(worldMinX, worldMaxX, worldMinY, worldMaxY,
-                                               canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
+      InitialiseTransformer();
     }
 
     /// <summary>
@@ -43,8 +28,13 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     /// <param name="tourItem">The tour item to draw.</param>
     /// <param name="drawOptimal">Draw the optimal tour as well (if available).</param>
-    public void DrawTspLibItem(ListViewTourItem tourItem, bool drawOptimal)
+    public void DrawTspLibItem(ListViewTourItem tourItem, bool drawOptimal, bool canvasSizeChanged)
     {
+      if (canvasSizeChanged)
+      {
+        InitialiseTransformer();
+      }
+
       _canvas.Children.Clear();
 
       var points = _currentTspItemManager.NodeCoordinatesAsPoints;
@@ -128,6 +118,26 @@ namespace AntSimComplexUI.Utilities
       var transformed = _transformer.TransformWorldToCanvas(point);
       Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
       Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
+    }
+
+    private void InitialiseTransformer()
+    {
+      var worldMinX = _currentTspItemManager.MinXCoordinate;
+      var worldMinY = _currentTspItemManager.MinYCoordinate;
+      var worldMaxX = _currentTspItemManager.MaxXCoordinate;
+      var worldMaxY = _currentTspItemManager.MaxYCoordinate;
+
+      const double margin = 20;
+      const double canvasMinX = margin;
+      const double canvasMinY = margin;
+      var canvasMaxX = _canvas.ActualWidth - margin;
+      var canvasMaxY = _canvas.ActualHeight - margin;
+
+      // Order of canvas Y min and max arguments are swapped due to canvas coordinate
+      // system (top-left is 0,0).  This "flips" the coordinate system along the Y
+      // axis by making the Y scale value negative so that we have bottom-left at 0,0.
+      _transformer = new CoordinateTransformer(worldMinX, worldMaxX, worldMinY, worldMaxY,
+        canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
     }
   }
 }
