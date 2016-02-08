@@ -43,7 +43,7 @@ namespace AntSimComplexTests.Backend.Utilities
     public void StopIterationGivenEmptyTourLengthArrayShouldThrowArgumentOutofRangeException()
     {
       // arrange
-      var tourLengths = new double[0];
+      var tourLengths = new int[0];
       var statsAggregator = new StatsAggregator();
 
       // assert
@@ -55,7 +55,7 @@ namespace AntSimComplexTests.Backend.Utilities
     public void CallingStopIterationWithoutHavingCalledStartIterationShouldThrowInvalidOperationException()
     {
       // arrange
-      var tourLengths = new[] { 0.0 };
+      var tourLengths = new[] { 0 };
       var statsAggregator = new StatsAggregator();
 
       // assert
@@ -68,7 +68,7 @@ namespace AntSimComplexTests.Backend.Utilities
     {
       // arrange
       const int iteration = 1;
-      var tourLengths = new[] { 0.0 };
+      var tourLengths = new[] { 0 };
       var statsAggregator = new StatsAggregator();
 
       // act
@@ -86,7 +86,7 @@ namespace AntSimComplexTests.Backend.Utilities
     {
       // arrange
       const int iteration = 1;
-      var tourLengths = new[] { 0.0 };
+      var tourLengths = new[] { 0 };
 
       var statsAggregator = new StatsAggregator();
 
@@ -105,8 +105,8 @@ namespace AntSimComplexTests.Backend.Utilities
     {
       // arrange
       const int iteration = 1;
-      var tourLengths = new[] { 1.0, 2.0, 3.0, 4.0 };
-      var expectedAverage = tourLengths.Average();
+      var tourLengths = new[] { 1, 2, 3, 4 };
+      var expectedAverage = (int)tourLengths.Average();
 
       var statsAggregator = new StatsAggregator();
 
@@ -125,7 +125,7 @@ namespace AntSimComplexTests.Backend.Utilities
     {
       // arrange
       const int iteration = 1;
-      var tourLengths = new[] { 1.0, 2.0, 3.0, 4.0 };
+      var tourLengths = new[] { 1, 2, 3, 4 };
       var statsAggregator = new StatsAggregator();
 
       // act

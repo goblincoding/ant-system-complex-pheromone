@@ -30,7 +30,7 @@ namespace AntSimComplexAlgorithms.ProblemContext
       return _dataStructures.NearestNeighbours(node);
     }
 
-    public double Distance(int node1, int node2)
+    public int Distance(int node1, int node2)
     {
       return _dataStructures.Distance(node1, node2);
     }
@@ -72,7 +72,7 @@ namespace AntSimComplexAlgorithms.ProblemContext
     /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     /// <param name="random">The application global random object instance.</param>
-    public Context(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances, Random random)
+    public Context(int nodeCount, int nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<int>> distances, Random random)
     {
       Random = random;
       NodeCount = nodeCount;

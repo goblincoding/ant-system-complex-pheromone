@@ -19,11 +19,11 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// </summary>
     /// <param name="problem"></param>
     /// <param name="random">A random number generator</param>
-    public static double GetNearestNeighbourTourLength(this IProblem problem, Random random)
+    public static int GetNearestNeighbourTourLength(this IProblem problem, Random random)
     {
       var notVisited = problem.NodeProvider.GetNodes().ToList();
       var weightsProvider = problem.EdgeWeightsProvider;
-      var tourLength = 0.0;
+      var tourLength = 0;
 
       // Select a random node.
       var current = notVisited.ElementAt(random.Next(0, notVisited.Count));
@@ -41,7 +41,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
       }
 
       // Return to the first node.
-      tourLength += weightsProvider.GetWeight(current, first);
+      tourLength += (int)weightsProvider.GetWeight(current, first);
       return tourLength;
     }
 
@@ -57,7 +57,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
     private class NodeWeightPair : IComparable<NodeWeightPair>, IComparable
     {
       public INode Node { get; set; }
-      public double Weight { get; set; }
+      public int Weight { get; set; }
 
       public int CompareTo(NodeWeightPair other)
       {
@@ -92,7 +92,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
     {
       var weightList = from n in nodes
                        let w = provider.GetWeight(fromNode, n)
-                       select new NodeWeightPair { Node = n, Weight = w };
+                       select new NodeWeightPair { Node = n, Weight = (int)w };
       return weightList.Min();
     }
 

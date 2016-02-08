@@ -36,18 +36,18 @@ namespace AntSimComplexTspLibItemManager.Utilities
 
     /// <returns>Returns a distance matrix of edge weights between nodes.  I.e. Distances[i][j]
     /// will return the distance between node i and j.</returns>
-    public IReadOnlyList<IReadOnlyList<double>> Distances => _distances;
+    public IReadOnlyList<IReadOnlyList<int>> Distances => _distances;
 
-    private double[][] _distances;
+    private int[][] _distances;
 
     /// <returns>Returns the tour length constructed by the nearest neighbour heuristic (ACO Dorigo Ch3, p70).</returns>
-    public double NearestNeighbourTourLength { get; private set; }
+    public int NearestNeighbourTourLength { get; private set; }
 
     /// <returns>Returns true if the TSP instance has a known optimal tour.</returns>
     public bool HasOptimalTour { get; private set; }
 
-    /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
-    public double OptimalTourLength { get; private set; } = double.MaxValue;
+    /// <returns>The optimal tour length if known, int.MaxValue if not.</returns>
+    public int OptimalTourLength { get; private set; } = int.MaxValue;
 
     /// <returns>A list of TspNode objects corresponding to the optimal tour for the problem (if it is known).</returns>
     public List<TspNode> OptimalTour { get; private set; } = new List<TspNode>();
@@ -121,14 +121,14 @@ namespace AntSimComplexTspLibItemManager.Utilities
       {
         var nodes = item.OptimalTour.Nodes.Select(n => item.Problem.NodeProvider.GetNode(n));
         OptimalTour = nodes.OfType<Node2D>().Select(n => new TspNode(n.Id, n.X, n.Y)).ToList();
-        OptimalTourLength = item.OptimalTourDistance;
+        OptimalTourLength = (int)item.OptimalTourDistance;
         HasOptimalTour = true;
       }
     }
 
     private void CalculateDistances(IProblem problem)
     {
-      _distances = new double[NodeCount][];
+      _distances = new int[NodeCount][];
 
       // Ensure that the nodes are sorted by ID ascending
       // or else all matrix indices will be off.
@@ -138,11 +138,11 @@ namespace AntSimComplexTspLibItemManager.Utilities
       for (var i = 0; i < NodeCount; i++)
       {
         // Initialise columns.
-        _distances[i] = new double[NodeCount];
+        _distances[i] = new int[NodeCount];
 
         for (var j = 0; j < NodeCount; j++)
         {
-          _distances[i][j] = weightsProvider.GetWeight(nodes[i], nodes[j]);
+          _distances[i][j] = (int)weightsProvider.GetWeight(nodes[i], nodes[j]);
         }
       }
     }

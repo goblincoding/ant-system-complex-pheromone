@@ -16,10 +16,10 @@ namespace AntSimComplexTspLibItemManager
 
     /// <returns>Returns a distance matrix of edge weights between nodes.  I.e. Distances[i][j]
     /// will return the distance between node i and j.</returns>
-    public IReadOnlyList<IReadOnlyList<double>> Distances => _infoProvider.Distances;
+    public IReadOnlyList<IReadOnlyList<int>> Distances => _infoProvider.Distances;
 
     /// <returns>Returns the tour length constructed by the nearest neighbour heuristic (ACO Dorigo Ch3, p70).</returns>
-    public double NearestNeighbourTourLength => _infoProvider.NearestNeighbourTourLength;
+    public int NearestNeighbourTourLength => _infoProvider.NearestNeighbourTourLength;
 
     /// <returns>The maximum "x" coordinate of all the nodes in the graph</returns>
     public double MaxXCoordinate => _infoProvider.MaxXCoordinate;
@@ -36,8 +36,8 @@ namespace AntSimComplexTspLibItemManager
     /// <returns>True if the current item has a known optimal tour.</returns>
     public bool HasOptimalTour => _infoProvider.HasOptimalTour;
 
-    /// <returns>The optimal tour length if known, double.MaxValue if not.</returns>
-    public double OptimalTourLength => _infoProvider.OptimalTourLength;
+    /// <returns>The optimal tour length if known, int.MaxValue if not.</returns>
+    public int OptimalTourLength => _infoProvider.OptimalTourLength;
 
     /// <returns>A list of TspNode objects corresponding to the optimal tour for the problem (if it is known).</returns>
     public List<TspNode> OptimalTour => _infoProvider.OptimalTour;

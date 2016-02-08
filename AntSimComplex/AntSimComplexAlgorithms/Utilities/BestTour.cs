@@ -10,7 +10,7 @@ namespace AntSimComplexAlgorithms.Utilities
     /// </summary>
     public IEnumerable<int> Tour { get; set; }
 
-    public double TourLength { get; set; }
+    public int TourLength { get; set; }
 
     public int CompareTo(BestTour other)
     {

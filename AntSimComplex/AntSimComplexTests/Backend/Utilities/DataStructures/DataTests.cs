@@ -59,7 +59,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var result = data.Distance(node1, node2);
 
       // assert
-      Assert.AreEqual(double.MaxValue, result);
+      Assert.AreEqual(int.MaxValue, result);
     }
 
     [Test]
@@ -106,7 +106,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       var data = CreateDefaultDataStructuresFromMockProblem();
       var distance = data.Distance(node1, node2);
-      var heuristic = Math.Pow(1 / distance, Parameters.Beta);
+      var heuristic = Math.Pow(1 / (double)distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity, Parameters.Alpha) * heuristic;
 
       // act
@@ -126,7 +126,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       var data = CreateDefaultDataStructuresFromMockProblem();
       var distance = data.Distance(node1, node2);
-      var heuristic = Math.Pow(1 / distance, Parameters.Beta);
+      var heuristic = Math.Pow(1 / (double)distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity + deposit, Parameters.Alpha) * heuristic;
 
       // act
@@ -146,7 +146,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       var data = CreateDefaultDataStructuresFromMockProblem();
       var distance = data.Distance(node1, node2);
-      var heuristic = Math.Pow(1 / distance, Parameters.Beta);
+      var heuristic = Math.Pow(1 / (double)distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity * Parameters.EvaporationRate, Parameters.Alpha) * heuristic;
 
       // act
@@ -168,7 +168,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       var data = CreateDefaultDataStructuresFromMockProblem();
       var distance = data.Distance(node1, node2);
-      var heuristic = Math.Pow(1 / distance, Parameters.Beta);
+      var heuristic = Math.Pow(1 / (double)distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity, Parameters.Alpha) * heuristic;
 
       // act

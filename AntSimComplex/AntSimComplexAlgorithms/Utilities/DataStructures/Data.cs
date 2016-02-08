@@ -4,8 +4,6 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.DataStructures
 {
-  // Note:  Might have to change distance matrix to integers: ACO p101
-
   /// <summary>
   /// This class represents the prepopulated (prior to algorithm run-time), consolidated,
   /// calculated values of different aspects of a particular TSP problem instance in data
@@ -39,19 +37,19 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     private readonly double _initialPheromoneDensity;
 
     /// <summary>
+    /// Represents ALL inter-city distances in a grid format, i.e. querying
+    /// _distances[i][j] will return the distance from node i to node j.
+    /// If i == j, the distance is set to int.MaxValue
+    /// Once initialised, the values in this matrix do not change.
+    /// </summary>
+    private int[][] _distances;
+
+    /// <summary>
     /// Represents the simple pheromone density trails between two nodes (graph arcs)
     /// for the "standard" Ant System implementation. Pheromone is frequently updated
     /// during the evaporation and deposit steps.
     /// </summary>
     private double[][] _pheromone;
-
-    /// <summary>
-    /// Represents ALL inter-city distances in a grid format, i.e. querying
-    /// _distances[i][j] will return the distance from node i to node j.
-    /// If i == j, the distance is set to double.MaxValue
-    /// Once initialised, the values in this matrix do not change.
-    /// </summary>
-    private double[][] _distances;
 
     /// <summary>
     /// Represents the [n_ij]^B heuristic values for each edge [i][j] where
@@ -82,7 +80,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
-    public Data(int nodeCount, double initialPheromoneDensity, IReadOnlyList<IReadOnlyList<double>> distances)
+    public Data(int nodeCount, double initialPheromoneDensity, IReadOnlyList<IReadOnlyList<int>> distances)
     {
       if (initialPheromoneDensity <= 0.0)
       {
@@ -136,7 +134,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
     }
 
-    public double Distance(int node1, int node2)
+    public int Distance(int node1, int node2)
     {
       return _distances[node1][node2];
     }
@@ -177,20 +175,21 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// Choice info matrix - p102
     /// </summary>
     /// <param name="distances"></param>
-    private void PopulateDataStructures(IReadOnlyList<IReadOnlyList<double>> distances)
+    private void PopulateDataStructures(IReadOnlyList<IReadOnlyList<int>> distances)
     {
       // Initialise rows.
+      _distances = new int[_nodeCount][];
+      _nearest = new int[_nodeCount][];
+
       _pheromone = new double[_nodeCount][];
-      _distances = new double[_nodeCount][];
       _heuristic = new double[_nodeCount][];
       _choiceInfo = new double[_nodeCount][];
-      _nearest = new int[_nodeCount][];
 
       for (var i = 0; i < _nodeCount; i++)
       {
         // Initialise columns.
+        _distances[i] = new int[_nodeCount];
         _pheromone[i] = new double[_nodeCount];
-        _distances[i] = new double[_nodeCount];
         _heuristic[i] = new double[_nodeCount];
         _choiceInfo[i] = new double[_nodeCount];
 
@@ -198,8 +197,8 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         {
           // Set the distance from a node to itself as sufficiently large that it
           // is HIGHLY unlikely to be selected.
-          _distances[i][j] = i != j ? distances[i][j] : double.MaxValue;
-          _heuristic[i][j] = Math.Pow(1 / _distances[i][j], Parameters.Beta);
+          _distances[i][j] = i != j ? distances[i][j] : int.MaxValue;
+          _heuristic[i][j] = Math.Pow(1 / (double)_distances[i][j], Parameters.Beta);
           _pheromone[i][j] = _initialPheromoneDensity;
           CalculateChoiceInfo(i, j);
         }

@@ -36,7 +36,7 @@ namespace AntSimComplexAlgorithms
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
-    public AntSystem(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
+    public AntSystem(int nodeCount, int nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<int>> distances)
     {
       _problemContext = new Context(nodeCount, nearestNeighbourTourLength, distances, Random);
       _statsAggregator = new StatsAggregator();

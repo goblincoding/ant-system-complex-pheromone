@@ -32,9 +32,9 @@
 
     /// <param name="numberOfAnts">The number of ants that were spawned (corresponding to nr of nodes).</param>
     /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
-    public Parameters(int numberOfAnts, double nearestNeighbourTourLength)
+    public Parameters(int numberOfAnts, int nearestNeighbourTourLength)
     {
-      InitialPheromone = numberOfAnts / nearestNeighbourTourLength;
+      InitialPheromone = (double)numberOfAnts / nearestNeighbourTourLength;
     }
   }
 }

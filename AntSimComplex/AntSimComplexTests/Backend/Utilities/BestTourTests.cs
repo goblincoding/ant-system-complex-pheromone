@@ -6,10 +6,10 @@ namespace AntSimComplexTests.Backend.Utilities
   [TestFixture]
   internal class BestTourTests
   {
-    [TestCase(5.0, 4.0, 1)]
-    [TestCase(2, 4.0, -1)]
-    [TestCase(1.0, 1.0, 0)]
-    public void CompareToShouldCompareOnTourLength(double tourLength1, double tourLength2, int compareResult)
+    [TestCase(5, 4, 1)]
+    [TestCase(2, 4, -1)]
+    [TestCase(1, 1, 0)]
+    public void CompareToShouldCompareOnTourLength(int tourLength1, int tourLength2, int compareResult)
     {
       // arrange
       var tour1 = new BestTour { TourLength = tourLength1, Tour = new[] { 1, 2, 3, 4 } };

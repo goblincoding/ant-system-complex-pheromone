@@ -14,7 +14,7 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Length of the ant's completed tour.
     /// </summary>
-    public double TourLength { get; private set; }
+    public int TourLength { get; private set; }
 
     /// <summary>
     /// The node indices corresponding to the ant's tour.
@@ -54,7 +54,7 @@ namespace AntSimComplexAlgorithms
       }
       _visited[_currentNode] = 1;
 
-      TourLength = 0.0;
+      TourLength = 0;
       Tour.Clear();
       Tour.Add(_currentNode);
     }

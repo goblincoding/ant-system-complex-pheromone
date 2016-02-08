@@ -28,6 +28,7 @@ namespace AntSimComplexUI.Utilities
     /// </summary>
     /// <param name="tourItem">The tour item to draw.</param>
     /// <param name="drawOptimal">Draw the optimal tour as well (if available).</param>
+    /// <param name="canvasSizeChanged">True if the GUI window's canvas size has changed.</param>
     public void DrawTspLibItem(ListViewTourItem tourItem, bool drawOptimal, bool canvasSizeChanged)
     {
       if (canvasSizeChanged)

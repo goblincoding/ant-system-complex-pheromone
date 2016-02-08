@@ -22,25 +22,25 @@ namespace AntSimComplexTests
   internal class MockEdgeWeightsProvider : IEdgeWeightsProvider
   {
     // Random edge weight values (10 * 10).
-    public IReadOnlyList<double[]> Distances => Weights;
+    public IReadOnlyList<int[]> Distances => Weights;
 
-    private static readonly double[][] Weights =
+    private static readonly int[][] Weights =
     {
             //            0  1  2  3  4  5  6  7  8  9
-            new double[]{ 0, 3, 7, 3, 4, 5, 6, 7, 8, 9 }, // 0
-            new double[]{ 3, 0, 3, 4, 5, 6, 7, 8, 9, 1 }, // 1
-            new double[]{ 7, 3, 0, 5, 6, 7, 8, 9, 1, 2 }, // 2
-            new double[]{ 3, 4, 5, 0, 7, 8, 9, 1, 2, 3 }, // 3
-            new double[]{ 4, 5, 6, 7, 0, 9, 1, 2, 3, 4 }, // 4
-            new double[]{ 5, 6, 7, 8, 9, 0, 2, 3, 4, 5 }, // 5
-            new double[]{ 6, 7, 8, 9, 1, 2, 0, 4, 5, 6 }, // 6
-            new double[]{ 7, 8, 9, 1, 2, 3, 4, 0, 6, 7 }, // 7
-            new double[]{ 8, 9, 1, 2, 3, 4, 5, 6, 0, 8 }, // 8
-            new double[]{ 9, 1, 2, 3, 4, 5, 6, 7, 8, 0 }  // 9
+            new[]{ 0, 3, 7, 3, 4, 5, 6, 7, 8, 9 }, // 0
+            new[]{ 3, 0, 3, 4, 5, 6, 7, 8, 9, 1 }, // 1
+            new[]{ 7, 3, 0, 5, 6, 7, 8, 9, 1, 2 }, // 2
+            new[]{ 3, 4, 5, 0, 7, 8, 9, 1, 2, 3 }, // 3
+            new[]{ 4, 5, 6, 7, 0, 9, 1, 2, 3, 4 }, // 4
+            new[]{ 5, 6, 7, 8, 9, 0, 2, 3, 4, 5 }, // 5
+            new[]{ 6, 7, 8, 9, 1, 2, 0, 4, 5, 6 }, // 6
+            new[]{ 7, 8, 9, 1, 2, 3, 4, 0, 6, 7 }, // 7
+            new[]{ 8, 9, 1, 2, 3, 4, 5, 6, 0, 8 }, // 8
+            new[]{ 9, 1, 2, 3, 4, 5, 6, 7, 8, 0 }  // 9
         };
 
     // Convenience method so we can work with indices directly.
-    public double GetWeight(int first, int second)
+    public int GetWeight(int first, int second)
     {
       return Weights[first][second];
     }
@@ -95,7 +95,7 @@ namespace AntSimComplexTests
     public IEdgeWeightsProvider EdgeWeightsProvider { get; } = new MockEdgeWeightsProvider();
     public INodeProvider NodeProvider { get; } = new MockNodeProvider();
 
-    public IReadOnlyList<double[]> Distances => ((MockEdgeWeightsProvider)EdgeWeightsProvider).Distances;
+    public IReadOnlyList<int[]> Distances => ((MockEdgeWeightsProvider)EdgeWeightsProvider).Distances;
 
     public string Name => "MockProblem";
 

@@ -44,7 +44,7 @@ namespace AntSimComplexAlgorithms.Utilities
     /// Consolidate information for the current iteration.
     /// </summary>
     /// <param name="tourLengths">The tour lengths of all the tours constructed during the iteration ending.</param>
-    public void StopIteration(IEnumerable<double> tourLengths)
+    public void StopIteration(IEnumerable<int> tourLengths)
     {
       // Stop first so that the safety checks do not interfere with performance data.
       _stopWatch.Stop();
@@ -54,7 +54,7 @@ namespace AntSimComplexAlgorithms.Utilities
         throw new ArgumentNullException(nameof(tourLengths), "Ant array can't be null");
       }
 
-      var enumerable = tourLengths as double[] ?? tourLengths.ToArray();
+      var enumerable = tourLengths as int[] ?? tourLengths.ToArray();
       if (!enumerable.Any())
       {
         throw new ArgumentOutOfRangeException(nameof(tourLengths), "Ant array can't be empty");
@@ -66,7 +66,7 @@ namespace AntSimComplexAlgorithms.Utilities
       }
 
       _startTimerCalled = false;
-      IterationStats.Add(new IterationStatsItem(_currentIteration, _stopWatch.ElapsedMilliseconds, enumerable.Average()));
+      IterationStats.Add(new IterationStatsItem(_currentIteration, _stopWatch.ElapsedMilliseconds, (int)enumerable.Average()));
       _stopWatch.Reset();
     }
 

@@ -9,9 +9,9 @@ namespace AntSimComplexAlgorithms.Utilities
 
     public int Iteration { get; set; }
     public long TimeElapsed { get; set; }
-    public double AverageTourLength { get; set; }
+    public int AverageTourLength { get; set; }
 
-    public IterationStatsItem(int iteration, long timeElapsed, double averageTourLength)
+    public IterationStatsItem(int iteration, long timeElapsed, int averageTourLength)
     {
       Iteration = iteration;
       TimeElapsed = timeElapsed;
