@@ -75,9 +75,13 @@ namespace AntSimComplexUI
       {
         IterateThroughRunCount(worker);
       }
-      else
+      else if (RunTime.IsChecked == true)
       {
         IterateForRunTime(worker);
+      }
+      else
+      {
+        IterateForThreshold(worker);
       }
 
       // Set IsBusy before we start the thread.
@@ -115,6 +119,20 @@ namespace AntSimComplexUI
       worker.DoWork += (o, ea) =>
       {
         for (var i = 0; i < runCount; i++)
+        {
+          _antSystem.Execute();
+        }
+      };
+    }
+
+    private void IterateForThreshold(BackgroundWorker worker)
+    {
+      var runThreshold = RunThresholdInt.Value;
+
+      worker.DoWork += (o, ea) =>
+      {
+        while (!_antSystem.BestTours.Any() ||
+               _antSystem.BestTours.Last().TourLength > runThreshold)
         {
           _antSystem.Execute();
         }

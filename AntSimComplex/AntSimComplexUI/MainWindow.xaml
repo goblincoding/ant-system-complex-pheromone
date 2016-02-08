@@ -97,6 +97,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -126,6 +127,17 @@
                                                 Value="10" Minimum="1"
                                                 Grid.Column="1"
                                                 Grid.Row="2" />
+
+                            <RadioButton Name="RunThreshold"
+                                         GroupName="ExecuteRadioButtons"
+                                         Content="Run threshold:"
+                                         Grid.Column="0"
+                                         Grid.Row="3"
+                                         HorizontalAlignment="Left" />
+                            <xctk:IntegerUpDown Name="RunThresholdInt"
+                                                Value="1000" Minimum="500"
+                                                Grid.Column="1"
+                                                Grid.Row="3" />
                         </Grid>
                     </Border>
 

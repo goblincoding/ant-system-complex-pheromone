@@ -35,7 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\AntSimComplex\AntSimComplex.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\AntSimComplexUI\AntSimComplex.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
