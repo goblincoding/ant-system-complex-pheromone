@@ -11,18 +11,25 @@ namespace AntSimComplexAlgorithms
   /// </summary>
   public class AntSystem
   {
+    private Ant[] Ants { get; set; }
+    private readonly StatsAggregator _statsAggregator;
+    private readonly IProblemContext _problemContext;
+    private int _currentIteration;
+
     /// <summary>
     /// A list of ALL the best tours per solution iteration.
     /// </summary>
     public List<BestTour> BestTours { get; } = new List<BestTour>();
 
+    /// <summary>
+    /// A list of stats items for each iteration.
+    /// </summary>
     public List<IterationStatsItem> IterationStats => _statsAggregator.IterationStats;
 
-    private Ant[] Ants { get; set; }
-
-    private readonly StatsAggregator _statsAggregator;
-    private readonly IProblemContext _problemContext;
-    private int _currentIteration;
+    /// <summary>
+    /// The length of the best tour of the last iteration completed.
+    /// </summary>
+    public int LastTourMinimum { get; set; } = int.MaxValue;
 
     /// <summary>
     /// Use a single, static random variable so that we do not end up with roughly
@@ -68,6 +75,7 @@ namespace AntSimComplexAlgorithms
       _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
       var bestAnt = Ants.Min();
+      LastTourMinimum = bestAnt.TourLength;
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
 
