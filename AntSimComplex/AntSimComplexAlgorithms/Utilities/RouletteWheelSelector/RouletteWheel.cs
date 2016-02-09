@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
 {
@@ -9,6 +10,8 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
   /// The probabilistic selection of the next node to be visited is done in accordance to the
   /// roulette wheel selection procedure: https://en.wikipedia.org/wiki/Fitness_proportionate_selection
   /// (ACO p107)
+  ///
+  /// Probabilities are
   /// </summary>
   internal class RouletteWheel : IRouletteWheelSelector
   {
@@ -18,37 +21,19 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     ///
     /// Compares on probability.
     /// </summary>
-    private class ProbabilityNodeIndexPair : IComparable<ProbabilityNodeIndexPair>, IComparable
+    private struct ProbabilityNodeIndexPair : IComparable<ProbabilityNodeIndexPair>
     {
-      public double Probability { get; set; }
+      public int Probability { get; set; }
       public int NeighbourIndex { get; set; }
 
       public int CompareTo(ProbabilityNodeIndexPair other)
       {
-        if (other == null)
-        {
-          throw new ArgumentNullException(nameof(other));
-        }
-
-        return Probability.CompareTo(other.Probability);
-      }
-
-      public int CompareTo(object obj)
-      {
-        if (obj == null)
-        {
-          return 1;
-        }
-
-        var other = obj as ProbabilityNodeIndexPair;
-        if (other == null)
-        {
-          throw new ArgumentException("Object is not of type 'ProbabilityNodeIndexPair'");
-        }
-
         return Probability.CompareTo(other.Probability);
       }
     }
+
+    // Comparing probability doubles are expensive, rather scale to a relatively big integer range.
+    private const int ProbabilityScaleFactor = 1000;
 
     private readonly Random _random;
     private readonly IDataStructures _dataStructures;
@@ -74,17 +59,15 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     /// <returns>The index of the next node to visit.</returns>
     public int SelectNextNode(int[] notVisited, int currentNode)
     {
-      var selectedProbability = _random.NextDouble();
+      var selectedProbability = (int)(ProbabilityScaleFactor * _random.NextDouble());
       var probabilities = CalculateProbabilities(notVisited, currentNode);
 
       // Find the first item with probability greater than the selected
       // probability, if no such item exists, return the last item (since
       // it has the greatest likelihood of selection).
-      var selected = probabilities
-                          .Where(p => p.Probability >= selectedProbability)
-                          .DefaultIfEmpty(probabilities.Last())
-                          .First();
-
+      var selected = probabilities.Where(p => p.Probability >= selectedProbability)
+                                  .DefaultIfEmpty(probabilities.Last())
+                                  .First();
       return selected.NeighbourIndex;
     }
 
@@ -102,8 +85,8 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
 
       var pairs = from neighbour in notVisited
                   let numerator = _dataStructures.ChoiceInfo(currentNode, neighbour)
-                  let probability = numerator / denominator
-                  select new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour };
+                  let probability = ProbabilityScaleFactor * (numerator / denominator)
+                  select new ProbabilityNodeIndexPair { Probability = (int)probability, NeighbourIndex = neighbour };
 
       return pairs.OrderBy(pair => pair).ToList();
     }
