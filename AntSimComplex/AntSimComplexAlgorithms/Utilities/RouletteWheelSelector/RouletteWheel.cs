@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
 {
@@ -10,8 +9,6 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
   /// The probabilistic selection of the next node to be visited is done in accordance to the
   /// roulette wheel selection procedure: https://en.wikipedia.org/wiki/Fitness_proportionate_selection
   /// (ACO p107)
-  ///
-  /// Probabilities are
   /// </summary>
   internal class RouletteWheel : IRouletteWheelSelector
   {
@@ -33,7 +30,7 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     }
 
     // Comparing probability doubles are expensive, rather scale to a relatively big integer range.
-    private const int ProbabilityScaleFactor = 1000;
+    private const uint ProbabilityScaleFactor = 1000000000;
 
     private readonly Random _random;
     private readonly IDataStructures _dataStructures;
@@ -82,11 +79,17 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     {
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
       var denominator = notVisited.Sum(n => _dataStructures.ChoiceInfo(currentNode, n));
+      var pairs = new List<ProbabilityNodeIndexPair>();
 
-      var pairs = from neighbour in notVisited
-                  let numerator = _dataStructures.ChoiceInfo(currentNode, neighbour)
-                  let probability = ProbabilityScaleFactor * (numerator / denominator)
-                  select new ProbabilityNodeIndexPair { Probability = (int)probability, NeighbourIndex = neighbour };
+      // LINQ is not viable in this case due to the closure.  Performance
+      // is increased significantly by using a basic foreach here instead.
+      // ReSharper disable once LoopCanBeConvertedToQuery
+      foreach (var neighbour in notVisited)
+      {
+        var numerator = _dataStructures.ChoiceInfo(currentNode, neighbour);
+        var probability = (int)(ProbabilityScaleFactor * (numerator / denominator));
+        pairs.Add(new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour });
+      }
 
       return pairs.OrderBy(pair => pair).ToList();
     }
