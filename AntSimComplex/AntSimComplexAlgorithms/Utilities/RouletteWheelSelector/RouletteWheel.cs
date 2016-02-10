@@ -30,7 +30,7 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     }
 
     // Comparing probability doubles are expensive, rather scale to a relatively big integer range.
-    private const uint ProbabilityScaleFactor = 1000000000;
+    private const int ProbabilityScaleFactor = 1000000000;
 
     private readonly Random _random;
     private readonly IDataStructures _dataStructures;
@@ -56,7 +56,7 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     /// <returns>The index of the next node to visit.</returns>
     public int SelectNextNode(int[] notVisited, int currentNode)
     {
-      var selectedProbability = (int)(ProbabilityScaleFactor * _random.NextDouble());
+      var selectedProbability = _random.Next(ProbabilityScaleFactor);
       var probabilities = CalculateProbabilities(notVisited, currentNode);
 
       // Find the first item with probability greater than the selected
