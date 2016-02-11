@@ -12,23 +12,20 @@ namespace AntSimComplexAlgorithms
   public class AntSystem
   {
     /// <summary>
-    /// A list of ALL the best tours per solution iteration.
-    /// </summary>
-    public List<BestTour> BestTours { get; } = new List<BestTour>();
-
-    public List<IterationStatsItem> IterationStats => _statsAggregator.IterationStats;
-
-    private Ant[] Ants { get; set; }
-
-    private readonly StatsAggregator _statsAggregator;
-    private readonly IProblemContext _problemContext;
-    private int _currentIteration;
-
-    /// <summary>
     /// Use a single, static random variable so that we do not end up with roughly
     /// the same number generation sequences with fast clock cycles.
     /// </summary>
     private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
+
+    private readonly StatsAggregator _statsAggregator;
+    private readonly IProblemContext _problemContext;
+
+    private int _currentIteration;
+    private Ant[] Ants { get; set; }
+
+    public double IterationMinTourLength { get; set; } = double.MaxValue;
+    public List<BestTour> BestTours { get; } = new List<BestTour>();
+    public List<IterationStatsItem> IterationStats => _statsAggregator.IterationStats;
 
     /// <summary>
     /// Constructor.
@@ -68,6 +65,7 @@ namespace AntSimComplexAlgorithms
       _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
       var bestAnt = Ants.Min();
+      IterationMinTourLength = bestAnt.TourLength;
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
 

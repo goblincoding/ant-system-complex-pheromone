@@ -24,11 +24,12 @@ namespace AntSimComplexUI
     private bool _drawOptimal;
     private static bool _timerRunning;
 
-    private readonly ObservableCollection<ListViewTourItem> _tourItems;
+    private double _optimalTourLength;
 
     private TspLibItemManager _tspLibItemManager;
     private Visualiser _visualiser;
     private AntSystem _antSystem;
+    private readonly ObservableCollection<ListViewTourItem> _tourItems;
 
     public MainWindow()
     {
@@ -103,7 +104,9 @@ namespace AntSimComplexUI
         {
           timer.Elapsed += OnTimerElapsed;
           timer.Start();
-          while (_timerRunning)
+          while (_timerRunning &&
+                 _antSystem.IterationMinTourLength > _optimalTourLength
+          )
           {
             _antSystem.Execute();
           }
@@ -118,9 +121,12 @@ namespace AntSimComplexUI
       // No direct interaction with the UI is allowed from this method.
       worker.DoWork += (o, ea) =>
       {
-        for (var i = 0; i < runCount; i++)
+        var i = 0;
+        while (i < runCount &&
+               _antSystem.IterationMinTourLength > _optimalTourLength)
         {
           _antSystem.Execute();
+          i++;
         }
       };
     }
@@ -131,8 +137,8 @@ namespace AntSimComplexUI
 
       worker.DoWork += (o, ea) =>
       {
-        while (!_antSystem.BestTours.Any() ||
-               _antSystem.BestTours.Last().TourLength > runThreshold)
+        while (_antSystem.IterationMinTourLength > runThreshold &&
+               _antSystem.IterationMinTourLength > _optimalTourLength)
         {
           _antSystem.Execute();
         }
@@ -189,6 +195,8 @@ namespace AntSimComplexUI
         _tourItems.Add(new ListViewTourItem(_tspLibItemManager.OptimalTour,
                                             _tspLibItemManager.OptimalTourLength,
                                             $"Current Problem (Optimal): {_tspLibItemManager.ProblemName}"));
+
+        _optimalTourLength = _tspLibItemManager.OptimalTourLength;
       }
     }
 
