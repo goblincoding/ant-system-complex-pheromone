@@ -66,7 +66,7 @@ namespace AntSimComplexAlgorithms.Utilities
       }
 
       _startTimerCalled = false;
-      IterationStats.Add(new IterationStatsItem(_currentIteration, _stopWatch.ElapsedMilliseconds, enumerable.Average()));
+      IterationStats.Add(new IterationStatsItem(_currentIteration, _stopWatch.ElapsedMilliseconds, enumerable.Average(), enumerable.Min()));
       _stopWatch.Reset();
     }
 
