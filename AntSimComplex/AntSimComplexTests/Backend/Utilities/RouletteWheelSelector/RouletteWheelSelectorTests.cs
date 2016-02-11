@@ -22,9 +22,10 @@ namespace AntSimComplexTests.Backend.Utilities.RouletteWheelSelector
     {
       // arrange
       const int nodeCount = 10;
+      const int probabilityScaleFactor = 1000000000;
 
       var random = Substitute.For<Random>();
-      random.NextDouble().Returns(next);
+      random.Next(probabilityScaleFactor).Returns((int)(next * probabilityScaleFactor));
 
       var problem = new MockProblem();
       var distances = problem.Distances;
