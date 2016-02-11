@@ -20,9 +20,12 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     /// </summary>
     private struct ProbabilityNodeIndexPair
     {
-      public double Probability { get; set; }
+      public int Probability { get; set; }
       public int NeighbourIndex { get; set; }
     }
+
+    // Comparing probability doubles are expensive, rather scale to a relatively big integer range.
+    private const int ProbabilityScaleFactor = 1000000000;
 
     private readonly Random _random;
     private readonly IDataStructures _dataStructures;
@@ -48,17 +51,15 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     /// <returns>The index of the next node to visit.</returns>
     public int SelectNextNode(int[] notVisited, int currentNode)
     {
-      var selectedProbability = _random.NextDouble();
+      var selectedProbability = _random.Next(ProbabilityScaleFactor);
       var probabilities = CalculateProbabilities(notVisited, currentNode);
 
       // Find the first item with probability greater than the selected
       // probability, if no such item exists, return the last item (since
       // it has the greatest likelihood of selection).
-      var selected = probabilities
-                          .Where(p => p.Probability >= selectedProbability)
-                          .DefaultIfEmpty(probabilities.Last())
-                          .First();
-
+      var selected = probabilities.Where(p => p.Probability >= selectedProbability)
+                                  .DefaultIfEmpty(probabilities.Last())
+                                  .First();
       return selected.NeighbourIndex;
     }
 
@@ -69,18 +70,19 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     /// <param name="notVisited">An array of node indices to neighbours that have not been visited.</param>
     /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
     /// <returns>An ordered list of ProbabilityNodeIndexPair sorted by probability.</returns>
-    private List<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
+    private IList<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
     {
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
       var denominator = notVisited.Sum(n => _dataStructures.ChoiceInfo(currentNode, n));
-
       var pairs = new List<ProbabilityNodeIndexPair>();
 
+      // LINQ is not viable in this case due to the closure.  Performance
+      // is increased significantly by using a basic foreach here instead.
       // ReSharper disable once LoopCanBeConvertedToQuery
       foreach (var neighbour in notVisited)
       {
         var numerator = _dataStructures.ChoiceInfo(currentNode, neighbour);
-        var probability = numerator / denominator;
+        var probability = (int)(ProbabilityScaleFactor * (numerator / denominator));
         pairs.Add(new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour });
       }
 
