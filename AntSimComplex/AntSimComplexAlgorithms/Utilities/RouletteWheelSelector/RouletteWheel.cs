@@ -18,36 +18,10 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     ///
     /// Compares on probability.
     /// </summary>
-    private class ProbabilityNodeIndexPair : IComparable<ProbabilityNodeIndexPair>, IComparable
+    private struct ProbabilityNodeIndexPair
     {
       public double Probability { get; set; }
       public int NeighbourIndex { get; set; }
-
-      public int CompareTo(ProbabilityNodeIndexPair other)
-      {
-        if (other == null)
-        {
-          throw new ArgumentNullException(nameof(other));
-        }
-
-        return Probability.CompareTo(other.Probability);
-      }
-
-      public int CompareTo(object obj)
-      {
-        if (obj == null)
-        {
-          return 1;
-        }
-
-        var other = obj as ProbabilityNodeIndexPair;
-        if (other == null)
-        {
-          throw new ArgumentException("Object is not of type 'ProbabilityNodeIndexPair'");
-        }
-
-        return Probability.CompareTo(other.Probability);
-      }
     }
 
     private readonly Random _random;
@@ -95,17 +69,22 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     /// <param name="notVisited">An array of node indices to neighbours that have not been visited.</param>
     /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
     /// <returns>An ordered list of ProbabilityNodeIndexPair sorted by probability.</returns>
-    private IList<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
+    private List<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
     {
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
       var denominator = notVisited.Sum(n => _dataStructures.ChoiceInfo(currentNode, n));
 
-      var pairs = from neighbour in notVisited
-                  let numerator = _dataStructures.ChoiceInfo(currentNode, neighbour)
-                  let probability = numerator / denominator
-                  select new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour };
+      var pairs = new List<ProbabilityNodeIndexPair>();
 
-      return pairs.OrderBy(pair => pair).ToList();
+      // ReSharper disable once LoopCanBeConvertedToQuery
+      foreach (var neighbour in notVisited)
+      {
+        var numerator = _dataStructures.ChoiceInfo(currentNode, neighbour);
+        var probability = numerator / denominator;
+        pairs.Add(new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour });
+      }
+
+      return pairs.OrderBy(pair => pair.Probability).ToList();
     }
   }
 }
