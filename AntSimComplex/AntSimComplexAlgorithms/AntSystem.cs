@@ -1,5 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
-using AntSimComplexAlgorithms.Utilities.DataStructures;
+using AntSimComplexAlgorithms.Utilities.ProblemData;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
 
-    private readonly IDataStructures _dataStructures;
+    private readonly IProblemData _problemData;
     private readonly IRouletteWheelSelector _rouletteWheelSelector;
     private readonly StatsAggregator _statsAggregator;
 
@@ -38,8 +38,8 @@ namespace AntSimComplexAlgorithms
     public AntSystem(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
-      _dataStructures = new Data(nodeCount, parameters.InitialPheromone, distances, Random);
-      _rouletteWheelSelector = new RouletteWheel(_dataStructures, Random);
+      _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances, Random);
+      _rouletteWheelSelector = new RouletteWheel(_problemData, Random);
 
       _statsAggregator = new StatsAggregator();
       CreateAnts();
@@ -51,7 +51,7 @@ namespace AntSimComplexAlgorithms
     public void Reset()
     {
       BestTours.Clear();
-      _dataStructures.ResetPheromone();
+      _problemData.ResetPheromone();
       _statsAggregator.ClearStats();
       _currentIteration = 0;
     }
@@ -76,11 +76,11 @@ namespace AntSimComplexAlgorithms
 
     private void CreateAnts()
     {
-      var nodeCount = _dataStructures.NodeCount;
+      var nodeCount = _problemData.NodeCount;
       Ants = new Ant[nodeCount];
       for (var i = 0; i < nodeCount; i++)
       {
-        var ant = new Ant(_dataStructures, _rouletteWheelSelector);
+        var ant = new Ant(_problemData, _rouletteWheelSelector);
         Ants[i] = ant;
       }
     }
@@ -90,7 +90,7 @@ namespace AntSimComplexAlgorithms
       // Initialise the ants at random start nodes.
       foreach (var ant in Ants)
       {
-        var startNode = Random.Next(0, _dataStructures.NodeCount);
+        var startNode = Random.Next(0, _problemData.NodeCount);
         ant.Initialise(startNode);
       }
     }
@@ -99,7 +99,7 @@ namespace AntSimComplexAlgorithms
     {
       // Construct solutions (iterate through nr of nodes since
       // each ant has to visit each node once).
-      for (var i = 0; i < _dataStructures.NodeCount; i++)
+      for (var i = 0; i < _problemData.NodeCount; i++)
       {
         foreach (var ant in Ants)
         {
@@ -111,17 +111,17 @@ namespace AntSimComplexAlgorithms
     private void UpdatePheromoneTrails()
     {
       // Update pheromone trails.
-      _dataStructures.EvaporatePheromone();
+      _problemData.EvaporatePheromone();
 
       // Deposit new pheromone.
       foreach (var ant in Ants)
       {
         var deposit = 1.0 / ant.TourLength;
-        _dataStructures.DepositPheromone(ant.Tour, deposit);
+        _problemData.DepositPheromone(ant.Tour, deposit);
       }
 
       // Choice info matrix has to be updated after pheromone changes.
-      _dataStructures.UpdateChoiceInfoMatrix();
+      _problemData.UpdateChoiceInfoMatrix();
     }
   }
 }

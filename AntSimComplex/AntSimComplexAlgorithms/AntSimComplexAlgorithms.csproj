@@ -46,8 +46,8 @@
     <Compile Include="Ant.cs" />
     <Compile Include="AntSystem.cs" />
     <Compile Include="Utilities\BestTour.cs" />
-    <Compile Include="Utilities\DataStructures\Data.cs" />
-    <Compile Include="Utilities\DataStructures\IDataStructures.cs" />
+    <Compile Include="Utilities\ProblemData\ProblemData.cs" />
+    <Compile Include="Utilities\ProblemData\IProblemData.cs" />
     <Compile Include="Utilities\IterationStatsItem.cs" />
     <Compile Include="Utilities\RouletteWheelSelector\IRouletteWheelSelector.cs" />
     <Compile Include="Utilities\Parameters.cs" />

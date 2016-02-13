@@ -74,7 +74,7 @@
   <ItemGroup>
     <Compile Include="Backend\AntTests.cs" />
     <Compile Include="Backend\Utilities\BestTourTests.cs" />
-    <Compile Include="Backend\Utilities\DataStructures\DataTests.cs" />
+    <Compile Include="Backend\Utilities\ProblemData\DataTests.cs" />
     <Compile Include="TspLibManager\ExtensionMethodTests.cs" />
     <Compile Include="Backend\Utilities\ParametersTests.cs" />
     <Compile Include="Backend\Utilities\RouletteWheelSelector\RouletteWheelSelectorTests.cs" />

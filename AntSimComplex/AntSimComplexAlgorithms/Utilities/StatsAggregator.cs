@@ -15,7 +15,7 @@ namespace AntSimComplexAlgorithms.Utilities
     private bool _startTimerCalled;
 
     /// <summary>
-    /// A list of iteration data.
+    /// A list of iteration problemData.
     /// </summary>
     public List<IterationStatsItem> IterationStats { get; } = new List<IterationStatsItem>();
 
@@ -36,7 +36,7 @@ namespace AntSimComplexAlgorithms.Utilities
       _currentIteration = iteration;
       _startTimerCalled = true;
 
-      // Start last so that setup does not interfere with performance data.
+      // Start last so that setup does not interfere with performance problemData.
       _stopWatch.Start();
     }
 
@@ -46,7 +46,7 @@ namespace AntSimComplexAlgorithms.Utilities
     /// <param name="tourLengths">The tour lengths of all the tours constructed during the iteration ending.</param>
     public void StopIteration(IEnumerable<double> tourLengths)
     {
-      // Stop first so that the safety checks do not interfere with performance data.
+      // Stop first so that the safety checks do not interfere with performance problemData.
       _stopWatch.Stop();
 
       if (tourLengths == null)

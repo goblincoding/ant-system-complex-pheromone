@@ -1,5 +1,5 @@
 ﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Utilities.DataStructures;
+using AntSimComplexAlgorithms.Utilities.ProblemData;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using NSubstitute;
 using NUnit.Framework;
@@ -16,7 +16,7 @@ namespace AntSimComplexTests.Backend
       // arrange
       const int startNode = 5;
 
-      var data = Substitute.For<IDataStructures>();
+      var data = Substitute.For<IProblemData>();
       data.NodeCount.Returns(10);
       var roulette = Substitute.For<IRouletteWheelSelector>();
       var ant = new Ant(data, roulette);
@@ -34,7 +34,7 @@ namespace AntSimComplexTests.Backend
       // arrange
       const int startNode = 5;
 
-      var data = Substitute.For<IDataStructures>();
+      var data = Substitute.For<IProblemData>();
       data.NodeCount.Returns(10);
       var roulette = Substitute.For<IRouletteWheelSelector>();
       var ant = new Ant(data, roulette);
@@ -50,7 +50,7 @@ namespace AntSimComplexTests.Backend
     public void MoveNextShouldBuildAccurateTourLength()
     {
       // arrange
-      var data = Substitute.For<IDataStructures>();
+      var data = Substitute.For<IProblemData>();
       var roulette = Substitute.For<IRouletteWheelSelector>();
 
       data.NodeCount.Returns(10);

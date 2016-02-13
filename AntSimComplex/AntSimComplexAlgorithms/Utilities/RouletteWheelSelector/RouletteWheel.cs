@@ -1,4 +1,4 @@
-﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
+﻿using AntSimComplexAlgorithms.Utilities.ProblemData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,17 +28,17 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     private const int ProbabilityScaleFactor = 1000000000;
 
     private readonly Random _random;
-    private readonly IDataStructures _dataStructures;
+    private readonly IProblemData _problemData;
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="dataStructures">The problem specific <seealso cref="Data"/> object containing distance,
+    /// <param name="problemData">The problem specific <seealso cref="ProblemData"/> object containing distance,
     /// pheromone, heuristic and choice info information.</param>
     /// <param name="random">The global random number generator object.</param>
-    public RouletteWheel(IDataStructures dataStructures, Random random)
+    public RouletteWheel(IProblemData problemData, Random random)
     {
-      _dataStructures = dataStructures;
+      _problemData = problemData;
       _random = random;
     }
 
@@ -73,7 +73,7 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
     private IList<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
     {
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
-      var denominator = notVisited.Sum(n => _dataStructures.ChoiceInfo(currentNode, n));
+      var denominator = notVisited.Sum(n => _problemData.ChoiceInfo(currentNode, n));
       var pairs = new List<ProbabilityNodeIndexPair>();
 
       // LINQ is not viable in this case due to the closure.  Performance
@@ -81,7 +81,7 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
       // ReSharper disable once LoopCanBeConvertedToQuery
       foreach (var neighbour in notVisited)
       {
-        var numerator = _dataStructures.ChoiceInfo(currentNode, neighbour);
+        var numerator = _problemData.ChoiceInfo(currentNode, neighbour);
         var probability = (int)(ProbabilityScaleFactor * (numerator / denominator));
         pairs.Add(new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour });
       }
