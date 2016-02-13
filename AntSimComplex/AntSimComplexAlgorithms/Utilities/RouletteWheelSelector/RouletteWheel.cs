@@ -54,23 +54,28 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
       var selectedProbability = _random.Next(ProbabilityScaleFactor);
       var probabilities = CalculateProbabilities(notVisited, currentNode);
 
-      // Find the first item with probability greater than the selected
-      // probability, if no such item exists, return the last item (since
-      // it has the greatest likelihood of selection).
-      var selected = probabilities.Where(p => p.Probability >= selectedProbability)
-                                  .DefaultIfEmpty(probabilities.Last())
-                                  .First();
-      return selected.NeighbourIndex;
+      var i = 0;
+      var probabilityPair = probabilities[i];
+      var probabilitySum = probabilityPair.Probability;
+
+      while (probabilitySum < selectedProbability)
+      {
+        i++;
+        probabilityPair = probabilities[i];
+        probabilitySum += probabilityPair.Probability;
+      }
+
+      return probabilityPair.NeighbourIndex;
     }
 
     /// <summary>
-    /// Determines the probabilities of selection of the "neighbour" nodes based on the
-    /// "random proportional rule" (ACO, Dorigo, 2004 p70).
+    /// Determines the probabilities of selection of the neighbour nodes based on the
+    /// random proportional rule (ACO, Dorigo, 2004 p70).
     /// </summary>
     /// <param name="notVisited">An array of node indices to neighbours that have not been visited.</param>
     /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
-    /// <returns>An ordered list of ProbabilityNodeIndexPair sorted by probability.</returns>
-    private IList<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
+    /// <returns>An unordered list of ProbabilityNodeIndexPair.</returns>
+    private List<ProbabilityNodeIndexPair> CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
     {
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
       var denominator = notVisited.Sum(n => _problemData.ChoiceInfo(currentNode, n));
@@ -86,7 +91,7 @@ namespace AntSimComplexAlgorithms.Utilities.RouletteWheelSelector
         pairs.Add(new ProbabilityNodeIndexPair { Probability = probability, NeighbourIndex = neighbour });
       }
 
-      return pairs.OrderBy(pair => pair.Probability).ToList();
+      return pairs;
     }
   }
 }
