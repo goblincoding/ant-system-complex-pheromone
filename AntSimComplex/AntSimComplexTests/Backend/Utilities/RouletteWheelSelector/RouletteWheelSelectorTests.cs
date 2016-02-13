@@ -1,5 +1,4 @@
-﻿using AntSimComplexAlgorithms.Utilities.ProblemData;
-using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
+﻿using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -30,7 +29,7 @@ namespace AntSimComplexTests.Backend.Utilities.RouletteWheelSelector
       var problem = new MockProblem();
       var distances = problem.Distances;
 
-      var data = new ProblemData(nodeCount, 0.5, distances, random);
+      var data = new AntSimComplexAlgorithms.Utilities.DataStructures.ProblemData(nodeCount, 0.5, distances, random);
       var selector = new RouletteWheel(data, random);
 
       // act

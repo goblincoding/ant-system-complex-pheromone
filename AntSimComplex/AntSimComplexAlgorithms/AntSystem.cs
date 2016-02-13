@@ -1,5 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
-using AntSimComplexAlgorithms.Utilities.ProblemData;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using System;
 using System.Collections.Generic;

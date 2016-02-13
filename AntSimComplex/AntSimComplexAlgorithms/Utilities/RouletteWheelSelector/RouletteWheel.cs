@@ -1,4 +1,4 @@
-﻿using AntSimComplexAlgorithms.Utilities.ProblemData;
+﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
 using System.Collections.Generic;
 using System.Linq;

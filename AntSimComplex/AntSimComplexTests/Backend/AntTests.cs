@@ -1,5 +1,5 @@
 ﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Utilities.ProblemData;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using NSubstitute;
 using NUnit.Framework;

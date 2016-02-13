@@ -1,4 +1,4 @@
-﻿using AntSimComplexAlgorithms.Utilities.ProblemData;
+﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace AntSimComplexAlgorithms
     private int _startNode;
     private int _currentNode;
 
-    private readonly int[] _visited; // the indices of the nodes the Ant has already visited.
+    private readonly bool[] _visited; // the indices of the nodes the Ant has already visited.
     private readonly IProblemData _problemData;
     private readonly IRouletteWheelSelector _rouletteWheel;
 
@@ -38,7 +38,7 @@ namespace AntSimComplexAlgorithms
     {
       _problemData = problemData;
       _rouletteWheel = rouletteWheel;
-      _visited = new int[_problemData.NodeCount];
+      _visited = new bool[_problemData.NodeCount];
     }
 
     /// <summary>
@@ -53,9 +53,9 @@ namespace AntSimComplexAlgorithms
       // Set all nodes to "not visited" except for current (start) node.
       for (var i = 0; i < _visited.Length; i++)
       {
-        _visited[i] = 0;
+        _visited[i] = false;
       }
-      _visited[_currentNode] = 1;
+      _visited[_currentNode] = true;
 
       TourLength = 0.0;
       Tour.Clear();
@@ -70,7 +70,7 @@ namespace AntSimComplexAlgorithms
     {
       // Find the neighbours we haven't visited yet.
       var neighbours = _problemData.NearestNeighbours(_currentNode);
-      var notVisited = neighbours.Where(n => _visited[n] != 1).ToArray();
+      var notVisited = neighbours.Where(n => !_visited[n]).ToArray();
 
       // Select the next node to visit ("start" if all nodes have been visited).
       var selectedNext = notVisited.Any() ?
@@ -80,7 +80,7 @@ namespace AntSimComplexAlgorithms
       TourLength += _problemData.Distance(_currentNode, selectedNext);
       _currentNode = selectedNext;
       Tour.Add(_currentNode);
-      _visited[_currentNode] = 1;
+      _visited[_currentNode] = true;
     }
 
     /// <summary>
