@@ -12,6 +12,10 @@ namespace AntSimComplexAlgorithms
   /// </summary>
   public class AntSystem
   {
+    public double IterationMinTourLength { get; set; } = double.MaxValue;
+    public List<BestTour> BestTours { get; } = new List<BestTour>();
+    public List<IterationStatsItem> IterationStats => _statsAggregator.IterationStats;
+
     /// <summary>
     /// Use a single, static random variable so that we do not end up with roughly
     /// the same number generation sequences with fast clock cycles.
@@ -24,10 +28,6 @@ namespace AntSimComplexAlgorithms
 
     private int _currentIteration;
     private Ant[] Ants { get; set; }
-
-    public double IterationMinTourLength { get; set; } = double.MaxValue;
-    public List<BestTour> BestTours { get; } = new List<BestTour>();
-    public List<IterationStatsItem> IterationStats => _statsAggregator.IterationStats;
 
     /// <summary>
     /// Constructor.

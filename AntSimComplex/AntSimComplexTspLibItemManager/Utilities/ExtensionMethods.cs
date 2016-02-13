@@ -45,8 +45,6 @@ namespace AntSimComplexTspLibItemManager.Utilities
       return tourLength;
     }
 
-    #region privateHelpers
-
     /// <summary>
     /// Helper class representing a node and an edge weight to that node from
     /// an unspecified, other node.
@@ -95,7 +93,5 @@ namespace AntSimComplexTspLibItemManager.Utilities
                        select new NodeWeightPair { Node = n, Weight = w };
       return weightList.Min();
     }
-
-    #endregion privateHelpers
   }
 }
