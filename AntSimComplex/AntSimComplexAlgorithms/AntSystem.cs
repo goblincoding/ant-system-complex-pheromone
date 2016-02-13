@@ -111,7 +111,7 @@ namespace AntSimComplexAlgorithms
       // Deposit new pheromone.
       foreach (var ant in Ants)
       {
-        var deposit = 1 / ant.TourLength;
+        var deposit = 1.0 / ant.TourLength;
         _problemContext.DepositPheromone(ant.Tour, deposit);
       }
 

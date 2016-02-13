@@ -135,7 +135,7 @@
                                          Grid.Row="3"
                                          HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="RunThresholdInt"
-                                                Value="1000" Minimum="500"
+                                                Value="100" Minimum="500"
                                                 Grid.Column="1"
                                                 Grid.Row="3" />
                         </Grid>
@@ -161,12 +161,12 @@
                                                 AllowTextInput="False" />
 
                             <Label Content="Beta" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
-                            <xctk:IntegerUpDown Name="BetaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="2"
+                            <xctk:IntegerUpDown Name="BetaInt" Value="2" Minimum="2" Maximum="5" Grid.Column="1" Grid.Row="2"
                                                 ValueChanged="BetaIntValueChanged"
                                                 AllowTextInput="False" />
 
                             <Label Content="Evaporation Rate" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
-                            <xctk:DoubleUpDown Name="EvapDouble" Value="0.5" Minimum="0.0" Maximum="1.0" Increment="0.1"
+                            <xctk:DoubleUpDown Name="EvapDouble" Value="0.50" Minimum="0.0" Maximum="1.0" Increment="0.01"
                                                Grid.Column="1" Grid.Row="3"
                                                ValueChanged="EvapDoubleValueChanged"
                                                AllowTextInput="False" />

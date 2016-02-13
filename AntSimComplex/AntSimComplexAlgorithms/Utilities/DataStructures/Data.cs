@@ -116,7 +116,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       {
         for (var j = i; j < _nodeCount; j++)
         {
-          var pher = _pheromone[i][j] * Parameters.EvaporationRate;
+          var pher = _pheromone[i][j] * (1.0 - Parameters.EvaporationRate);
           _pheromone[i][j] = pher;  // matrix is symmetric
           _pheromone[j][i] = pher;
         }
