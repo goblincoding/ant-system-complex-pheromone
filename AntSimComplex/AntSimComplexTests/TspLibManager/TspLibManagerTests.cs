@@ -1,15 +1,8 @@
 ﻿using AntSimComplexTests.GUI;
 using AntSimComplexTspLibItemManager;
 using AntSimComplexTspLibItemManager.Utilities;
-using NSubstitute;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TspLibNet;
-using TspLibNet.Tours;
 
 namespace AntSimComplexTests.TspLibManager
 {

@@ -1,5 +1,6 @@
 ﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.ProblemContext;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
+using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
 using NSubstitute;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -15,9 +16,10 @@ namespace AntSimComplexTests.Backend
       // arrange
       const int startNode = 5;
 
-      var context = Substitute.For<IProblemContext>();
-      context.NodeCount.Returns(10);
-      var ant = new Ant(context);
+      var data = Substitute.For<IDataStructures>();
+      data.NodeCount.Returns(10);
+      var roulette = Substitute.For<IRouletteWheelSelector>();
+      var ant = new Ant(data, roulette);
 
       // act
       ant.Initialise(startNode);
@@ -32,9 +34,10 @@ namespace AntSimComplexTests.Backend
       // arrange
       const int startNode = 5;
 
-      var context = Substitute.For<IProblemContext>();
-      context.NodeCount.Returns(10);
-      var ant = new Ant(context);
+      var data = Substitute.For<IDataStructures>();
+      data.NodeCount.Returns(10);
+      var roulette = Substitute.For<IRouletteWheelSelector>();
+      var ant = new Ant(data, roulette);
 
       // act
       ant.Initialise(startNode);
@@ -47,22 +50,24 @@ namespace AntSimComplexTests.Backend
     public void MoveNextShouldBuildAccurateTourLength()
     {
       // arrange
-      var context = Substitute.For<IProblemContext>();
-      context.NodeCount.Returns(10);
+      var data = Substitute.For<IDataStructures>();
+      var roulette = Substitute.For<IRouletteWheelSelector>();
 
-      context.NearestNeighbours(7).Returns(new[] { 3, 8, 2 });
-      context.SelectNextNode(Arg.Any<int[]>(), 7).Returns(3);
-      context.Distance(7, 3).Returns(1);
+      data.NodeCount.Returns(10);
 
-      context.NearestNeighbours(3).Returns(new[] { 7, 8, 2 });
-      context.SelectNextNode(Arg.Any<int[]>(), 3).Returns(8);
-      context.Distance(3, 8).Returns(2);
+      data.NearestNeighbours(7).Returns(new[] { 3, 8, 2 });
+      roulette.SelectNextNode(Arg.Any<int[]>(), 7).Returns(3);
+      data.Distance(7, 3).Returns(1);
 
-      context.NearestNeighbours(8).Returns(new[] { 7, 3, 2 });
-      context.SelectNextNode(Arg.Any<int[]>(), 8).Returns(2);
-      context.Distance(8, 2).Returns(5);
+      data.NearestNeighbours(3).Returns(new[] { 7, 8, 2 });
+      roulette.SelectNextNode(Arg.Any<int[]>(), 3).Returns(8);
+      data.Distance(3, 8).Returns(2);
 
-      var ant = new Ant(context);
+      data.NearestNeighbours(8).Returns(new[] { 7, 3, 2 });
+      roulette.SelectNextNode(Arg.Any<int[]>(), 8).Returns(2);
+      data.Distance(8, 2).Returns(5);
+
+      var ant = new Ant(data, roulette);
       var expectedTour = new List<int> { 7, 3, 8, 2, 7 };
 
       // act

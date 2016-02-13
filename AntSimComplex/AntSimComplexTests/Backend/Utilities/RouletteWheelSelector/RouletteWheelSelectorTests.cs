@@ -30,7 +30,7 @@ namespace AntSimComplexTests.Backend.Utilities.RouletteWheelSelector
       var problem = new MockProblem();
       var distances = problem.Distances;
 
-      var data = new Data(nodeCount, 0.5, distances);
+      var data = new Data(nodeCount, 0.5, distances, random);
       var selector = new RouletteWheel(data, random);
 
       // act

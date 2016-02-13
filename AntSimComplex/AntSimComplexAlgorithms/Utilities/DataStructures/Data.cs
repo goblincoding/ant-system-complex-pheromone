@@ -27,11 +27,8 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
   /// </summary>
   internal class Data : IDataStructures
   {
-    /// <summary>
-    /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
-    /// nearest neighbour and pheromone density matrices.
-    /// </summary>
-    private readonly int _nodeCount;
+    public Random Random { get; }
+    public int NodeCount { get; }
 
     /// <summary>
     /// The initial pheromone density with which to initialise the pheromone matrix values.
@@ -81,16 +78,22 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
+    /// <param name="random">The global AntSystem Random object instance.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
-    public Data(int nodeCount, double initialPheromoneDensity, IReadOnlyList<IReadOnlyList<double>> distances)
+    public Data(int nodeCount,
+                double initialPheromoneDensity,
+                IReadOnlyList<IReadOnlyList<double>> distances,
+                Random random)
     {
       if (initialPheromoneDensity <= 0.0)
       {
         throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
       }
 
+      NodeCount = nodeCount;
       _initialPheromoneDensity = initialPheromoneDensity;
-      _nodeCount = nodeCount;
+      Random = random;
+
       PopulateDataStructures(distances);
     }
 
@@ -112,9 +115,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     public void EvaporatePheromone()
     {
-      for (var i = 0; i < _nodeCount; i++)
+      for (var i = 0; i < NodeCount; i++)
       {
-        for (var j = i; j < _nodeCount; j++)
+        for (var j = i; j < NodeCount; j++)
         {
           var pher = _pheromone[i][j] * (1.0 - Parameters.EvaporationRate);
           _pheromone[i][j] = pher;  // matrix is symmetric
@@ -154,9 +157,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     public void UpdateChoiceInfoMatrix()
     {
       // Matrix is symmetric.
-      for (var i = 0; i < _nodeCount; i++)
+      for (var i = 0; i < NodeCount; i++)
       {
-        for (var j = i; j < _nodeCount; j++)
+        for (var j = i; j < NodeCount; j++)
         {
           CalculateChoiceInfo(i, j);
           CalculateChoiceInfo(j, i);
@@ -180,21 +183,21 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     private void PopulateDataStructures(IReadOnlyList<IReadOnlyList<double>> distances)
     {
       // Initialise rows.
-      _pheromone = new double[_nodeCount][];
-      _distances = new double[_nodeCount][];
-      _heuristic = new double[_nodeCount][];
-      _choiceInfo = new double[_nodeCount][];
-      _nearest = new int[_nodeCount][];
+      _pheromone = new double[NodeCount][];
+      _distances = new double[NodeCount][];
+      _heuristic = new double[NodeCount][];
+      _choiceInfo = new double[NodeCount][];
+      _nearest = new int[NodeCount][];
 
-      for (var i = 0; i < _nodeCount; i++)
+      for (var i = 0; i < NodeCount; i++)
       {
         // Initialise columns.
-        _pheromone[i] = new double[_nodeCount];
-        _distances[i] = new double[_nodeCount];
-        _heuristic[i] = new double[_nodeCount];
-        _choiceInfo[i] = new double[_nodeCount];
+        _pheromone[i] = new double[NodeCount];
+        _distances[i] = new double[NodeCount];
+        _heuristic[i] = new double[NodeCount];
+        _choiceInfo[i] = new double[NodeCount];
 
-        for (var j = 0; j < _nodeCount; j++)
+        for (var j = 0; j < NodeCount; j++)
         {
           // Set the distance from a node to itself as sufficiently large that it
           // is HIGHLY unlikely to be selected.
@@ -223,7 +226,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       var nearestIndices = pairs.Where(p => p.Index != currentNodeIndex).Select(p => p.Index).ToArray();
 
       // -1 since nodes aren't included in their own nearest neighbours lists.
-      _nearest[currentNodeIndex] = new int[_nodeCount - 1];
+      _nearest[currentNodeIndex] = new int[NodeCount - 1];
       nearestIndices.CopyTo(_nearest[currentNodeIndex], 0);
     }
   }

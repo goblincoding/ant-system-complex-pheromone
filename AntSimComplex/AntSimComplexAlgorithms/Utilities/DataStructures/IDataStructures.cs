@@ -6,6 +6,17 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
   internal interface IDataStructures
   {
     /// <summary>
+    /// The global AntSystem Random object instance.
+    /// </summary>
+    Random Random { get; }
+
+    /// <summary>
+    /// Nr of nodes is used everywhere as it determines the dimensions of the distance,
+    /// nearest neighbour and pheromone density matrices.
+    /// </summary>
+    int NodeCount { get; }
+
+    /// <summary>
     /// This method does not create the nearest neighbours list, but references
     /// the lists obtained from the original problem with which the <seealso cref="Data"/>
     /// object was constructed.
