@@ -87,13 +87,15 @@
                                       Content="Show Optimal Tour (if available)"
                                       Grid.Row="2"
                                       Checked="ShowOptimalChecked"
-                                      Unchecked="ShowOptimalUnchecked" />
+                                      Unchecked="ShowOptimalUnchecked"
+                                      HorizontalAlignment="Left" />
                         </Grid>
                     </Border>
 
                     <Border Grid.Row="1">
                         <Grid x:Name="OptionsGrid">
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -138,6 +140,14 @@
                                                 Value="100" Minimum="500"
                                                 Grid.Column="1"
                                                 Grid.Row="3" />
+                            <CheckBox Name="ExecuteRandom"
+                                      Content="Random Selection (exclude algorithm)"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="4"
+                                      Checked="ExecuteRandomChecked"
+                                      Unchecked="ExecuteRandomUnchecked"
+                                      HorizontalAlignment="Left" />
                         </Grid>
                     </Border>
 
@@ -158,18 +168,18 @@
                             <Label Content="Alpha" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="AlphaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="1"
                                                 ValueChanged="AlphaIntValueChanged"
-                                                AllowTextInput="False" />
+                                                AllowTextInput="False" Margin="5,5,-43,5" />
 
                             <Label Content="Beta" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="BetaInt" Value="2" Minimum="2" Maximum="5" Grid.Column="1" Grid.Row="2"
                                                 ValueChanged="BetaIntValueChanged"
-                                                AllowTextInput="False" />
+                                                AllowTextInput="False" Margin="5,5,-43,5" />
 
                             <Label Content="Evaporation Rate" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
                             <xctk:DoubleUpDown Name="EvapDouble" Value="0.50" Minimum="0.0" Maximum="1.0" Increment="0.01"
                                                Grid.Column="1" Grid.Row="3"
                                                ValueChanged="EvapDoubleValueChanged"
-                                               AllowTextInput="False" />
+                                               AllowTextInput="False" Margin="5,5,-43,5" />
                         </Grid>
                     </Border>
 

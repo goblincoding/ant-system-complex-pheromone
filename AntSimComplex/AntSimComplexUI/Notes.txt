@@ -12,3 +12,7 @@ http://heuristicswiki.wikispaces.com/Nearest+Neighbor+(Heuristic)
 Transformations:
 
 http://csharphelper.com/blog/2014/09/use-transformations-draw-graph-wpf-c/
+
+
+Experimental setup for and performance of AS
+Stutzle 2000 Max-Min p14, section 4.6

@@ -22,6 +22,7 @@ namespace AntSimComplexUI
   {
     private bool _initialised;
     private bool _drawOptimal;
+    private bool _executeRandom;
     private static bool _timerRunning;
 
     private double _optimalTourLength;
@@ -224,12 +225,27 @@ namespace AntSimComplexUI
       _visualiser = new Visualiser(Canvas, _tspLibItemManager);
 
       DrawTspLibItem();
-
-      _antSystem = new AntSystem(_tspLibItemManager.NodeCount,
-                                 _tspLibItemManager.NearestNeighbourTourLength,
-                                 _tspLibItemManager.Distances);
+      CreateAntSystem();
       _tourItems.Clear();
       AddOptimalTourToListView();
+    }
+
+    private void CreateAntSystem()
+    {
+      if (_executeRandom)
+      {
+        _antSystem = new AntSystem(RunType.RandomSelection,
+                                   _tspLibItemManager.NodeCount,
+                                   _tspLibItemManager.NearestNeighbourTourLength,
+                                   _tspLibItemManager.Distances);
+      }
+      else
+      {
+        _antSystem = new AntSystem(RunType.StandardAntSystem,
+                                   _tspLibItemManager.NodeCount,
+                                   _tspLibItemManager.NearestNeighbourTourLength,
+                                   _tspLibItemManager.Distances);
+      }
     }
 
     /// <summary>
@@ -318,6 +334,18 @@ namespace AntSimComplexUI
     private void EvapDoubleValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
       Parameters.EvaporationRate = (double)e.NewValue;
+    }
+
+    private void ExecuteRandomChecked(object sender, RoutedEventArgs e)
+    {
+      _executeRandom = true;
+      CreateAntSystem();
+    }
+
+    private void ExecuteRandomUnchecked(object sender, RoutedEventArgs e)
+    {
+      _executeRandom = false;
+      CreateAntSystem();
     }
 
     #endregion eventhandlers

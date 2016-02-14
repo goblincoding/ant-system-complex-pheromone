@@ -75,9 +75,10 @@
     <Compile Include="Backend\AntTests.cs" />
     <Compile Include="Backend\Utilities\BestTourTests.cs" />
     <Compile Include="Backend\Utilities\DataStructures\DataTests.cs" />
+    <Compile Include="Backend\Utilities\NodeSelector\RandomSelectorTests.cs" />
     <Compile Include="TspLibManager\ExtensionMethodTests.cs" />
     <Compile Include="Backend\Utilities\ParametersTests.cs" />
-    <Compile Include="Backend\Utilities\RouletteWheelSelector\RouletteWheelSelectorTests.cs" />
+    <Compile Include="Backend\Utilities\NodeSelector\RouletteWheelSelectorTests.cs" />
     <Compile Include="Backend\Utilities\StatsAggregatorTests.cs" />
     <Compile Include="GUI\CoordinateTransformerTests.cs" />
     <Compile Include="GUI\Helpers.cs" />

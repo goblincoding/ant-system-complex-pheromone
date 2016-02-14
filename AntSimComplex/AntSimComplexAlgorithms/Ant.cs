@@ -1,5 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
-using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
+using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace AntSimComplexAlgorithms
 
     private readonly bool[] _visited; // the indices of the nodes the Ant has already visited.
     private readonly IProblemData _problemData;
-    private readonly IRouletteWheelSelector _rouletteWheel;
+    private readonly INodeSelector _rouletteWheel;
 
     /// <summary>
     /// Constructor.
@@ -34,7 +34,7 @@ namespace AntSimComplexAlgorithms
     /// <param name="problemData">Provides access to the problem-specific parameters and information matrices
     /// used in applying the random proportional rule.</param>
     /// <param name="rouletteWheel">Used to select the next node based on the probabilities of selection.</param>
-    public Ant(IProblemData problemData, IRouletteWheelSelector rouletteWheel)
+    public Ant(IProblemData problemData, INodeSelector rouletteWheel)
     {
       _problemData = problemData;
       _rouletteWheel = rouletteWheel;
@@ -64,7 +64,7 @@ namespace AntSimComplexAlgorithms
 
     /// <summary>
     /// Applies the random proportional rule on non-visited neighbours and moves the ant
-    /// to the node selected by the <seealso cref="RouletteWheel"/>.
+    /// to the node selected by the <seealso cref="RouletteWheelSelector"/>.
     /// </summary>
     public void MoveNext()
     {

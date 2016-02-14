@@ -11,7 +11,7 @@ namespace AntSimComplexTests.TspLibManager
     // Node(weight)NextNearest
     // 7(1)3(2)8(1)2(2)9(1)1(3)0(4)4(1)6(2)5(3)7
     [Test]
-    public void ProblemGetNearestNeighbourTourLengthGivenStartNode7ShouldReturn20()
+    public void ProblemGetNearestNeighbourTourLengthGivenMockProblemAndStartNode7ShouldReturn20()
     {
       // arrange
       var problem = new MockProblem();

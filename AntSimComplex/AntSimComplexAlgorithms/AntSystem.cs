@@ -1,12 +1,19 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
 using AntSimComplexAlgorithms.Utilities.DataStructures;
-using AntSimComplexAlgorithms.Utilities.RouletteWheelSelector;
+using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AntSimComplexAlgorithms
 {
+  public enum RunType
+  {
+    RandomSelection,
+    StandardAntSystem,
+    ModifiedAntSystem
+  }
+
   /// <summary>
   /// This class is the entry point for the basic ("standard") Ant System implementation.
   /// </summary>
@@ -23,7 +30,7 @@ namespace AntSimComplexAlgorithms
     private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
 
     private readonly IProblemData _problemData;
-    private readonly IRouletteWheelSelector _rouletteWheelSelector;
+    private readonly INodeSelector _rouletteWheelSelector;
     private readonly StatsAggregator _statsAggregator;
 
     private int _currentIteration;
@@ -32,14 +39,30 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Constructor.
     /// </summary>
+    /// <param name="type">The algorithm implementation to be executed.</param>
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
-    public AntSystem(int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
+    public AntSystem(RunType type, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
       _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances, Random);
-      _rouletteWheelSelector = new RouletteWheel(_problemData, Random);
+
+      switch (type)
+      {
+        case RunType.RandomSelection:
+          _rouletteWheelSelector = new RandomSelector(Random);
+          break;
+
+        case RunType.StandardAntSystem:
+          _rouletteWheelSelector = new RouletteWheelSelector(_problemData, Random);
+          break;
+
+        case RunType.ModifiedAntSystem:
+          throw new NotImplementedException("Modified Ant System has not been implemented yet.");
+        default:
+          throw new ArgumentOutOfRangeException(nameof(type), type, null);
+      }
 
       _statsAggregator = new StatsAggregator();
       CreateAnts();
