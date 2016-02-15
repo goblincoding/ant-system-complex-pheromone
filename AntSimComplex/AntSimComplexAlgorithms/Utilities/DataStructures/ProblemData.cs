@@ -142,7 +142,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       return _distances[node1][node2];
     }
 
-    public int[] NearestNeighbours(int node)
+    public IReadOnlyList<int> NearestNeighbours(int node)
     {
       return _nearest[node];
     }

@@ -154,7 +154,7 @@ namespace AntSimComplexUI
     {
       var logMessages = new List<string>
       {
-        $"Results for problem: {_tspLibItemManager.ProblemName}",
+        $"Results for problem: {_tspLibItemManager.ProblemName}, with selection strategy: {_selectionStrategy}",
         IterationStatsItem.CsvHeader
       };
 

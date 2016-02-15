@@ -24,7 +24,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <param name="node">The node index whose neighbours should be returned.</param>
     /// <returns>Returns an array of neighbouring node indices, ordered by ascending distance.</returns>
     /// <exception cref="IndexOutOfRangeException">Thrown when the node index falls outside the expected range.</exception>
-    int[] NearestNeighbours(int node);
+    IReadOnlyList<int> NearestNeighbours(int node);
 
     /// <summary>
     /// This method does not calculate the edge weight between two nodes, but references
