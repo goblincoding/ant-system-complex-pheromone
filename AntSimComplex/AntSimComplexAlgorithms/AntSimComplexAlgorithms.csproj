@@ -50,6 +50,7 @@
     <Compile Include="Utilities\DataStructures\IProblemData.cs" />
     <Compile Include="Utilities\IterationStatsItem.cs" />
     <Compile Include="Utilities\NodeSelector\INodeSelector.cs" />
+    <Compile Include="Utilities\NodeSelector\NearestNeighbourSelector.cs" />
     <Compile Include="Utilities\NodeSelector\RandomSelector.cs" />
     <Compile Include="Utilities\Parameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

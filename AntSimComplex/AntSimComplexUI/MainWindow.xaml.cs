@@ -4,6 +4,7 @@ using AntSimComplexTspLibItemManager;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,10 +23,11 @@ namespace AntSimComplexUI
   {
     private bool _initialised;
     private bool _drawOptimal;
-    private bool _executeRandom;
     private static bool _timerRunning;
 
     private double _optimalTourLength;
+
+    private NodeSelectionStrategy _selectionStrategy = NodeSelectionStrategy.RouletteWheel;
 
     private TspLibItemManager _tspLibItemManager;
     private Visualiser _visualiser;
@@ -52,6 +54,8 @@ namespace AntSimComplexUI
       // Load all symmetric TSP instances.
       _tspLibItemManager = new TspLibItemManager(tspLibPath);
       TspCombo.ItemsSource = _tspLibItemManager.AllProblemNames;
+      SelectionStrategy.ItemsSource = Enum.GetNames(typeof(NodeSelectionStrategy));
+      SelectionStrategy.SelectedIndex = (int)NodeSelectionStrategy.RouletteWheel;
     }
 
     /// <summary>
@@ -232,20 +236,10 @@ namespace AntSimComplexUI
 
     private void CreateAntSystem()
     {
-      if (_executeRandom)
-      {
-        _antSystem = new AntSystem(RunType.RandomSelection,
-                                   _tspLibItemManager.NodeCount,
-                                   _tspLibItemManager.NearestNeighbourTourLength,
-                                   _tspLibItemManager.Distances);
-      }
-      else
-      {
-        _antSystem = new AntSystem(RunType.StandardAntSystem,
-                                   _tspLibItemManager.NodeCount,
-                                   _tspLibItemManager.NearestNeighbourTourLength,
-                                   _tspLibItemManager.Distances);
-      }
+      _antSystem = new AntSystem(_selectionStrategy,
+                                 _tspLibItemManager.NodeCount,
+                                 _tspLibItemManager.NearestNeighbourTourLength,
+                                 _tspLibItemManager.Distances);
     }
 
     /// <summary>
@@ -336,15 +330,10 @@ namespace AntSimComplexUI
       Parameters.EvaporationRate = (double)e.NewValue;
     }
 
-    private void ExecuteRandomChecked(object sender, RoutedEventArgs e)
+    private void SelectionStrategyChanged(object sender, SelectionChangedEventArgs e)
     {
-      _executeRandom = true;
-      CreateAntSystem();
-    }
-
-    private void ExecuteRandomUnchecked(object sender, RoutedEventArgs e)
-    {
-      _executeRandom = false;
+      _selectionStrategy = (NodeSelectionStrategy)Enum.Parse(typeof(NodeSelectionStrategy),
+                                                              SelectionStrategy.SelectedValue.ToString());
       CreateAntSystem();
     }
 

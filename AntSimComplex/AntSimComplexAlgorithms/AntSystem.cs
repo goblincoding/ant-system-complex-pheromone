@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms
 {
-  public enum RunType
+  public enum NodeSelectionStrategy
   {
     RandomSelection,
-    StandardAntSystem,
-    ModifiedAntSystem
+    RouletteWheel,
+    NearestNeighbour
   }
 
   /// <summary>
@@ -30,7 +30,7 @@ namespace AntSimComplexAlgorithms
     private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
 
     private readonly IProblemData _problemData;
-    private readonly INodeSelector _rouletteWheelSelector;
+    private readonly INodeSelector _nodeSelector;
     private readonly StatsAggregator _statsAggregator;
 
     private int _currentIteration;
@@ -39,29 +39,31 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="type">The algorithm implementation to be executed.</param>
+    /// <param name="strategy">The algorithm implementation to be executed.</param>
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
-    public AntSystem(RunType type, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
+    public AntSystem(NodeSelectionStrategy strategy, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
       _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances, Random);
 
-      switch (type)
+      switch (strategy)
       {
-        case RunType.RandomSelection:
-          _rouletteWheelSelector = new RandomSelector(Random);
+        case NodeSelectionStrategy.RandomSelection:
+          _nodeSelector = new RandomSelector(Random);
           break;
 
-        case RunType.StandardAntSystem:
-          _rouletteWheelSelector = new RouletteWheelSelector(_problemData, Random);
+        case NodeSelectionStrategy.RouletteWheel:
+          _nodeSelector = new RouletteWheelSelector(_problemData, Random);
           break;
 
-        case RunType.ModifiedAntSystem:
-          throw new NotImplementedException("Modified Ant System has not been implemented yet.");
+        case NodeSelectionStrategy.NearestNeighbour:
+          _nodeSelector = new NearestNeighbourSelector(_problemData);
+          break;
+
         default:
-          throw new ArgumentOutOfRangeException(nameof(type), type, null);
+          throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
       }
 
       _statsAggregator = new StatsAggregator();
@@ -103,7 +105,7 @@ namespace AntSimComplexAlgorithms
       Ants = new Ant[nodeCount];
       for (var i = 0; i < nodeCount; i++)
       {
-        var ant = new Ant(_problemData, _rouletteWheelSelector);
+        var ant = new Ant(_problemData, _nodeSelector);
         Ants[i] = ant;
       }
     }
