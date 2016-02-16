@@ -125,6 +125,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
 
     private void CalculateDistances(IProblem problem)
     {
+      // Create rows.
       _distances = new double[NodeCount][];
 
       // Ensure that the nodes are sorted by ID ascending
@@ -134,7 +135,7 @@ namespace AntSimComplexTspLibItemManager.Utilities
 
       for (var i = 0; i < NodeCount; i++)
       {
-        // Initialise columns.
+        // Create columns.
         _distances[i] = new double[NodeCount];
 
         for (var j = 0; j < NodeCount; j++)

@@ -54,12 +54,14 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// <exception cref="ArgumentOutOfRangeException">Thrown if no problem of this name was found.</exception>
     public TspLib95Item GetItem(string problemName)
     {
-      var item = _tspLibItems.FirstOrDefault(i => i.Problem.Name == problemName);
-      if (item == null)
+      try
+      {
+        return _tspLibItems.First(i => i.Problem.Name == problemName);
+      }
+      catch
       {
         throw new ArgumentOutOfRangeException(nameof(problemName), "No problem of this name was found.");
       }
-      return item;
     }
   }
 }

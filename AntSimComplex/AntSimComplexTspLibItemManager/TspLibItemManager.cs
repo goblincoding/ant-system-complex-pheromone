@@ -51,7 +51,8 @@ namespace AntSimComplexTspLibItemManager
     public List<string> AllProblemNames => _itemLoader.ProblemNames;
 
     /// <summary>
-    /// Constructor.  Automatically loads the first STSP instance available.
+    /// Selects and loads symmetrical TSP problems with fewer than or equal to 100 nodes and
+    /// 2D coordinate sets.  Automatically loads the first STSP instance available.
     /// </summary>
     /// <param name="tspLibPath">The directory path to the TSPLIB95 library.</param>
     /// <exception cref="ArgumentException">Thrown if no TSP items were loaded.</exception>
