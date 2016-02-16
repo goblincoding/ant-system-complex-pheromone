@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace AntSimComplexTspLibItemManager
 {
@@ -45,8 +44,8 @@ namespace AntSimComplexTspLibItemManager
     /// <returns>The name of the current TSP problem.</returns>
     public string ProblemName => _infoProvider.ProblemName;
 
-    /// <returns>A list of Points corresponding to the current nodes' coordinates.</returns>
-    public IEnumerable<Point> NodeCoordinatesAsPoints => _infoProvider.NodeCoordinatesAsPoints;
+    /// <returns>A list of the current TspNodes ordered by ID.</returns>
+    public IReadOnlyList<TspNode> TspNodes => _infoProvider.TspNodes;
 
     /// <returns>The name of the current TSP problem.</returns>
     public List<string> AllProblemNames => _itemLoader.ProblemNames;

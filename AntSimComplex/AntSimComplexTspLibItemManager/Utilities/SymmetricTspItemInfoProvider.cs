@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
 
@@ -31,14 +30,16 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// <returns>The minimum "y" coordinate of all the nodes in the graph</returns>
     public double MinYCoordinate { get; private set; }
 
-    /// <returns>A list of Points corresponding to the current nodes' coordinates.</returns>
-    public IEnumerable<Point> NodeCoordinatesAsPoints { get; private set; }
-
     /// <returns>Returns a distance matrix of edge weights between nodes.  I.e. Distances[i][j]
     /// will return the distance between node i and j.</returns>
     public IReadOnlyList<IReadOnlyList<double>> Distances => _distances;
 
     private double[][] _distances;
+
+    /// <returns>A list of the current TspNodes ordered by ID.</returns>
+    public IReadOnlyList<TspNode> TspNodes => _tspNodes;
+
+    private readonly List<TspNode> _tspNodes;
 
     /// <returns>Returns the tour length constructed by the nearest neighbour heuristic (ACO Dorigo Ch3, p70).</returns>
     public double NearestNeighbourTourLength { get; private set; }
@@ -58,8 +59,6 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// </summary>
     private readonly int _zeroBasedIdOffset;
 
-    private List<TspNode> TspNodes { get; }
-
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -74,14 +73,14 @@ namespace AntSimComplexTspLibItemManager.Utilities
       }
 
       var nodes2D = item.Problem.NodeProvider.GetNodes();
-      TspNodes = nodes2D.OfType<Node2D>().Select(n => new TspNode(n.Id, n.X, n.Y)).ToList();
-      if (TspNodes.Any() == false)
+      _tspNodes = nodes2D.OfType<Node2D>().Select(n => new TspNode(n.Id, n.X, n.Y)).OrderBy(n => n.Id).ToList();
+      if (_tspNodes.Any() == false)
       {
         string errMsg = $"Selected problem: {item.Problem.Name} does not contain Node2D objects.";
         throw new ArgumentOutOfRangeException(nameof(item), errMsg);
       }
 
-      _zeroBasedIdOffset = TspNodes.Min(n => n.Id) - 0;
+      _zeroBasedIdOffset = _tspNodes.Min(n => n.Id) - 0;
 
       var problem = item.Problem;
       NodeCount = problem.NodeProvider.CountNodes();
@@ -102,17 +101,15 @@ namespace AntSimComplexTspLibItemManager.Utilities
     /// <returns>A list of TspNode objects representing an Ant's constructed tour.</returns>
     public IEnumerable<TspNode> BuildTspNodeTourFromZeroBasedIndices(IEnumerable<int> tourIndices)
     {
-      return tourIndices.Select(index => TspNodes.First(n => n.Id == index + _zeroBasedIdOffset));
+      return tourIndices.Select(index => _tspNodes.First(n => n.Id == index + _zeroBasedIdOffset));
     }
 
     private void SetCoordinateProperties()
     {
-      MaxXCoordinate = TspNodes.Max(i => i.X);
-      MinXCoordinate = TspNodes.Min(i => i.X);
-      MaxYCoordinate = TspNodes.Max(i => i.Y);
-      MinYCoordinate = TspNodes.Min(i => i.Y);
-
-      NodeCoordinatesAsPoints = TspNodes.Select(n => new Point { X = n.X, Y = n.Y });
+      MaxXCoordinate = _tspNodes.Max(i => i.X);
+      MinXCoordinate = _tspNodes.Min(i => i.X);
+      MaxYCoordinate = _tspNodes.Max(i => i.Y);
+      MinYCoordinate = _tspNodes.Min(i => i.Y);
     }
 
     private void SetOptimalTourProperties(TspLib95Item item)

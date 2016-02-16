@@ -39,8 +39,7 @@ namespace AntSimComplexUI.Utilities
     public ListViewTourItem(IEnumerable<TspNode> nodes, double tourLength, string tourInfo)
     {
       var tspNodes = nodes as TspNode[] ?? nodes.ToArray();
-      var ids = from n in tspNodes
-                select n.Id.ToString();
+      var ids = tspNodes.Select(n => n.Id.ToString());
       NodeSequence = ids.Aggregate((a, b) => a + "," + b);
       Nodes = tspNodes;
       Length = tourLength;

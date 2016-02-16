@@ -30,11 +30,21 @@ namespace AntSimComplexUI.Utilities
                                     canvasMinX, canvasMaxX, canvasMinY, canvasMaxY);
     }
 
+    /// <summary>
+    /// Transforms a world coordinate point to a canvas coordinate point.
+    /// </summary>
+    /// <param name="point">The coordinate point in world space to transform.</param>
+    /// <returns>A coordinate point in canvas space</returns>
     public Point TransformWorldToCanvas(Point point)
     {
       return _worldToCanvasMatrix.Transform(point);
     }
 
+    /// <summary>
+    /// Transforms a canvas coordinate point to a world coordinate point.
+    /// </summary>
+    /// <param name="point">The coordinate point in canvas space to transform.</param>
+    /// <returns>A coordinate point in world space</returns>
     public Point TransformCanvasToWorld(Point point)
     {
       return _canvasToWorldMatrix.Transform(point);

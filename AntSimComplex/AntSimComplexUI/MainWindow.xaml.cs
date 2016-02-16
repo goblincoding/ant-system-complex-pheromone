@@ -59,8 +59,7 @@ namespace AntSimComplexUI
     }
 
     /// <summary>
-    /// Runs the algorithm against the selected problem and for the chosen number of iterations
-    /// or seconds.
+    /// Runs the algorithm against the selected problem based on the selected execution parameters.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -76,7 +75,7 @@ namespace AntSimComplexUI
       // This method gets called as soon as work has completed. UI interaction is re-enabled.
       worker.RunWorkerCompleted += ExecutionCompleted;
 
-      // Are we executing by nr of iterations or time?
+      // Select termination strategy.
       if (RunCount.IsChecked == true)
       {
         IterateThroughRunCount(worker);
@@ -95,6 +94,10 @@ namespace AntSimComplexUI
       worker.RunWorkerAsync();
     }
 
+    /// <summary>
+    /// Executes the algorithm for the number of seconds selected.
+    /// </summary>
+    /// <param name="worker">The background thread that will do the heavy lifting.</param>
     private void IterateForRunTime(BackgroundWorker worker)
     {
       // ReSharper disable once PossibleInvalidOperationException
@@ -119,6 +122,10 @@ namespace AntSimComplexUI
       };
     }
 
+    /// <summary>
+    /// Executes the algorithm for the number of iterations selected.
+    /// </summary>
+    /// <param name="worker">The background thread that will do the heavy lifting.</param>
     private void IterateThroughRunCount(BackgroundWorker worker)
     {
       var runCount = RunCountInt.Value;
@@ -136,10 +143,15 @@ namespace AntSimComplexUI
       };
     }
 
+    /// <summary>
+    /// Executes the algorithm until the selected threshold is breached.
+    /// </summary>
+    /// <param name="worker">The background thread that will do the heavy lifting.</param>
     private void IterateForThreshold(BackgroundWorker worker)
     {
       var runThreshold = RunThresholdInt.Value;
 
+      // No direct interaction with the UI is allowed from this method.
       worker.DoWork += (o, ea) =>
       {
         while (_antSystem.IterationMinTourLength > runThreshold &&
@@ -150,6 +162,9 @@ namespace AntSimComplexUI
       };
     }
 
+    /// <summary>
+    /// Logs the statistics for the entire run.
+    /// </summary>
     private void LogStats()
     {
       var logMessages = new List<string>
@@ -165,7 +180,7 @@ namespace AntSimComplexUI
     /// <summary>
     /// Browse to the TSPLIB95 directory.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The full name of the TSPLIB95 directory</returns>
     private string BrowseTsplibPath()
     {
       var packageRelPath = Properties.Settings.Default.PackageRelPath;
@@ -193,6 +208,9 @@ namespace AntSimComplexUI
       return tspLibPath;
     }
 
+    /// <summary>
+    /// If an optimal tour is known, add it to the List View.
+    /// </summary>
     private void AddOptimalTourToListView()
     {
       if (_tspLibItemManager.HasOptimalTour)
@@ -332,8 +350,7 @@ namespace AntSimComplexUI
 
     private void SelectionStrategyChanged(object sender, SelectionChangedEventArgs e)
     {
-      _selectionStrategy = (NodeSelectionStrategy)Enum.Parse(typeof(NodeSelectionStrategy),
-                                                              SelectionStrategy.SelectedValue.ToString());
+      _selectionStrategy = (NodeSelectionStrategy)Enum.Parse(typeof(NodeSelectionStrategy), SelectionStrategy.SelectedValue.ToString());
       CreateAntSystem();
     }
 

@@ -155,7 +155,7 @@ namespace AntSimComplexTests.TspLibManager
     }
 
     [Test]
-    public void NodeCoordinatesAsPointsShouldMatchThatOfInfoProvider()
+    public void TspNodesShouldMatchThatOfInfoProvider()
     {
       // arrange
       const string problemName = "eil76";
@@ -168,7 +168,7 @@ namespace AntSimComplexTests.TspLibManager
       manager.LoadItem(problemName);
 
       // assert
-      CollectionAssert.AreEqual(infoProvider.NodeCoordinatesAsPoints, manager.NodeCoordinatesAsPoints);
+      CollectionAssert.AreEqual(infoProvider.TspNodes, manager.TspNodes);
     }
 
     [Test]

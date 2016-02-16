@@ -167,18 +167,18 @@
                             <Label Content="Alpha" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" />
                             <xctk:IntegerUpDown Name="AlphaInt" Value="1" Minimum="1" Maximum="5" Grid.Column="1" Grid.Row="1"
                                                 ValueChanged="AlphaIntValueChanged"
-                                                AllowTextInput="False" Margin="5,5,-43,5" />
+                                                AllowTextInput="False" Margin="5,5,-26,5" />
 
                             <Label Content="Beta" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" />
-                            <xctk:IntegerUpDown Name="BetaInt" Value="2" Minimum="2" Maximum="5" Grid.Column="1" Grid.Row="2"
+                            <xctk:IntegerUpDown Name="BetaInt" Value="5" Minimum="2" Maximum="5" Grid.Column="1" Grid.Row="2"
                                                 ValueChanged="BetaIntValueChanged"
-                                                AllowTextInput="False" Margin="5,5,-43,5" />
+                                                AllowTextInput="False" Margin="5,5,-26,5" />
 
                             <Label Content="Evaporation Rate" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" />
                             <xctk:DoubleUpDown Name="EvapDouble" Value="0.50" Minimum="0.0" Maximum="1.0" Increment="0.01"
                                                Grid.Column="1" Grid.Row="3"
                                                ValueChanged="EvapDoubleValueChanged"
-                                               AllowTextInput="False" Margin="5,5,-43,5" />
+                                               AllowTextInput="False" Margin="5,5,-26,5" />
                         </Grid>
                     </Border>
 

@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;
 using TspLibNet.Tours;
@@ -75,15 +74,19 @@ namespace AntSimComplexTests.TspLibManager
     }
 
     [Test]
-    public void NodeCoordinatesAsPointsGivenTspLib95ItemFromMockProblemShouldBeSetCorrectly()
+    public void TspNodesGivenTspLib95ItemFromMockProblemShouldReturnListofTspNodesOrderedById()
     {
       // arrange
       var problem = new MockProblem();
       var infoProvider = CreateInfoProviderFromMockProblem();
-      var expected = problem.NodeProvider.GetNodes().OfType<Node2D>().Select(n => new Point { X = n.X, Y = n.Y });
+      var expected = problem.NodeProvider.GetNodes()
+                                         .OfType<Node2D>()
+                                         .Select(n => new TspNode(n.Id, n.X, n.Y))
+                                         .OrderBy(n => n.Id)
+                                         .ToList();
 
       // assert
-      CollectionAssert.AreEqual(expected, infoProvider.NodeCoordinatesAsPoints);
+      CollectionAssert.AreEqual(expected, infoProvider.TspNodes);
     }
 
     [Test]

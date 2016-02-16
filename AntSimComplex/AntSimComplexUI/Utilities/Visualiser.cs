@@ -38,10 +38,9 @@ namespace AntSimComplexUI.Utilities
 
       _canvas.Children.Clear();
 
-      var points = _currentTspItemManager.NodeCoordinatesAsPoints;
-      foreach (var point in points)
+      foreach (var node in _currentTspItemManager.TspNodes)
       {
-        DrawNode(point, Brushes.Black);
+        DrawNode(node.Id, new Point { X = node.X, Y = node.Y }, Brushes.Black, false);
       }
 
       DrawSelectedTour(tourItem);
@@ -74,17 +73,14 @@ namespace AntSimComplexUI.Utilities
     {
       if (tourItem != null)
       {
-        DrawTour(tourItem.Nodes, tourItem.Length, Brushes.CornflowerBlue, Brushes.DodgerBlue);
+        DrawTour(tourItem.Nodes, tourItem.Length, Brushes.OrangeRed, Brushes.DodgerBlue);
       }
     }
 
     private void DrawTour(IEnumerable<TspNode> nodes, double tourLength, Brush startNodeBrush, Brush lineBrush)
     {
-      var points = (from n in nodes
-                    select _transformer.TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();
-
-      // Draw the starting node in red for easier identification.
-      DrawNode(_transformer.TransformCanvasToWorld(points.First()), startNodeBrush);
+      var tspNodes = nodes as IList<TspNode> ?? nodes.ToList();
+      var points = tspNodes.Select(n => _transformer.TransformWorldToCanvas(new Point { X = n.X, Y = n.Y })).ToList();
 
       // Return to starting point.
       points.Add(points.First());
@@ -98,24 +94,34 @@ namespace AntSimComplexUI.Utilities
       };
 
       _canvas.Children.Add(poly);
+
+      // Draw the starting node over the poly lines.
+      DrawNode(tspNodes.First().Id, _transformer.TransformCanvasToWorld(points.First()), startNodeBrush, true);
     }
 
     /// <summary>
     /// Draws a single problem node at its relative position within the world.
     /// </summary>
-    /// <param name="point"></param>
-    /// <param name="brush"></param>
-    private void DrawNode(Point point, Brush brush)
+    /// <param name="id">The ID of the node being drawn.</param>
+    /// <param name="point">The point at which the node is drawn.</param>
+    /// <param name="brush">The colour of the node.</param>
+    /// <param name="startNode">True if the node to be drawn is the start node.</param>
+    private void DrawNode(int id, Point point, Brush brush, bool startNode)
     {
+      // Draw the start node slightly larger for easier visual identification.
       var circleWidth = Properties.Settings.Default.NodeCircleWidth;
+      circleWidth = startNode ? circleWidth * 2 : circleWidth;
+
       var ellipse = new Ellipse
       {
         Width = circleWidth,
         Height = circleWidth,
         Fill = brush,
-        ToolTip = $"x: {point.X}, y: {point.Y}"
+        ToolTip = $"Node {id}: ({point.X}, {point.Y})"
       };
+
       _canvas.Children.Add(ellipse);
+
       var transformed = _transformer.TransformWorldToCanvas(point);
       Canvas.SetLeft(ellipse, transformed.X - ellipse.Width / 2);
       Canvas.SetTop(ellipse, transformed.Y - ellipse.Height / 2);
@@ -138,7 +144,7 @@ namespace AntSimComplexUI.Utilities
       // system (top-left is 0,0).  This "flips" the coordinate system along the Y
       // axis by making the Y scale value negative so that we have bottom-left at 0,0.
       _transformer = new CoordinateTransformer(worldMinX, worldMaxX, worldMinY, worldMaxY,
-        canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
+                                               canvasMinX, canvasMaxX, canvasMaxY, canvasMinY);
     }
   }
 }

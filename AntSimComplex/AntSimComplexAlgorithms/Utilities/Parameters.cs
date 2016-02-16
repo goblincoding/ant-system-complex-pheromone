@@ -18,7 +18,7 @@
     /// Good values are 2 - 5, determines the relative influence of the heuristic information
     /// in the random proportional rule.
     /// </summary>
-    public static int Beta { get; set; } = 2;
+    public static int Beta { get; set; } = 5;
 
     /// <summary>
     /// The pheromone evaporation rate for the pheromone update cycle (rho).

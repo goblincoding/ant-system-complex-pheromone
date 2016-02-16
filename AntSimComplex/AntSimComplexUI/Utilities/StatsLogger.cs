@@ -8,6 +8,10 @@ namespace AntSimComplexUI.Utilities
   {
     public static StatsLogger Logger => _logger ?? (_logger = new StatsLogger());
 
+    /// <summary>
+    /// Logs every message on a separate line.
+    /// </summary>
+    /// <param name="logMessages"></param>
     public void Log(IEnumerable<string> logMessages)
     {
       using (var sw = File.AppendText(_path))
@@ -16,14 +20,6 @@ namespace AntSimComplexUI.Utilities
         {
           sw.WriteLine(logMessage);
         }
-      }
-    }
-
-    public void Log(string log)
-    {
-      using (var sw = File.AppendText(_path))
-      {
-        sw.WriteLine(log);
       }
     }
 
