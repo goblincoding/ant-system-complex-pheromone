@@ -4,25 +4,25 @@ namespace AntSimComplexAlgorithms.Utilities
 {
   public struct IterationStatsItem : IComparable<IterationStatsItem>
   {
-    public static string CsvHeader => $"{nameof(Iteration)},{nameof(TimeElapsed)}(ms),{nameof(AverageTourLength)}, {nameof(BestTourLength)}";
-    public string CsvString => $"{Iteration},{TimeElapsed},{AverageTourLength}, {BestTourLength}";
+    public static string CsvHeader => $"{nameof(_iteration)},{nameof(_timeElapsed)}(ms),{nameof(_averageTourLength)}, {nameof(_bestTourLength)}";
+    public string CsvResult => $"{_iteration},{_timeElapsed},{_averageTourLength}, {_bestTourLength}";
 
-    public int Iteration { get; set; }
-    public long TimeElapsed { get; set; }
-    public double AverageTourLength { get; set; }
-    public double BestTourLength { get; set; }
+    private readonly int _iteration;
+    private readonly long _timeElapsed;
+    private readonly double _averageTourLength;
+    private readonly double _bestTourLength;
 
     public IterationStatsItem(int iteration, long timeElapsed, double averageTourLength, double bestTourLength)
     {
-      Iteration = iteration;
-      TimeElapsed = timeElapsed;
-      AverageTourLength = averageTourLength;
-      BestTourLength = bestTourLength;
+      _iteration = iteration;
+      _timeElapsed = timeElapsed;
+      _averageTourLength = averageTourLength;
+      _bestTourLength = bestTourLength;
     }
 
     public int CompareTo(IterationStatsItem other)
     {
-      return Iteration.CompareTo(other.Iteration);
+      return _iteration.CompareTo(other._iteration);
     }
   }
 }

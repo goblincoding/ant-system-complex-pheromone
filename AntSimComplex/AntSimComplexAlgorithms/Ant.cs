@@ -6,9 +6,6 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms
 {
-  /// <summary>
-  /// Ants are implemented predominantly as per "Ant Colony Optimisation" Dorigo and Stutzle (2004), Ch3.8, p103.
-  /// </summary>
   internal class Ant : IComparable<Ant>
   {
     /// <summary>
@@ -26,23 +23,22 @@ namespace AntSimComplexAlgorithms
 
     private readonly bool[] _visited; // the indices of the nodes the Ant has already visited.
     private readonly IProblemData _problemData;
-    private readonly INodeSelector _rouletteWheel;
+    private readonly INodeSelector _nodeSelector;
 
     /// <summary>
-    /// Constructor.
+    /// Ants are implemented predominantly as per "Ant Colony Optimisation" Dorigo and Stutzle (2004), Ch3.8, p103.
     /// </summary>
-    /// <param name="problemData">Provides access to the problem-specific parameters and information matrices
-    /// used in applying the random proportional rule.</param>
-    /// <param name="rouletteWheel">Used to select the next node based on the probabilities of selection.</param>
-    public Ant(IProblemData problemData, INodeSelector rouletteWheel)
+    /// <param name="problemData">Provides access to the problem-specific parameters and data matrices.</param>
+    /// <param name="nodeSelector">Used to select the next node to move to.</param>
+    public Ant(IProblemData problemData, INodeSelector nodeSelector)
     {
       _problemData = problemData;
-      _rouletteWheel = rouletteWheel;
+      _nodeSelector = nodeSelector;
       _visited = new bool[_problemData.NodeCount];
     }
 
     /// <summary>
-    /// Initialises the internal state of the Ant (discards constructed tour information if it exists).
+    /// Initialises (or resets) the internal state of the Ant.
     /// </summary>
     /// <param name="startNode">The node the ant starts its tour on.</param>
     public void Initialise(int startNode)
@@ -63,24 +59,16 @@ namespace AntSimComplexAlgorithms
     }
 
     /// <summary>
-    /// Applies the random proportional rule on non-visited neighbours and moves the ant
-    /// to the node selected by the <seealso cref="RouletteWheelSelector"/>.
+    /// Move to the next node selected by the current node selection strategy.
     /// </summary>
-    public void MoveNext()
+    public void Step()
     {
-      // Find the neighbours we haven't visited yet.
-      var neighbours = _problemData.NearestNeighbours(_currentNode);
-      var notVisited = neighbours.Where(n => !_visited[n]).ToArray();
+      var selectedNext = SelectedNextNode();
 
-      // Select the next node to visit ("start" if all nodes have been visited).
-      var selectedNext = notVisited.Any() ?
-                              _rouletteWheel.SelectNextNode(notVisited, _currentNode) : _startNode;
-
-      // Update tour information and move to the next selected node.
+      // Update tour information before we move to the next node.
       TourLength += _problemData.Distance(_currentNode, selectedNext);
-      _currentNode = selectedNext;
-      Tour.Add(_currentNode);
-      _visited[_currentNode] = true;
+
+      MoveNext(selectedNext);
     }
 
     /// <summary>
@@ -91,6 +79,24 @@ namespace AntSimComplexAlgorithms
     public int CompareTo(Ant other)
     {
       return other != null ? TourLength.CompareTo(other.TourLength) : 1;
+    }
+
+    private int SelectedNextNode()
+    {
+      // Find the neighbours we haven't visited yet.
+      var neighbours = _problemData.NearestNeighbours(_currentNode);
+      var notVisited = neighbours.Where(n => !_visited[n]).ToArray();
+
+      // Select the next node to visit ("start" if all nodes have been visited).
+      var nextNode = notVisited.Any() ? _nodeSelector.SelectNextNode(notVisited, _currentNode) : _startNode;
+      return nextNode;
+    }
+
+    private void MoveNext(int selectedNext)
+    {
+      _currentNode = selectedNext;
+      Tour.Add(_currentNode);
+      _visited[_currentNode] = true;
     }
   }
 }

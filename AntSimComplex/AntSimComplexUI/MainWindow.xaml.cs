@@ -173,7 +173,7 @@ namespace AntSimComplexUI
         IterationStatsItem.CsvHeader
       };
 
-      logMessages.AddRange(_antSystem.IterationStats.Select(s => s.CsvString));
+      logMessages.AddRange(_antSystem.IterationStats.Select(s => s.CsvResult));
       StatsLogger.Logger.Log(logMessages);
     }
 

@@ -4,13 +4,12 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.DataStructures
 {
-  // Note:  Might have to change distance matrix to integers: ACO p101
-
   /// <summary>
   /// This class represents the prepopulated (prior to algorithm run-time), consolidated,
-  /// calculated values of different aspects of a particular TSP problem instance in problemData
+  /// calculated values of different aspects of a particular TSP problem instance in data
   /// structures such as distance and nearest neighbour matrices.
-  /// All the problemData structures are created and populated as per "Ant Colony Optimisation"
+  ///
+  /// All the data structures are created and populated as per "Ant Colony Optimisation"
   /// Dorigo and Stutzle (2004), Ch3.8, p99 which is aimed at obtaining an efficient
   /// Ant System implementation.
   ///

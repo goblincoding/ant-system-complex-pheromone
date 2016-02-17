@@ -30,8 +30,8 @@ namespace AntSimComplexAlgorithms
     private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
 
     private readonly IProblemData _problemData;
-    private readonly INodeSelector _nodeSelector;
     private readonly StatsAggregator _statsAggregator;
+    private INodeSelector _nodeSelector;
 
     private int _currentIteration;
     private Ant[] Ants { get; set; }
@@ -39,34 +39,17 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="strategy">The algorithm implementation to be executed.</param>
+    /// <param name="strategy">The node selection strategy to be executed.</param>
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
-    /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
+    /// <param name="nearestNeighbourTourLength">The tour length constructed by the Nearest Neighbour Heuristic.</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     public AntSystem(NodeSelectionStrategy strategy, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
       _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances, Random);
-
-      switch (strategy)
-      {
-        case NodeSelectionStrategy.RandomSelection:
-          _nodeSelector = new RandomSelector(Random);
-          break;
-
-        case NodeSelectionStrategy.RouletteWheel:
-          _nodeSelector = new RouletteWheelSelector(_problemData, Random);
-          break;
-
-        case NodeSelectionStrategy.NearestNeighbour:
-          _nodeSelector = new NearestNeighbourSelector(_problemData);
-          break;
-
-        default:
-          throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
-      }
-
       _statsAggregator = new StatsAggregator();
+
+      CreateNodeSelector(strategy);
       CreateAnts();
     }
 
@@ -99,6 +82,27 @@ namespace AntSimComplexAlgorithms
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
 
+    private void CreateNodeSelector(NodeSelectionStrategy strategy)
+    {
+      switch (strategy)
+      {
+        case NodeSelectionStrategy.RandomSelection:
+          _nodeSelector = new RandomSelector(Random);
+          break;
+
+        case NodeSelectionStrategy.RouletteWheel:
+          _nodeSelector = new RouletteWheelSelector(_problemData, Random);
+          break;
+
+        case NodeSelectionStrategy.NearestNeighbour:
+          _nodeSelector = new NearestNeighbourSelector(_problemData);
+          break;
+
+        default:
+          throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
+      }
+    }
+
     private void CreateAnts()
     {
       var nodeCount = _problemData.NodeCount;
@@ -112,9 +116,9 @@ namespace AntSimComplexAlgorithms
 
     private void InitialiseAnts()
     {
-      // Initialise the ants at random start nodes.
       foreach (var ant in Ants)
       {
+        // Initialise the ants at random start nodes.
         var startNode = Random.Next(0, _problemData.NodeCount);
         ant.Initialise(startNode);
       }
@@ -122,30 +126,27 @@ namespace AntSimComplexAlgorithms
 
     private void ConstructSolutions()
     {
-      // Construct solutions (iterate through nr of nodes since
-      // each ant has to visit each node once).
+      // Iterate through nr of nodes since each ant has to visit each node once.
       for (var i = 0; i < _problemData.NodeCount; i++)
       {
         foreach (var ant in Ants)
         {
-          ant.MoveNext();
+          ant.Step();
         }
       }
     }
 
     private void UpdatePheromoneTrails()
     {
-      // Update pheromone trails.
       _problemData.EvaporatePheromone();
 
-      // Deposit new pheromone.
       foreach (var ant in Ants)
       {
         var deposit = 1.0 / ant.TourLength;
         _problemData.DepositPheromone(ant.Tour, deposit);
       }
 
-      // Choice info matrix has to be updated after pheromone changes.
+      // Choice info matrix has to be updated AFTER pheromone changes.
       _problemData.UpdateChoiceInfoMatrix();
     }
   }

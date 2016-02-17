@@ -8,15 +8,12 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
   /// <summary>
   /// The probabilistic selection of the next node to be visited is done in accordance to the
   /// roulette wheel selection procedure: https://en.wikipedia.org/wiki/Fitness_proportionate_selection
-  /// (ACO p107)
   /// </summary>
   internal class RouletteWheelSelector : INodeSelector
   {
     /// <summary>
     /// Helper class representing a node and a probability of selection of that node from
     /// a non-specified, other node.
-    ///
-    /// Compares on probability.
     /// </summary>
     private struct ProbabilityNodeIndexPair
     {
@@ -43,8 +40,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     }
 
     /// <summary>
-    /// Randomly selects the index of the next node based on the "roulette wheel
-    /// selection" principle.
+    /// Selects the index of the next node based on the "roulette wheel selection" principle.
     /// </summary>
     /// <param name="notVisited">The indices of the neighbouring nodes that have not been visited.</param>
     /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>

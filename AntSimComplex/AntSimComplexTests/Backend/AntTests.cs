@@ -47,7 +47,7 @@ namespace AntSimComplexTests.Backend
     }
 
     [Test]
-    public void MoveNextShouldBuildAccurateTourLength()
+    public void StepShouldBuildAccurateTourLength()
     {
       // arrange
       var data = Substitute.For<IProblemData>();
@@ -72,10 +72,10 @@ namespace AntSimComplexTests.Backend
 
       // act
       ant.Initialise(7);
-      ant.MoveNext();
-      ant.MoveNext();
-      ant.MoveNext();
-      ant.MoveNext();
+      ant.Step();
+      ant.Step();
+      ant.Step();
+      ant.Step();
 
       // assert
       Assert.AreEqual(8, ant.TourLength);

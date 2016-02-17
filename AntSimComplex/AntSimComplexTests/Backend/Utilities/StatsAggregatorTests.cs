@@ -82,45 +82,6 @@ namespace AntSimComplexTests.Backend.Utilities
     }
 
     [Test]
-    public void IterationStatsItemAfterSingleStartSleepStopShouldReturnCorrectIteration()
-    {
-      // arrange
-      const int iteration = 1;
-      var tourLengths = new[] { 0.0 };
-
-      var statsAggregator = new StatsAggregator();
-
-      // act
-      statsAggregator.StartIteration(iteration);
-      statsAggregator.StopIteration(tourLengths);
-
-      var result = statsAggregator.IterationStats.First();
-
-      // assert
-      Assert.AreEqual(iteration, result.Iteration);
-    }
-
-    [Test]
-    public void IterationStatsItemAfterSingleStartSleepStopShouldReturnCorrectTourLengthAverage()
-    {
-      // arrange
-      const int iteration = 1;
-      var tourLengths = new[] { 1.0, 2.0, 3.0, 4.0 };
-      var expectedAverage = tourLengths.Average();
-
-      var statsAggregator = new StatsAggregator();
-
-      // act
-      statsAggregator.StartIteration(iteration);
-      statsAggregator.StopIteration(tourLengths);
-
-      var result = statsAggregator.IterationStats.First();
-
-      // assert
-      Assert.AreEqual(expectedAverage, result.AverageTourLength);
-    }
-
-    [Test]
     public void ClearStatsShouldRemoveAllIterationStatsItems()
     {
       // arrange
