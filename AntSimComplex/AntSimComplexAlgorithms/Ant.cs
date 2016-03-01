@@ -15,7 +15,7 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// The index of the node the ant is currently on.
     /// </summary>
-    public int CurrentNode;
+    public int CurrentNode { get; private set; }
 
     /// <summary>
     /// Length of the ant's completed tour.

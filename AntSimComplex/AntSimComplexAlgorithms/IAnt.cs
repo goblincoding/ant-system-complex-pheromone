@@ -10,6 +10,11 @@ namespace AntSimComplexAlgorithms
     int Id { get; }
 
     /// <summary>
+    /// The index of the node the ant is currently on.
+    /// </summary>
+    int CurrentNode { get; }
+
+    /// <summary>
     /// Length of the ant's completed tour.
     /// </summary>
     double TourLength { get; }

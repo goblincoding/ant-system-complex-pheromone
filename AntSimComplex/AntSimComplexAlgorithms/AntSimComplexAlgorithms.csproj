@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapted\SmartPheromone.cs" />
     <Compile Include="Ant.cs" />
     <Compile Include="AntSystem.cs" />
     <Compile Include="IAnt.cs" />
