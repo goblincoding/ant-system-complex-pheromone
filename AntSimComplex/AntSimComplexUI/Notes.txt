@@ -16,3 +16,10 @@ http://csharphelper.com/blog/2014/09/use-transformations-draw-graph-wpf-c/
 
 Experimental setup for and performance of AS
 Stutzle 2000 Max-Min p14, section 4.6
+
+Possible Smart Pheromone Implementation
+========================================
+At each step, ants emit signal with own ID, current node ID and tour length so far. Pheromone has internal array of size "nr of ants", subscribe to signals, 
+retrieves weights from ants' nodes to itself and uses ant ID as index on internal array on which to set adapted density. Perhaps adapted density can be
+current density * 1/(ant tour length + step distance). Neighbour heuristic will need to be adapted or replaced, when querying heuristic/pheromone density, ant
+will provide own ID and will receive adapted value. Check if operator overload on pheromone is worth it, i.e pheromone = value should set density
