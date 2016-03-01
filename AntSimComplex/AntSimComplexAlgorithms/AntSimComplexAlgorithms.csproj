@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Ant.cs" />
     <Compile Include="AntSystem.cs" />
+    <Compile Include="IAnt.cs" />
     <Compile Include="Utilities\BestTour.cs" />
     <Compile Include="Utilities\DataStructures\ProblemData.cs" />
     <Compile Include="Utilities\DataStructures\IProblemData.cs" />

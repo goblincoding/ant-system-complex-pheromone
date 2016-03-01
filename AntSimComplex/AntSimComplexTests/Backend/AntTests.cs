@@ -19,7 +19,7 @@ namespace AntSimComplexTests.Backend
       var data = Substitute.For<IProblemData>();
       data.NodeCount.Returns(10);
       var roulette = Substitute.For<INodeSelector>();
-      var ant = new Ant(data, roulette);
+      var ant = new Ant(0, data, roulette);
 
       // act
       ant.Initialise(startNode);
@@ -37,7 +37,7 @@ namespace AntSimComplexTests.Backend
       var data = Substitute.For<IProblemData>();
       data.NodeCount.Returns(10);
       var roulette = Substitute.For<INodeSelector>();
-      var ant = new Ant(data, roulette);
+      var ant = new Ant(0, data, roulette);
 
       // act
       ant.Initialise(startNode);
@@ -67,7 +67,7 @@ namespace AntSimComplexTests.Backend
       roulette.SelectNextNode(Arg.Any<int[]>(), 8).Returns(2);
       data.Distance(8, 2).Returns(5);
 
-      var ant = new Ant(data, roulette);
+      var ant = new Ant(0, data, roulette);
       var expectedTour = new List<int> { 7, 3, 8, 2, 7 };
 
       // act

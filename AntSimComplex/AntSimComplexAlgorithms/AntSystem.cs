@@ -34,7 +34,7 @@ namespace AntSimComplexAlgorithms
     private INodeSelector _nodeSelector;
 
     private int _currentIteration;
-    private Ant[] Ants { get; set; }
+    private IAnt[] Ants { get; set; }
 
     /// <summary>
     /// Constructor.
@@ -77,7 +77,7 @@ namespace AntSimComplexAlgorithms
       UpdatePheromoneTrails();
       _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
-      var bestAnt = Ants.Min();
+      var bestAnt = Ants.Aggregate((a1, a2) => a1.TourLength < a2.TourLength ? a1 : a2);
       IterationMinTourLength = bestAnt.TourLength;
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
@@ -109,7 +109,7 @@ namespace AntSimComplexAlgorithms
       Ants = new Ant[nodeCount];
       for (var i = 0; i < nodeCount; i++)
       {
-        var ant = new Ant(_problemData, _nodeSelector);
+        var ant = new Ant(i, _problemData, _nodeSelector);
         Ants[i] = ant;
       }
     }
