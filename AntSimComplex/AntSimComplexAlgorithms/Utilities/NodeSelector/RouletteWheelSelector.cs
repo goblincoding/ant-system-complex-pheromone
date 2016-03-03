@@ -20,7 +20,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="problemData">The problem specific <seealso cref="ProblemData"/> object containing distance,
+    /// <param name="problemData">The problem specific <seealso cref="StandardProblemData"/> object containing distance,
     /// pheromone, heuristic and choice info information.</param>
     /// <param name="random">The global random number generator object.</param>
     public RouletteWheelSelector(IProblemData problemData, Random random)

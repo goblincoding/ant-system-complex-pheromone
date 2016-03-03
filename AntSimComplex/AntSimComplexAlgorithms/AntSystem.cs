@@ -46,7 +46,7 @@ namespace AntSimComplexAlgorithms
     public AntSystem(NodeSelectionStrategy strategy, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
-      _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances);
+      _problemData = new StandardProblemData(nodeCount, parameters.InitialPheromone, distances);
       _statsAggregator = new StatsAggregator();
 
       CreateNodeSelector(strategy);

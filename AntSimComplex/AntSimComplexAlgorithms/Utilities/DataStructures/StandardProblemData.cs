@@ -24,7 +24,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
   /// matrix and the choice info matrix (since the choice info heuristic is directly
   /// dependent on pheromone density).
   /// </summary>
-  internal class ProblemData : ProblemDataBase
+  internal class StandardProblemData : ProblemDataBase
   {
     /// <summary>
     /// Represents the simple pheromone density trails between two nodes (graph arcs)
@@ -47,7 +47,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
-    public ProblemData(int nodeCount,
+    public StandardProblemData(int nodeCount,
                        double initialPheromoneDensity,
                        IReadOnlyList<IReadOnlyList<double>> distances)
       : base(nodeCount, initialPheromoneDensity, distances)

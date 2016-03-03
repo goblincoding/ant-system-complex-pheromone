@@ -22,7 +22,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       // assert
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new ProblemData(problem.NodeProvider.CountNodes(), -1, distances));
+      Assert.Throws<ArgumentOutOfRangeException>(() => new StandardProblemData(problem.NodeProvider.CountNodes(), -1, distances));
     }
 
     [Test]
@@ -192,14 +192,14 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       Assert.AreEqual(expected, choiceInfo);
     }
 
-    private static ProblemData CreateDefaultDataStructuresFromMockProblem()
+    private static StandardProblemData CreateDefaultDataStructuresFromMockProblem()
     {
       const int nodeCount = 10;
 
       var problem = new MockProblem();
       var distances = problem.Distances;
 
-      var data = new ProblemData(nodeCount, InitialPheromoneDensity, distances);
+      var data = new StandardProblemData(nodeCount, InitialPheromoneDensity, distances);
       return data;
     }
   }

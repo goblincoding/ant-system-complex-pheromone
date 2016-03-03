@@ -13,7 +13,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     /// <summary>
     /// This method does not create the nearest neighbours list, but references
-    /// the lists obtained from the original problem with which the <seealso cref="ProblemData"/>
+    /// the lists obtained from the original problem with which the <seealso cref="StandardProblemData"/>
     /// object was constructed.
     /// </summary>
     /// <param name="node">The node index whose neighbours should be returned.</param>
@@ -23,7 +23,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     /// <summary>
     /// This method does not calculate the edge weight between two nodes, but references
-    /// the weights obtained from the original problem with which the <seealso cref="ProblemData"/>
+    /// the weights obtained from the original problem with which the <seealso cref="StandardProblemData"/>
     /// object was constructed.
     /// </summary>
     /// <param name="node1">The index of the first node</param>
@@ -36,7 +36,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// Represents the [t_ij]^A [n_ij]^B heuristic values for each edge [i][j] where t_ij is the
     /// pheromone density, n_ij = 1/d_ij, and 'A' and 'B' are the Alpha and Beta parameter values.
     /// This method does not calculate the choice info heuristics, but references values in a matrix
-    /// of dimensions dependent on the original problem with which the <seealso cref="ProblemData"/>
+    /// of dimensions dependent on the original problem with which the <seealso cref="StandardProblemData"/>
     /// object was constructed.
     /// </summary>
     /// <param name="node1">The index of the first node</param>
