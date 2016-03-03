@@ -43,7 +43,7 @@ namespace AntSimComplexTests.Backend
       ant.Initialise(startNode);
 
       // assert
-      Assert.AreEqual(new List<int> { startNode }, ant.Tour);
+      Assert.AreEqual(new[] { startNode }, ant.Tour);
     }
 
     [Test]
@@ -68,14 +68,14 @@ namespace AntSimComplexTests.Backend
       data.Distance(8, 2).Returns(5);
 
       var ant = new Ant(0, data, roulette);
-      var expectedTour = new List<int> { 7, 3, 8, 2, 7 };
+      var expectedTour = new[] { 7, 3, 8, 2, 7 };
 
       // act
       ant.Initialise(7);
-      ant.Step();
-      ant.Step();
-      ant.Step();
-      ant.Step();
+      for (var i = 1; i < expectedTour.Length; i++)
+      {
+        ant.Step(i);
+      }
 
       // assert
       Assert.AreEqual(8, ant.TourLength);

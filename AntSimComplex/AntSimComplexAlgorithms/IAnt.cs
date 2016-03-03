@@ -22,7 +22,12 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// The node indices corresponding to the ant's tour.
     /// </summary>
-    List<int> Tour { get; }
+    IReadOnlyList<int> Tour { get; }
+
+    /// <summary>
+    /// The node indices corresponding to nodes the ant has not yet visited.
+    /// </summary>
+    IReadOnlyList<int> NotVisited { get; }
 
     /// <summary>
     /// Initialises (or resets) the internal state of the Ant.
@@ -33,6 +38,7 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Move to the next node selected by the current node selection strategy.
     /// </summary>
-    void Step();
+    /// <param name="i">The current step</param>
+    void Step(int i);
   }
 }

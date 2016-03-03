@@ -7,27 +7,14 @@ namespace AntSimComplexAlgorithms
 {
   internal class Ant : IAnt
   {
-    /// <summary>
-    /// The ant's unique integer Id.
-    /// </summary>
     public int Id { get; }
-
-    /// <summary>
-    /// The index of the node the ant is currently on.
-    /// </summary>
     public int CurrentNode { get; private set; }
-
-    /// <summary>
-    /// Length of the ant's completed tour.
-    /// </summary>
     public double TourLength { get; private set; }
-
-    /// <summary>
-    /// The node indices corresponding to the ant's tour.
-    /// </summary>
-    public List<int> Tour { get; } = new List<int>();
+    public IReadOnlyList<int> Tour => _tour.Where(n => n != -1).ToArray();
+    public IReadOnlyList<int> NotVisited => _tour.Where(n => !_visited[n]).ToArray();
 
     private int _startNode;
+    private readonly int[] _tour;
     private readonly bool[] _visited; // the indices of the nodes the Ant has already visited.
     private readonly IProblemData _problemData;
     private readonly INodeSelector _nodeSelector;
@@ -43,6 +30,7 @@ namespace AntSimComplexAlgorithms
       Id = id;
       _problemData = problemData;
       _nodeSelector = nodeSelector;
+      _tour = new int[_problemData.NodeCount];
       _visited = new bool[_problemData.NodeCount];
     }
 
@@ -59,25 +47,28 @@ namespace AntSimComplexAlgorithms
       for (var i = 0; i < _visited.Length; i++)
       {
         _visited[i] = false;
+        _tour[i] = -1;
       }
       _visited[CurrentNode] = true;
 
       TourLength = 0.0;
-      Tour.Clear();
-      Tour.Add(CurrentNode);
+      _tour[0] = CurrentNode;
     }
 
     /// <summary>
     /// Move to the next node selected by the current node selection strategy.
     /// </summary>
-    public void Step()
+    /// <param name="i"></param>
+    public void Step(int i)
     {
       var selectedNext = SelectedNextNode();
 
       // Update tour information before we move to the next node.
       TourLength += _problemData.Distance(CurrentNode, selectedNext);
 
-      MoveNext(selectedNext);
+      CurrentNode = selectedNext;
+      _tour[i] = CurrentNode;
+      _visited[CurrentNode] = true;
     }
 
     /// <summary>
@@ -99,13 +90,6 @@ namespace AntSimComplexAlgorithms
       // Select the next node to visit ("start" if all nodes have been visited).
       var nextNode = notVisited.Any() ? _nodeSelector.SelectNextNode(notVisited, CurrentNode) : _startNode;
       return nextNode;
-    }
-
-    private void MoveNext(int selectedNext)
-    {
-      CurrentNode = selectedNext;
-      Tour.Add(CurrentNode);
-      _visited[CurrentNode] = true;
     }
   }
 }

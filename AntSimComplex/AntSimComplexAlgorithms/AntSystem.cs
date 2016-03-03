@@ -127,11 +127,12 @@ namespace AntSimComplexAlgorithms
     private void ConstructSolutions()
     {
       // Iterate through nr of nodes since each ant has to visit each node once.
-      for (var i = 0; i < _problemData.NodeCount; i++)
+      // Start at 1 since Ants have already been initialised on their starting nodes.
+      for (var i = 1; i < _problemData.NodeCount; i++)
       {
         foreach (var ant in Ants)
         {
-          ant.Step();
+          ant.Step(i);
         }
       }
     }
