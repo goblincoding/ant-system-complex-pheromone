@@ -26,7 +26,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
   /// </summary>
   internal class ProblemData : IProblemData
   {
-    public Random Random { get; }
     public int NodeCount { get; }
 
     /// <summary>
@@ -77,12 +76,10 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
-    /// <param name="random">The global AntSystem Random object instance.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
     public ProblemData(int nodeCount,
                        double initialPheromoneDensity,
-                       IReadOnlyList<IReadOnlyList<double>> distances,
-                       Random random)
+                       IReadOnlyList<IReadOnlyList<double>> distances)
     {
       if (initialPheromoneDensity <= 0.0)
       {
@@ -91,7 +88,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
       NodeCount = nodeCount;
       _initialPheromoneDensity = initialPheromoneDensity;
-      Random = random;
 
       PopulateDataStructures(distances);
     }

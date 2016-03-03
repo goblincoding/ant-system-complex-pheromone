@@ -46,7 +46,7 @@ namespace AntSimComplexAlgorithms
     public AntSystem(NodeSelectionStrategy strategy, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
-      _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances, Random);
+      _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances);
       _statsAggregator = new StatsAggregator();
 
       CreateNodeSelector(strategy);
@@ -106,7 +106,7 @@ namespace AntSimComplexAlgorithms
     private void CreateAnts()
     {
       var nodeCount = _problemData.NodeCount;
-      Ants = new Ant[nodeCount];
+      Ants = new IAnt[nodeCount];
       for (var i = 0; i < nodeCount; i++)
       {
         var ant = new Ant(i, _problemData, _nodeSelector);

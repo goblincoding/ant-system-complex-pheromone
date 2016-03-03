@@ -16,11 +16,10 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       // arrange
       var problem = new MockProblem();
       var distances = problem.Distances;
-      var random = new Random();
 
       // assert
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new ProblemData(problem.NodeProvider.CountNodes(), -1, distances, random));
+      Assert.Throws<ArgumentOutOfRangeException>(() => new ProblemData(problem.NodeProvider.CountNodes(), -1, distances));
     }
 
     [Test]
@@ -188,9 +187,8 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       var problem = new MockProblem();
       var distances = problem.Distances;
-      var random = new Random();
 
-      var data = new ProblemData(nodeCount, InitialPheromoneDensity, distances, random);
+      var data = new ProblemData(nodeCount, InitialPheromoneDensity, distances);
       return data;
     }
   }
