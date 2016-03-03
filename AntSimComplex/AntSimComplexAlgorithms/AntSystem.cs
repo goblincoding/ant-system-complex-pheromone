@@ -74,7 +74,7 @@ namespace AntSimComplexAlgorithms
       _statsAggregator.StartIteration(_currentIteration++);
       InitialiseAnts();
       ConstructSolutions();
-      UpdatePheromoneTrails();
+      _problemData.UpdatePheromoneTrails(Ants);
       _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
       var bestAnt = Ants.Aggregate((a1, a2) => a1.TourLength < a2.TourLength ? a1 : a2);
@@ -134,20 +134,6 @@ namespace AntSimComplexAlgorithms
           ant.Step();
         }
       }
-    }
-
-    private void UpdatePheromoneTrails()
-    {
-      _problemData.EvaporatePheromone();
-
-      foreach (var ant in Ants)
-      {
-        var deposit = 1.0 / ant.TourLength;
-        _problemData.DepositPheromone(ant.Tour, deposit);
-      }
-
-      // Choice info matrix has to be updated AFTER pheromone changes.
-      _problemData.UpdateChoiceInfoMatrix();
     }
   }
 }

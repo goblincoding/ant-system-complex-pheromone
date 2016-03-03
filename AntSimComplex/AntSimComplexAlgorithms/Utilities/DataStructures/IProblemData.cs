@@ -46,27 +46,15 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     double ChoiceInfo(int node1, int node2);
 
     /// <summary>
-    /// Updates the ChoiceInfo matrix with the latest pheromone values.  Should be called after the pheromone update
-    /// process is completed.
+    /// Updates all pheromone trails traversed by the ants during their solution construction.
     /// </summary>
-    void UpdateChoiceInfoMatrix();
+    /// <param name="ants">A list of active ants.</param>
+    void UpdatePheromoneTrails(IEnumerable<IAnt> ants);
 
     /// <summary>
     /// Resets all pheromone densities to the initial pheromone density the pheromone
     /// matrix values were initialised with and updates the choice info matrix.
     /// </summary>
     void ResetPheromone();
-
-    /// <summary>
-    /// Evaporates all pheromone values by the current evaporation rate (<seealso cref="Parameters"/>)
-    /// </summary>
-    void EvaporatePheromone();
-
-    /// <summary>
-    /// Deposit additional pheromone on the edge formed between node1 and node2.
-    /// </summary>
-    /// <param name="tour">A list of indices representing one completed tour of all the nodes</param>
-    /// <param name="deposit">The amount to deposit</param>
-    void DepositPheromone(IEnumerable<int> tour, double deposit);
   }
 }

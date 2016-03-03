@@ -147,6 +147,20 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       return _choiceInfo[node1][node2];
     }
 
+    public void UpdatePheromoneTrails(IEnumerable<IAnt> ants)
+    {
+      EvaporatePheromone();
+
+      foreach (var ant in ants)
+      {
+        var deposit = 1.0 / ant.TourLength;
+        DepositPheromone(ant.Tour, deposit);
+      }
+
+      // Choice info matrix has to be updated AFTER pheromone changes.
+      UpdateChoiceInfoMatrix();
+    }
+
     public void UpdateChoiceInfoMatrix()
     {
       // Matrix is symmetric.
