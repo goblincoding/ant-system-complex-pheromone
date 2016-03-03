@@ -1,7 +1,10 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities;
 using AntSimComplexAlgorithms.Utilities.DataStructures;
+using NSubstitute;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace AntSimComplexTests.Backend.Utilities.DataStructures
 {
@@ -122,16 +125,20 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       // arrange
       const int node1 = 4;
       const int node2 = 5;
-      const double deposit = 1.5;
+      const double deposit = 0.1;
 
       var data = CreateDefaultDataStructuresFromMockProblem();
       var distance = data.Distance(node1, node2);
       var heuristic = Math.Pow(1 / distance, Parameters.Beta);
-      var expected = Math.Pow(InitialPheromoneDensity + deposit, Parameters.Alpha) * heuristic;
+      var expected = Math.Pow(InitialPheromoneDensity * Parameters.EvaporationRate + deposit, Parameters.Alpha) * heuristic;
+
+      var ant1 = Substitute.For<IAnt>();
+      ant1.Tour.Returns(new List<int> { node1, node2 });
+      ant1.TourLength.Returns(10);
+      var ants = new List<IAnt> { ant1 };
 
       // act
-      data.DepositPheromone(new[] { node1, node2 }, deposit);
-      data.UpdateChoiceInfoMatrix();
+      data.UpdatePheromoneTrails(ants);
       var choiceInfo = data.ChoiceInfo(node1, node2);
 
       // assert
@@ -149,9 +156,10 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var heuristic = Math.Pow(1 / distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity * Parameters.EvaporationRate, Parameters.Alpha) * heuristic;
 
+      var ants = Substitute.For<IList<IAnt>>();
+
       // act
-      data.EvaporatePheromone();
-      data.UpdateChoiceInfoMatrix();
+      data.UpdatePheromoneTrails(ants);
       var choiceInfo = data.ChoiceInfo(node1, node2);
 
       // assert
@@ -164,17 +172,20 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       // arrange
       const int node1 = 0;
       const int node2 = 4;
-      const double deposit = 1.5;
 
       var data = CreateDefaultDataStructuresFromMockProblem();
       var distance = data.Distance(node1, node2);
       var heuristic = Math.Pow(1 / distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity, Parameters.Alpha) * heuristic;
 
+      var ant1 = Substitute.For<IAnt>();
+      ant1.Tour.Returns(new List<int> { node1, node2 });
+      ant1.TourLength.Returns(15);
+      var ants = new List<IAnt> { ant1 };
+
       // act
-      data.DepositPheromone(new[] { node1, node2 }, deposit);
+      data.UpdatePheromoneTrails(ants);
       data.ResetPheromone();
-      data.UpdateChoiceInfoMatrix();
       var choiceInfo = data.ChoiceInfo(node1, node2);
 
       // assert

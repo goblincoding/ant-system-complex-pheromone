@@ -24,15 +24,8 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
   /// matrix and the choice info matrix (since the choice info heuristic is directly
   /// dependent on pheromone density).
   /// </summary>
-  internal class ProblemData : IProblemData
+  internal class ProblemData : ProblemDataBase
   {
-    public int NodeCount { get; }
-
-    /// <summary>
-    /// The initial pheromone density with which to initialise the pheromone matrix values.
-    /// </summary>
-    private readonly double _initialPheromoneDensity;
-
     /// <summary>
     /// Represents the simple pheromone density trails between two nodes (graph arcs)
     /// for the "standard" Ant System implementation. Pheromone is frequently updated
@@ -41,34 +34,11 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     private double[][] _pheromone;
 
     /// <summary>
-    /// Represents ALL inter-city distances in a grid format, i.e. querying
-    /// _distances[i][j] will return the distance from node i to node j.
-    /// If i == j, the distance is set to double.MaxValue
-    /// Once initialised, the values in this matrix do not change.
-    /// </summary>
-    private double[][] _distances;
-
-    /// <summary>
-    /// Represents the [n_ij]^B heuristic values for each edge [i][j] where
-    /// n_ij = 1/d_ij and 'B' is the Beta parameter value <seealso cref="Parameters"/>
-    /// Once initialised, the values in this matrix do not change.
-    /// </summary>
-    private double[][] _heuristic;
-
-    /// <summary>
     /// Represents the [t_ij]^A [n_ij]^B heuristic values for each edge [i][j] where
     /// t_ij is the pheromone density, n_ij = 1/d_ij, and 'A' and 'B' are the Alpha
     /// and Beta parameter values <seealso cref="Parameters"/>
     /// </summary>
     private double[][] _choiceInfo;
-
-    /// <summary>
-    /// Represents the nearest neighbour lists for all nodes where _nearest[i]
-    /// returns an array of the (adjusted from TSPLIB node ID's) node ids sorted
-    /// by increasing distance from node i.
-    /// Once initialised, the values in this matrix do not change.
-    /// </summary>
-    private int[][] _nearest;
 
     /// <summary>
     /// Constructor.
@@ -80,33 +50,25 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     public ProblemData(int nodeCount,
                        double initialPheromoneDensity,
                        IReadOnlyList<IReadOnlyList<double>> distances)
+      : base(nodeCount, initialPheromoneDensity, distances)
     {
-      if (initialPheromoneDensity <= 0.0)
-      {
-        throw new ArgumentOutOfRangeException(nameof(initialPheromoneDensity), "The initial pheromone density must be larger than zero.");
-      }
-
-      NodeCount = nodeCount;
-      _initialPheromoneDensity = initialPheromoneDensity;
-
-      PopulateDataStructures(distances);
     }
 
-    public void ResetPheromone()
+    public override void ResetPheromone()
     {
       var pheromone = _pheromone;
       foreach (var p in pheromone)
       {
         for (var j = 0; j < p.Length; j++)
         {
-          p[j] = _initialPheromoneDensity;
+          p[j] = InitialPheromoneDensity;
         }
       }
 
       UpdateChoiceInfoMatrix();
     }
 
-    public void EvaporatePheromone()
+    protected override void EvaporatePheromone()
     {
       for (var i = 0; i < NodeCount; i++)
       {
@@ -119,7 +81,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
     }
 
-    public void DepositPheromone(IEnumerable<int> tour, double deposit)
+    protected override void DepositPheromone(IEnumerable<int> tour, double deposit)
     {
       var tourArray = tour.ToArray();
       for (var i = 0; i < tourArray.Length - 1; i++)
@@ -132,22 +94,12 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
     }
 
-    public double Distance(int node1, int node2)
-    {
-      return _distances[node1][node2];
-    }
-
-    public IReadOnlyList<int> NearestNeighbours(int node)
-    {
-      return _nearest[node];
-    }
-
-    public double ChoiceInfo(int node1, int node2)
+    public override double ChoiceInfo(int node1, int node2)
     {
       return _choiceInfo[node1][node2];
     }
 
-    public void UpdatePheromoneTrails(IEnumerable<IAnt> ants)
+    public override void UpdatePheromoneTrails(IEnumerable<IAnt> ants)
     {
       EvaporatePheromone();
 
@@ -161,7 +113,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       UpdateChoiceInfoMatrix();
     }
 
-    public void UpdateChoiceInfoMatrix()
+    protected override void UpdateChoiceInfoMatrix()
     {
       // Matrix is symmetric.
       for (var i = 0; i < NodeCount; i++)
@@ -175,65 +127,29 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
     }
 
-    private double CalculateChoiceInfo(int i, int j)
+    protected override double CalculateChoiceInfo(int i, int j)
     {
-      return Math.Pow(_pheromone[i][j], Parameters.Alpha) * _heuristic[i][j];
+      return Math.Pow(_pheromone[i][j], Parameters.Alpha) * Heuristic[i][j];
     }
 
-    /// <summary>
-    /// Pheromone density matrix - p102
-    /// Heuristics matrix - p102
-    /// Choice info matrix - p102
-    /// </summary>
-    /// <param name="distances"></param>
-    private void PopulateDataStructures(IReadOnlyList<IReadOnlyList<double>> distances)
+    protected override void PopulatePheromoneChoiceStructures()
     {
       // Initialise rows.
       _pheromone = new double[NodeCount][];
-      _distances = new double[NodeCount][];
-      _heuristic = new double[NodeCount][];
       _choiceInfo = new double[NodeCount][];
-      _nearest = new int[NodeCount][];
 
       for (var i = 0; i < NodeCount; i++)
       {
         // Initialise columns.
         _pheromone[i] = new double[NodeCount];
-        _distances[i] = new double[NodeCount];
-        _heuristic[i] = new double[NodeCount];
         _choiceInfo[i] = new double[NodeCount];
 
         for (var j = 0; j < NodeCount; j++)
         {
-          // Set the distance from a node to itself as sufficiently large that it
-          // is HIGHLY unlikely to be selected.
-          _distances[i][j] = i != j ? distances[i][j] : double.MaxValue;
-          _heuristic[i][j] = Math.Pow(1.0 / _distances[i][j], Parameters.Beta);
-          _pheromone[i][j] = _initialPheromoneDensity;
+          _pheromone[i][j] = InitialPheromoneDensity;
           _choiceInfo[i][j] = CalculateChoiceInfo(i, j);
         }
-
-        PopulateNearestNeighboursList(i);
       }
-    }
-
-    /// <summary>
-    /// From Ant Colony Optimization, Dorigo 2004 , p101.
-    /// </summary>
-    private void PopulateNearestNeighboursList(int currentNodeIndex)
-    {
-      // Select distance/index pairs for all nodes so that we may
-      // know which index matched which distance after sorting.
-      var pairs = _distances[currentNodeIndex]
-                        .Select((distance, index) => new { Distance = distance, Index = index })
-                        .OrderBy(pair => pair.Distance);
-
-      // Remove nodes from their own nearest neighbour lists.
-      var nearestIndices = pairs.Where(p => p.Index != currentNodeIndex).Select(p => p.Index).ToArray();
-
-      // -1 since nodes aren't included in their own nearest neighbours lists.
-      _nearest[currentNodeIndex] = new int[NodeCount - 1];
-      nearestIndices.CopyTo(_nearest[currentNodeIndex], 0);
     }
   }
 }
