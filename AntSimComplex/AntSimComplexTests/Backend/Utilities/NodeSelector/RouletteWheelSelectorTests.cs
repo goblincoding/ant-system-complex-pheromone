@@ -28,19 +28,27 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
       const int probabilityScaleFactor = 1000000000;
       const int currentNode = 5;
 
+      var ant = Substitute.For<IAnt>();
+      ant.CurrentNode.Returns(currentNode);
+      ant.NotVisited.Returns(new[] { 4, 1, 2, 3 });
+
       var random = Substitute.For<Random>();
       random.Next(probabilityScaleFactor).Returns((int)(nextRandom * probabilityScaleFactor));
 
       var data = Substitute.For<IProblemData>();
-      data.ChoiceInfo(currentNode, 4).Returns(16.3);
-      data.ChoiceInfo(currentNode, 1).Returns(56.9);
-      data.ChoiceInfo(currentNode, 2).Returns(22);
-      data.ChoiceInfo(currentNode, 3).Returns(4.8);
+      var choice = new[]
+      {
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+        new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
+        new[] { 0.0, 56.9, 22.0, 4.8, 16.3, 0.0 }
+      };
+
+      data.ChoiceInfo(ant).Returns(choice);
 
       var selector = new RouletteWheelSelector(data, random);
-      var ant = Substitute.For<IAnt>();
-      ant.CurrentNode.Returns(currentNode);
-      ant.NotVisited.Returns(new[] { 4, 1, 2, 3 });
 
       // act
       var result = selector.SelectNextNode(ant);

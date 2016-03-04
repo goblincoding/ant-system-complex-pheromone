@@ -70,7 +70,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     public abstract void UpdatePheromoneTrails(IEnumerable<IAnt> ants);
 
-    public abstract double ChoiceInfo(int node1, int node2);
+    public abstract IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant = null);
 
     protected abstract void EvaporatePheromone();
 

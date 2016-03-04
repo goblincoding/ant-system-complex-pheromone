@@ -91,16 +91,6 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
     }
 
     [Test]
-    public void ChoiceInfoGivenInvalidIndexShouldThrowIndexOutOfRangeException()
-    {
-      // arrange
-      var data = CreateDefaultDataStructuresFromMockProblem();
-
-      // assert
-      Assert.Throws<IndexOutOfRangeException>(() => data.ChoiceInfo(0, MockConstants.NrNodes));
-    }
-
-    [Test]
     public void ChoiceInfoGivenValidIndicesShouldReturnCorrectMockProblemResults()
     {
       // arrange
@@ -112,11 +102,14 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var heuristic = Math.Pow(1 / distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity, Parameters.Alpha) * heuristic;
 
+      var ant = Substitute.For<IAnt>();
+
       // act
-      var choiceInfo = data.ChoiceInfo(node1, node2);
+      var choiceInfo = data.ChoiceInfo(ant);
+      var result = choiceInfo[node1][node2];
 
       // assert
-      Assert.AreEqual(expected, choiceInfo);
+      Assert.AreEqual(expected, result);
     }
 
     [Test]
@@ -132,17 +125,18 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var heuristic = Math.Pow(1 / distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity * Parameters.EvaporationRate + deposit, Parameters.Alpha) * heuristic;
 
-      var ant1 = Substitute.For<IAnt>();
-      ant1.Tour.Returns(new List<int> { node1, node2 });
-      ant1.TourLength.Returns(10);
-      var ants = new List<IAnt> { ant1 };
+      var ant = Substitute.For<IAnt>();
+      ant.Tour.Returns(new List<int> { node1, node2 });
+      ant.TourLength.Returns(10);
+      var ants = new List<IAnt> { ant };
 
       // act
       data.UpdatePheromoneTrails(ants);
-      var choiceInfo = data.ChoiceInfo(node1, node2);
+      var choiceInfo = data.ChoiceInfo(ant);
+      var result = choiceInfo[node1][node2];
 
       // assert
-      Assert.AreEqual(expected, choiceInfo);
+      Assert.AreEqual(expected, result);
     }
 
     [Test]
@@ -157,13 +151,15 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var expected = Math.Pow(InitialPheromoneDensity * Parameters.EvaporationRate, Parameters.Alpha) * heuristic;
 
       var ants = Substitute.For<IList<IAnt>>();
+      var ant = Substitute.For<IAnt>();
 
       // act
       data.UpdatePheromoneTrails(ants);
-      var choiceInfo = data.ChoiceInfo(node1, node2);
+      var choiceInfo = data.ChoiceInfo(ant);
+      var result = choiceInfo[node1][node2];
 
       // assert
-      Assert.AreEqual(expected, choiceInfo);
+      Assert.AreEqual(expected, result);
     }
 
     [Test]
@@ -178,18 +174,20 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var heuristic = Math.Pow(1 / distance, Parameters.Beta);
       var expected = Math.Pow(InitialPheromoneDensity, Parameters.Alpha) * heuristic;
 
-      var ant1 = Substitute.For<IAnt>();
-      ant1.Tour.Returns(new List<int> { node1, node2 });
-      ant1.TourLength.Returns(15);
-      var ants = new List<IAnt> { ant1 };
+      var ant = Substitute.For<IAnt>();
+      ant.Tour.Returns(new List<int> { node1, node2 });
+      ant.TourLength.Returns(15);
+      var ants = new List<IAnt> { ant };
 
       // act
       data.UpdatePheromoneTrails(ants);
       data.ResetPheromone();
-      var choiceInfo = data.ChoiceInfo(node1, node2);
+
+      var choiceInfo = data.ChoiceInfo(ant);
+      var result = choiceInfo[node1][node2];
 
       // assert
-      Assert.AreEqual(expected, choiceInfo);
+      Assert.AreEqual(expected, result);
     }
 
     private static StandardProblemData CreateDefaultDataStructuresFromMockProblem()

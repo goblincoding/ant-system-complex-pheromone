@@ -39,11 +39,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// of dimensions dependent on the original problem with which the <seealso cref="StandardProblemData"/>
     /// object was constructed.
     /// </summary>
-    /// <param name="node1">The index of the first node</param>
-    /// <param name="node2">The index of the second node</param>
-    /// <returns>Returns the "choice info" heuristic for two nodes.</returns>
-    /// <exception cref="IndexOutOfRangeException">Thrown when either of the two node indices fall outside the expected range.</exception>
-    double ChoiceInfo(int node1, int node2);
+    /// <param name="ant">The (optional) ant for which the choice info structure is requested.</param>
+    /// <returns>Returns "choice info" heuristic data.</returns>
+    IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant = null);
 
     /// <summary>
     /// Updates all pheromone trails traversed by the ants during their solution construction.

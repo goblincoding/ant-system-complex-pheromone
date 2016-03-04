@@ -1,6 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.NodeSelector
@@ -38,7 +37,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     {
       var selectedProbability = _random.Next(ProbabilityScaleFactor);
       var notVisited = ant.NotVisited;
-      var probabilities = CalculateProbabilities(notVisited, ant.CurrentNode);
+      var probabilities = CalculateProbabilities(ant);
 
       var i = 0;
       var probabilitySum = probabilities[i];
@@ -57,13 +56,13 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     /// Determines the probabilities of selection of the neighbour nodes based on the
     /// random proportional rule (ACO, Dorigo, 2004 p70).
     /// </summary>
-    /// <param name="notVisited">An array of node indices to neighbours that have not been visited.</param>
-    /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
     /// <returns>Probabilities of selection for each not visited node.</returns>
-    private int[] CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
+    private int[] CalculateProbabilities(IAnt ant)
     {
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
-      var denominator = notVisited.Sum(n => _problemData.ChoiceInfo(currentNode, n));
+      var choice = _problemData.ChoiceInfo(ant);
+      var notVisited = ant.NotVisited;
+      var denominator = notVisited.Sum(n => choice[ant.CurrentNode][n]);
       var probabilities = new int[notVisited.Count];
 
       // LINQ is not viable in this case due to the closure.  Performance
@@ -71,7 +70,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
       // ReSharper disable once LoopCanBeConvertedToQuery
       for (var i = 0; i < notVisited.Count; i++)
       {
-        var numerator = _problemData.ChoiceInfo(currentNode, notVisited[i]);
+        var numerator = choice[ant.CurrentNode][notVisited[i]];
         var probability = (int)(ProbabilityScaleFactor * (numerator / denominator));
         probabilities[i] = probability;
       }

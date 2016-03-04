@@ -82,27 +82,6 @@ namespace AntSimComplexAlgorithms
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
     }
 
-    private void CreateNodeSelector(NodeSelectionStrategy strategy)
-    {
-      switch (strategy)
-      {
-        case NodeSelectionStrategy.RandomSelection:
-          _nodeSelector = new RandomSelector(Random);
-          break;
-
-        case NodeSelectionStrategy.RouletteWheel:
-          _nodeSelector = new RouletteWheelSelector(_problemData, Random);
-          break;
-
-        case NodeSelectionStrategy.NearestNeighbour:
-          _nodeSelector = new NearestNeighbourSelector(_problemData);
-          break;
-
-        default:
-          throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
-      }
-    }
-
     private void CreateAnts()
     {
       var nodeCount = _problemData.NodeCount;
@@ -134,6 +113,27 @@ namespace AntSimComplexAlgorithms
         {
           ant.Step(i);
         }
+      }
+    }
+
+    private void CreateNodeSelector(NodeSelectionStrategy strategy)
+    {
+      switch (strategy)
+      {
+        case NodeSelectionStrategy.RandomSelection:
+          _nodeSelector = new RandomSelector(Random);
+          break;
+
+        case NodeSelectionStrategy.RouletteWheel:
+          _nodeSelector = new RouletteWheelSelector(_problemData, Random);
+          break;
+
+        case NodeSelectionStrategy.NearestNeighbour:
+          _nodeSelector = new NearestNeighbourSelector(_problemData);
+          break;
+
+        default:
+          throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
       }
     }
   }

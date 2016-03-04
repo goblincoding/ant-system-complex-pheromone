@@ -48,8 +48,8 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when "initialPheromoneDensity" is out of range.</exception>
     public StandardProblemData(int nodeCount,
-                       double initialPheromoneDensity,
-                       IReadOnlyList<IReadOnlyList<double>> distances)
+                               double initialPheromoneDensity,
+                               IReadOnlyList<IReadOnlyList<double>> distances)
       : base(nodeCount, initialPheromoneDensity, distances)
     {
     }
@@ -94,9 +94,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
     }
 
-    public override double ChoiceInfo(int node1, int node2)
+    public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant = null)
     {
-      return _choiceInfo[node1][node2];
+      return _choiceInfo;
     }
 
     public override void UpdatePheromoneTrails(IEnumerable<IAnt> ants)

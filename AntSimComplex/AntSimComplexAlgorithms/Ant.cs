@@ -53,7 +53,7 @@ namespace AntSimComplexAlgorithms
       }
       _visited[CurrentNode] = true;
 
-      // This bit of acrobatics is to ensure we reset the "nodecount +1"
+      // This bit of acrobatics is to ensure we reset the "nodecount + 1"
       // node as well as all the others.
       _tour[_tour.Length - 1] = -1;
 
@@ -68,7 +68,7 @@ namespace AntSimComplexAlgorithms
     public void Step(int i)
     {
       // Select the next node to visit ("start" if all nodes have been visited).
-      var selectedNext = NotVisited.Any() ? _nodeSelector.SelectNextNode(this) : _startNode; ;
+      var selectedNext = NotVisited.Any() ? _nodeSelector.SelectNextNode(this) : _startNode;
 
       // Update tour information before we move to the next node.
       TourLength += _problemData.Distance(CurrentNode, selectedNext);
