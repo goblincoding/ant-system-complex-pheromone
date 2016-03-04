@@ -67,7 +67,8 @@ namespace AntSimComplexAlgorithms
     /// <param name="i"></param>
     public void Step(int i)
     {
-      var selectedNext = SelectedNextNode();
+      // Select the next node to visit ("start" if all nodes have been visited).
+      var selectedNext = NotVisited.Any() ? _nodeSelector.SelectNextNode(this) : _startNode; ;
 
       // Update tour information before we move to the next node.
       TourLength += _problemData.Distance(CurrentNode, selectedNext);
@@ -85,17 +86,6 @@ namespace AntSimComplexAlgorithms
     public int CompareTo(Ant other)
     {
       return other != null ? TourLength.CompareTo(other.TourLength) : 1;
-    }
-
-    private int SelectedNextNode()
-    {
-      // Find the neighbours we haven't visited yet.
-      var neighbours = _problemData.NearestNeighbours(CurrentNode);
-      var notVisited = neighbours.Where(n => !_visited[n]).ToArray();
-
-      // Select the next node to visit ("start" if all nodes have been visited).
-      var nextNode = notVisited.Any() ? _nodeSelector.SelectNextNode(this) : _startNode;
-      return nextNode;
     }
   }
 }
