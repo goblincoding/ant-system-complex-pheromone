@@ -11,7 +11,7 @@ namespace AntSimComplexAlgorithms
     public int CurrentNode { get; private set; }
     public double TourLength { get; private set; }
     public IReadOnlyList<int> Tour => _tour.Where(n => n != -1).ToArray();
-    public IReadOnlyList<int> NotVisited => _tour.Where(n => !_visited[n]).ToArray();
+    public IReadOnlyList<int> NotVisited => Enumerable.Range(0, _visited.Length).Where(n => !_visited[n]).ToArray();
 
     private int _startNode;
     private readonly int[] _tour;
@@ -30,7 +30,9 @@ namespace AntSimComplexAlgorithms
       Id = id;
       _problemData = problemData;
       _nodeSelector = nodeSelector;
-      _tour = new int[_problemData.NodeCount];
+
+      // Ant ultimately returns to starting node.
+      _tour = new int[_problemData.NodeCount + 1];
       _visited = new bool[_problemData.NodeCount];
     }
 
@@ -50,6 +52,10 @@ namespace AntSimComplexAlgorithms
         _tour[i] = -1;
       }
       _visited[CurrentNode] = true;
+
+      // This bit of acrobatics is to ensure we reset the "nodecount +1"
+      // node as well as all the others.
+      _tour[_tour.Length - 1] = -1;
 
       TourLength = 0.0;
       _tour[0] = CurrentNode;
@@ -88,7 +94,7 @@ namespace AntSimComplexAlgorithms
       var notVisited = neighbours.Where(n => !_visited[n]).ToArray();
 
       // Select the next node to visit ("start" if all nodes have been visited).
-      var nextNode = notVisited.Any() ? _nodeSelector.SelectNextNode(notVisited, CurrentNode) : _startNode;
+      var nextNode = notVisited.Any() ? _nodeSelector.SelectNextNode(this) : _startNode;
       return nextNode;
     }
   }

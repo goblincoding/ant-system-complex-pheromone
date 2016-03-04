@@ -32,13 +32,13 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     /// <summary>
     /// Selects the index of the next node based on the "roulette wheel selection" principle.
     /// </summary>
-    /// <param name="notVisited">The indices of the neighbouring nodes that have not been visited.</param>
-    /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
+    /// <param name="ant"></param>
     /// <returns>The index of the next node to visit.</returns>
-    public int SelectNextNode(IReadOnlyList<int> notVisited, int currentNode)
+    public int SelectNextNode(IAnt ant)
     {
       var selectedProbability = _random.Next(ProbabilityScaleFactor);
-      var probabilities = CalculateProbabilities(notVisited, currentNode);
+      var notVisited = ant.NotVisited;
+      var probabilities = CalculateProbabilities(notVisited, ant.CurrentNode);
 
       var i = 0;
       var probabilitySum = probabilities[i];

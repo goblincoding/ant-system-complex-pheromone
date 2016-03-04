@@ -1,4 +1,5 @@
-﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using NSubstitute;
 using NUnit.Framework;
@@ -37,9 +38,12 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
       data.ChoiceInfo(currentNode, 3).Returns(4.8);
 
       var selector = new RouletteWheelSelector(data, random);
+      var ant = Substitute.For<IAnt>();
+      ant.CurrentNode.Returns(currentNode);
+      ant.NotVisited.Returns(new[] { 4, 1, 2, 3 });
 
       // act
-      var result = selector.SelectNextNode(new[] { 4, 1, 2, 3 }, 5);
+      var result = selector.SelectNextNode(ant);
 
       // assert
       Assert.AreEqual(expectedIndex, result);

@@ -1,4 +1,5 @@
-﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using NSubstitute;
 using NUnit.Framework;
@@ -13,12 +14,21 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
     {
       // arrange
       const int expected = 4;
+      const int currentNode = 5;
+
+      var neighbours = new[] { 4, 3, 1, 2, 7, 8 };
+
       var problemData = Substitute.For<IProblemData>();
-      problemData.NearestNeighbours(5).Returns(new[] { 4, 3, 1, 2, 7, 8 });
+      problemData.NearestNeighbours(currentNode).Returns(neighbours);
+
       var selector = new NearestNeighbourSelector(problemData);
 
+      var ant = Substitute.For<IAnt>();
+      ant.CurrentNode.Returns(currentNode);
+      ant.NotVisited.Returns(neighbours);
+
       // act
-      var result = selector.SelectNextNode(new[] { 8, 3, 4, 2 }, 5);
+      var result = selector.SelectNextNode(ant);
 
       // assert
       Assert.AreEqual(expected, result);
