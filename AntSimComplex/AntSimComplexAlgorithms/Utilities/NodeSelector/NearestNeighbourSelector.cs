@@ -22,17 +22,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     public int SelectNextNode(IAnt ant)
     {
       var nearestNeighbours = _problemData.NearestNeighbours(ant.CurrentNode);
-      var i = 0;
-      foreach (var nearestNeighbour in nearestNeighbours)
-      {
-        if (!ant.Visited[nearestNeighbour])
-        {
-          return i;
-        }
-
-        i++;
-      }
-      return i;
+      return nearestNeighbours.First(neighbour => !ant.Visited[neighbour]);
     }
   }
 }

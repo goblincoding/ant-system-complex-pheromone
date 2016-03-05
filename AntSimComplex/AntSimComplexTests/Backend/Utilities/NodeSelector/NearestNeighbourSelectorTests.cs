@@ -17,7 +17,7 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
       const int currentNode = 5;
 
       var neighbours = new[] { 4, 3, 1, 2, 7, 8 };
-      var visited = new[] { false, true, false, true, true, false };
+      var visited = new[] { true, false, true, false, true, false };
       var problemData = Substitute.For<IProblemData>();
       problemData.NearestNeighbours(currentNode).Returns(neighbours);
 
