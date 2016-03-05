@@ -25,9 +25,10 @@ namespace AntSimComplexAlgorithms
     IReadOnlyList<int> Tour { get; }
 
     /// <summary>
-    /// The node indices corresponding to nodes the ant has not yet visited.
+    /// Indices of visited nodes are set to "true", e.g. node x
+    /// has not been visited if Visited[x] is "false".
     /// </summary>
-    IReadOnlyList<int> NotVisited { get; }
+    IReadOnlyList<bool> Visited { get; }
 
     /// <summary>
     /// Initialises (or resets) the internal state of the Ant.

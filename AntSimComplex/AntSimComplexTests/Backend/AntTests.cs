@@ -80,9 +80,9 @@ namespace AntSimComplexTests.Backend
     }
 
     [Test]
-    public void NotVisitedShouldReturnCorrectSubsetOfAllNodes()
+    public void VisitedShouldReturnCorrectFlagsForAllAllNodes()
     {
-      var notVisited = new[] { 0, 1, 2, 4, 5, 6, 9 };
+      var visited = new[] { false, false, false, true, false, false, false, true, true, false };
       var tourSoFar = new[] { 7, 3, 8 };
 
       var roulette = Substitute.For<INodeSelector>();
@@ -97,7 +97,7 @@ namespace AntSimComplexTests.Backend
         ant.Step(i);
       }
 
-      Assert.AreEqual(notVisited, ant.NotVisited);
+      Assert.AreEqual(visited, ant.Visited);
     }
 
     [Test]

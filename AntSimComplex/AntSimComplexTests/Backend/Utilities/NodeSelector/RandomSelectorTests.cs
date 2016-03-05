@@ -13,13 +13,15 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
     public void SelectNextNodeShouldReturnRandomNodeIndex()
     {
       // arrange
-      const int expected = 1;
+      const int expected = 3;
+
+      var ant = Substitute.For<IAnt>();
+      ant.Visited.Returns(new[] { false, true, false, false });
+
       var random = Substitute.For<Random>();
-      random.Next(0, 4).Returns(2);
+      random.Next(0, 3).Returns(2);
 
       var selector = new RandomSelector(random);
-      var ant = Substitute.For<IAnt>();
-      ant.NotVisited.Returns(new[] { 4, 2, 1, 3 });
 
       // act
       var result = selector.SelectNextNode(ant);

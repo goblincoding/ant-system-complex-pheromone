@@ -1,5 +1,6 @@
 ﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
+using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.NodeSelector
 {
@@ -11,6 +12,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
   {
     private readonly Random _random;
     private readonly IProblemData _problemData;
+    private readonly double[] _probabilities;
 
     /// <summary>
     /// Constructor.
@@ -22,6 +24,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     {
       _problemData = problemData;
       _random = random;
+      _probabilities = new double[problemData.NodeCount];
     }
 
     /// <summary>
@@ -31,34 +34,38 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     /// <returns>The index of the next node to visit.</returns>
     public int SelectNextNode(IAnt ant)
     {
-      var notVisited = ant.NotVisited;
-      var probabilities = new double[notVisited.Count];
       var choice = _problemData.ChoiceInfo(ant);
       var sumProbabilities = 0.0;
 
       // LINQ is not viable in this case due to the closure.  Performance
       // is increased significantly by using a basic for loop here instead.
       // ReSharper disable once LoopCanBeConvertedToQuery
-      for (var i = 0; i < notVisited.Count; i++)
+      for (var i = 0; i < _problemData.NodeCount; i++)
       {
-        var probability = choice[ant.CurrentNode][notVisited[i]];
-        probabilities[i] = probability;
+        var probability = ant.Visited[i] ? 0.0 : choice[ant.CurrentNode][i];
+        _probabilities[i] = probability;
         sumProbabilities += probability;
       }
 
-      var selectedProbability = _random.NextDouble() * (sumProbabilities);
-
+      var selectedProbability = _random.NextDouble() * sumProbabilities;
       var j = 0;
-      var probabilitySum = probabilities[j];
+      var probabilitySum = _probabilities[j];
 
-      while (probabilitySum < selectedProbability &&
-             j < probabilities.Length - 1)
+      // NextDouble returns a value in [0.0, 1.0), deal with the edge
+      // case where it is zero or all probabilities of selection are zero;
+      if (selectedProbability.Equals(0.0))
       {
-        j++;
-        probabilitySum += probabilities[j];
+        return Enumerable.Range(0, _probabilities.Length).First(i => !ant.Visited[i]);
       }
 
-      return notVisited[j];
+      while (probabilitySum < selectedProbability &&
+             j < _probabilities.Length - 1)
+      {
+        j++;
+        probabilitySum += _probabilities[j];
+      }
+
+      return j;
     }
   }
 }

@@ -11,7 +11,7 @@ namespace AntSimComplexAlgorithms
     public int CurrentNode { get; private set; }
     public double TourLength { get; private set; }
     public IReadOnlyList<int> Tour => _tour.Where(n => n != -1).ToArray();
-    public IReadOnlyList<int> NotVisited => Enumerable.Range(0, _visited.Length).Where(n => !_visited[n]).ToArray();
+    public IReadOnlyList<bool> Visited => _visited;
 
     private int _startNode;
     private readonly int[] _tour;
