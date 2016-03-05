@@ -68,7 +68,7 @@ namespace AntSimComplexAlgorithms
     public void Step(int i)
     {
       // Select the next node to visit ("start" if all nodes have been visited).
-      var selectedNext = NotVisited.Any() ? _nodeSelector.SelectNextNode(this) : _startNode;
+      var selectedNext = _visited.Any(n => !n) ? _nodeSelector.SelectNextNode(this) : _startNode;
 
       // Update tour information before we move to the next node.
       TourLength += _problemData.Distance(CurrentNode, selectedNext);
