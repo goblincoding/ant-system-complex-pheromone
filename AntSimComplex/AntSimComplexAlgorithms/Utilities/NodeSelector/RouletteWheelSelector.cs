@@ -43,7 +43,7 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
       var probabilitySum = probabilities[i];
 
       while (probabilitySum < selectedProbability &&
-             i < probabilities.Length)
+             i < probabilities.Length - 1)
       {
         i++;
         probabilitySum += probabilities[i];
@@ -59,11 +59,13 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     /// <returns>Probabilities of selection for each not visited node.</returns>
     private int[] CalculateProbabilities(IAnt ant)
     {
+      var notVisited = ant.NotVisited;
+      var probabilities = new int[notVisited.Count];
+
       // Denominator is the sum of the choice info values for the feasible neighbourhood.
       var choice = _problemData.ChoiceInfo(ant);
-      var notVisited = ant.NotVisited;
       var denominator = notVisited.Sum(n => choice[ant.CurrentNode][n]);
-      var probabilities = new int[notVisited.Count];
+      denominator = denominator.Equals(0.0) ? 1.0 : denominator;
 
       // LINQ is not viable in this case due to the closure.  Performance
       // is increased significantly by using a basic for loop here instead.
