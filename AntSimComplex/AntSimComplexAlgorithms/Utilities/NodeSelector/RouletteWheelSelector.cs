@@ -1,6 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
-using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.NodeSelector
 {
@@ -10,9 +9,6 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
   /// </summary>
   internal class RouletteWheelSelector : INodeSelector
   {
-    // Comparing probability doubles is expensive, rather scale to a relatively big integer range.
-    private const int ProbabilityScaleFactor = 1000000000;
-
     private readonly Random _random;
     private readonly IProblemData _problemData;
 
@@ -35,49 +31,34 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     /// <returns>The index of the next node to visit.</returns>
     public int SelectNextNode(IAnt ant)
     {
-      var selectedProbability = _random.Next(ProbabilityScaleFactor);
       var notVisited = ant.NotVisited;
-      var probabilities = CalculateProbabilities(ant);
-
-      var i = 0;
-      var probabilitySum = probabilities[i];
-
-      while (probabilitySum < selectedProbability &&
-             i < probabilities.Length - 1)
-      {
-        i++;
-        probabilitySum += probabilities[i];
-      }
-
-      return notVisited[i];
-    }
-
-    /// <summary>
-    /// Determines the probabilities of selection of the neighbour nodes based on the
-    /// random proportional rule (ACO, Dorigo, 2004 p70).
-    /// </summary>
-    /// <returns>Probabilities of selection for each not visited node.</returns>
-    private int[] CalculateProbabilities(IAnt ant)
-    {
-      var notVisited = ant.NotVisited;
-      var probabilities = new int[notVisited.Count];
-
-      // Denominator is the sum of the choice info values for the feasible neighbourhood.
+      var probabilities = new double[notVisited.Count];
       var choice = _problemData.ChoiceInfo(ant);
-      var denominator = notVisited.Sum(n => choice[ant.CurrentNode][n]);
-      denominator = denominator.Equals(0.0) ? 1.0 : denominator;
+      var sumProbabilities = 0.0;
 
       // LINQ is not viable in this case due to the closure.  Performance
       // is increased significantly by using a basic for loop here instead.
       // ReSharper disable once LoopCanBeConvertedToQuery
       for (var i = 0; i < notVisited.Count; i++)
       {
-        var numerator = choice[ant.CurrentNode][notVisited[i]];
-        var probability = (int)(ProbabilityScaleFactor * (numerator / denominator));
+        var probability = choice[ant.CurrentNode][notVisited[i]];
         probabilities[i] = probability;
+        sumProbabilities += probability;
       }
 
-      return probabilities;
+      var selectedProbability = _random.NextDouble() * (sumProbabilities);
+
+      var j = 0;
+      var probabilitySum = probabilities[j];
+
+      while (probabilitySum < selectedProbability &&
+             j < probabilities.Length - 1)
+      {
+        j++;
+        probabilitySum += probabilities[j];
+      }
+
+      return notVisited[j];
     }
   }
 }

@@ -25,7 +25,6 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
     public void SelectNextNodeShouldReturnCorrectIndex(double nextRandom, int expectedIndex)
     {
       // arrange
-      const int probabilityScaleFactor = 1000000000;
       const int currentNode = 5;
 
       var ant = Substitute.For<IAnt>();
@@ -33,7 +32,7 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
       ant.NotVisited.Returns(new[] { 4, 1, 2, 3 });
 
       var random = Substitute.For<Random>();
-      random.Next(probabilityScaleFactor).Returns((int)(nextRandom * probabilityScaleFactor));
+      random.NextDouble().Returns(nextRandom);
 
       var data = Substitute.For<IProblemData>();
       var choice = new[]
