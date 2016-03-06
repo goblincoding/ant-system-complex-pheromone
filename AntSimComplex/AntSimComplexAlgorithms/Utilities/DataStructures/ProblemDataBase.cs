@@ -5,6 +5,26 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.DataStructures
 {
+  /// <summary>
+  /// This class represents the prepopulated (prior to algorithm run-time), consolidated,
+  /// calculated values of different aspects of a particular TSP problem instance in data
+  /// structures such as distance and nearest neighbour matrices.
+  ///
+  /// All the data structures are created and populated as per "Ant Colony Optimisation"
+  /// Dorigo and Stutzle (2004), Ch3.8, p99 which is aimed at obtaining an efficient
+  /// Ant System implementation.
+  ///
+  /// All matrices are n^2.  From Ant Colony Optimization, Dorigo 2004, p100:
+  ///
+  /// "In fact, although for symmetric TSPs we only need to store n(n-1)/2 distinct
+  /// distances, it is more efficient to use an n^2 matrix to avoid performing
+  /// additional operations to check whether, when accessing a generic distance
+  /// d(i,j), entry (i,j) or entry (j,i) of the matrix should be used."
+  ///
+  /// The values of only two matrices get updated after creation, those of the pheromone
+  /// matrix and the choice info matrix (since the choice info heuristic is directly
+  /// dependent on pheromone density).
+  /// </summary>
   internal abstract class ProblemDataBase : IProblemData
   {
     public int NodeCount { get; }
@@ -71,15 +91,13 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     public abstract void UpdatePheromoneTrails(IEnumerable<IAnt> ants);
 
-    public abstract IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant = null);
+    public abstract IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant);
 
     protected abstract void EvaporatePheromone();
 
     protected abstract void DepositPheromone(IEnumerable<int> tour, double deposit);
 
     protected abstract void UpdateChoiceInfoMatrix();
-
-    protected abstract double CalculateChoiceInfo(int i, int j);
 
     protected abstract void PopulatePheromoneChoiceStructures();
 

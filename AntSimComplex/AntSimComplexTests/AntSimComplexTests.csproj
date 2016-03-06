@@ -75,7 +75,8 @@
     <Compile Include="Backend\Smart\SmartPheromoneTests.cs" />
     <Compile Include="Backend\Ants\AntTests.cs" />
     <Compile Include="Backend\Utilities\BestTourTests.cs" />
-    <Compile Include="Backend\Utilities\DataStructures\DataTests.cs" />
+    <Compile Include="Backend\Utilities\DataStructures\SmartProblemDataTests.cs" />
+    <Compile Include="Backend\Utilities\DataStructures\StandardProblemDataTests.cs" />
     <Compile Include="Backend\Utilities\NodeSelector\NearestNeighbourSelectorTests.cs" />
     <Compile Include="Backend\Utilities\NodeSelector\RandomSelectorTests.cs" />
     <Compile Include="TspLibManager\ExtensionMethodTests.cs" />

@@ -40,9 +40,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// of dimensions dependent on the original problem with which the <seealso cref="StandardProblemData"/>
     /// object was constructed.
     /// </summary>
-    /// <param name="ant">The (optional) ant for which the choice info structure is requested.</param>
+    /// <param name="ant">The ant for which the choice info structure is requested.</param>
     /// <returns>Returns "choice info" heuristic data.</returns>
-    IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant = null);
+    IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant);
 
     /// <summary>
     /// Updates all pheromone trails traversed by the ants during their solution construction.

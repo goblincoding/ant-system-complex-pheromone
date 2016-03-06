@@ -5,7 +5,9 @@ namespace AntSimComplexAlgorithms.Ants
   internal interface IAnt
   {
     /// <summary>
-    /// The ant's unique integer Id.
+    /// The ant's unique integer Id (should be 0 based, i.e. Ant IDs are
+    /// expected to match those of the nodes in the graph such that
+    /// AntId is an element of [0, NodeCount).
     /// </summary>
     int Id { get; }
 

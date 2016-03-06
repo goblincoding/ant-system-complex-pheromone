@@ -48,6 +48,7 @@
     <Compile Include="AntSystem.cs" />
     <Compile Include="Ants\IAnt.cs" />
     <Compile Include="Utilities\BestTour.cs" />
+    <Compile Include="Utilities\DataStructures\SmartProblemData.cs" />
     <Compile Include="Utilities\DataStructures\StandardProblemData.cs" />
     <Compile Include="Utilities\DataStructures\IProblemData.cs" />
     <Compile Include="Utilities\DataStructures\ProblemDataBase.cs" />
