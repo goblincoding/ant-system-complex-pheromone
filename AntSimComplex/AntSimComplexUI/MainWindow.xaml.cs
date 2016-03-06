@@ -29,6 +29,7 @@ namespace AntSimComplexUI
     private double _optimalTourLength;
 
     private NodeSelectionStrategy _selectionStrategy = NodeSelectionStrategy.RouletteWheel;
+    private AntSystemImplementation _antSystemImplementation = AntSystemImplementation.Standard;
 
     private TspLibItemManager _tspLibItemManager;
     private Visualiser _visualiser;
@@ -57,6 +58,8 @@ namespace AntSimComplexUI
       TspCombo.ItemsSource = _tspLibItemManager.AllProblemNames;
       SelectionStrategy.ItemsSource = Enum.GetNames(typeof(NodeSelectionStrategy));
       SelectionStrategy.SelectedIndex = (int)NodeSelectionStrategy.RouletteWheel;
+      Implementation.ItemsSource = Enum.GetNames(typeof(AntSystemImplementation));
+      Implementation.SelectedIndex = (int)AntSystemImplementation.Standard;
     }
 
     /// <summary>
@@ -170,7 +173,7 @@ namespace AntSimComplexUI
     {
       var logMessages = new List<string>
       {
-        $"Results for problem: {_tspLibItemManager.ProblemName}, with selection strategy: {_selectionStrategy}",
+        $"{_tspLibItemManager.ProblemName}, {_antSystemImplementation}, {_selectionStrategy}",
         IterationStatsItem.CsvHeader
       };
 
@@ -255,7 +258,7 @@ namespace AntSimComplexUI
 
     private void CreateAntSystem()
     {
-      _antSystem = new AntSystem(_selectionStrategy,
+      _antSystem = new AntSystem(_selectionStrategy, _antSystemImplementation,
                                  _tspLibItemManager.NodeCount,
                                  _tspLibItemManager.NearestNeighbourTourLength,
                                  _tspLibItemManager.Distances);
@@ -352,6 +355,12 @@ namespace AntSimComplexUI
     private void SelectionStrategyChanged(object sender, SelectionChangedEventArgs e)
     {
       _selectionStrategy = (NodeSelectionStrategy)Enum.Parse(typeof(NodeSelectionStrategy), SelectionStrategy.SelectedValue.ToString());
+      CreateAntSystem();
+    }
+
+    private void ImplementationChanged(object sender, SelectionChangedEventArgs e)
+    {
+      _antSystemImplementation = (AntSystemImplementation)Enum.Parse(typeof(AntSystemImplementation), Implementation.SelectedValue.ToString());
       CreateAntSystem();
     }
 

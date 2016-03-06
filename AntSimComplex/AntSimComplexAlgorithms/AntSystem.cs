@@ -9,6 +9,12 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms
 {
+  public enum AntSystemImplementation
+  {
+    Standard,
+    Smart
+  }
+
   public enum NodeSelectionStrategy
   {
     RandomSelection,
@@ -31,8 +37,9 @@ namespace AntSimComplexAlgorithms
     /// </summary>
     private static readonly Random Random = new Random(Guid.NewGuid().GetHashCode());
 
-    private readonly IProblemData _problemData;
     private readonly StatsAggregator _statsAggregator;
+
+    private IProblemData _problemData;
     private INodeSelector _nodeSelector;
 
     private int _currentIteration;
@@ -42,14 +49,31 @@ namespace AntSimComplexAlgorithms
     /// Constructor.
     /// </summary>
     /// <param name="strategy">The node selection strategy to be executed.</param>
+    /// <param name="implementation">The Ant System implementation to execute.</param>
     /// <param name="nodeCount">The nr of nodes in the TSP graph.</param>
     /// <param name="nearestNeighbourTourLength">The tour length constructed by the Nearest Neighbour Heuristic.</param>
     /// <param name="distances">The distance matrix containing node to node edge weights.</param>
-    public AntSystem(NodeSelectionStrategy strategy, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
+    public AntSystem(NodeSelectionStrategy strategy,
+                     AntSystemImplementation implementation,
+                     int nodeCount,
+                     double nearestNeighbourTourLength,
+                     IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
-      _problemData = new StandardProblemData(nodeCount, parameters.InitialPheromone, distances);
       _statsAggregator = new StatsAggregator();
+
+      switch (implementation)
+      {
+        case AntSystemImplementation.Standard:
+          _problemData = new StandardProblemData(nodeCount, parameters.InitialPheromone, distances);
+          break;
+
+        case AntSystemImplementation.Smart:
+          throw new NotImplementedException();
+
+        default:
+          throw new ArgumentOutOfRangeException(nameof(implementation), implementation, null);
+      }
 
       CreateNodeSelector(strategy);
       CreateAnts();
