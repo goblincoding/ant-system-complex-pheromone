@@ -3,7 +3,7 @@ using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AntSimComplexAlgorithms
+namespace AntSimComplexAlgorithms.Ants
 {
   internal class Ant : IAnt
   {

@@ -1,11 +1,11 @@
-﻿using AntSimComplexAlgorithms;
-using AntSimComplexAlgorithms.Adapted;
+﻿using AntSimComplexAlgorithms.Ants;
+using AntSimComplexAlgorithms.Smart;
 using NSubstitute;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace AntSimComplexTests.Backend.Adapted
+namespace AntSimComplexTests.Backend.Smart
 {
   [TestFixture]
   internal class SmartPheromoneTests

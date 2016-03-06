@@ -43,10 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapted\SmartPheromone.cs" />
-    <Compile Include="Ant.cs" />
+    <Compile Include="Smart\SmartPheromone.cs" />
+    <Compile Include="Ants\Ant.cs" />
     <Compile Include="AntSystem.cs" />
-    <Compile Include="IAnt.cs" />
+    <Compile Include="Ants\IAnt.cs" />
     <Compile Include="Utilities\BestTour.cs" />
     <Compile Include="Utilities\DataStructures\StandardProblemData.cs" />
     <Compile Include="Utilities\DataStructures\IProblemData.cs" />

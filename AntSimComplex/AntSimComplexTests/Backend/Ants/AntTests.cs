@@ -1,11 +1,11 @@
-﻿using AntSimComplexAlgorithms;
+﻿using AntSimComplexAlgorithms.Ants;
 using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using NSubstitute;
 using NUnit.Framework;
 using System.Linq;
 
-namespace AntSimComplexTests.Backend
+namespace AntSimComplexTests.Backend.Ants
 {
   [TestFixture]
   internal class AntTests

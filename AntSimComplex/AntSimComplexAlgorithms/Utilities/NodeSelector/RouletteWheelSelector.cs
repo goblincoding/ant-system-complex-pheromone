@@ -1,4 +1,5 @@
-﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
+﻿using AntSimComplexAlgorithms.Ants;
+using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
 using System.Linq;
 

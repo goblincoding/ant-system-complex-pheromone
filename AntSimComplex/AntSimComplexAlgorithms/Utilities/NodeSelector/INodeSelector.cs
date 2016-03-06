@@ -1,3 +1,5 @@
+using AntSimComplexAlgorithms.Ants;
+
 namespace AntSimComplexAlgorithms.Utilities.NodeSelector
 {
   internal interface INodeSelector

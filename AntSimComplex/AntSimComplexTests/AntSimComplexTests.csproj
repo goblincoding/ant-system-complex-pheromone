@@ -72,8 +72,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Backend\Adapted\SmartPheromoneTests.cs" />
-    <Compile Include="Backend\AntTests.cs" />
+    <Compile Include="Backend\Smart\SmartPheromoneTests.cs" />
+    <Compile Include="Backend\Ants\AntTests.cs" />
     <Compile Include="Backend\Utilities\BestTourTests.cs" />
     <Compile Include="Backend\Utilities\DataStructures\DataTests.cs" />
     <Compile Include="Backend\Utilities\NodeSelector\NearestNeighbourSelectorTests.cs" />

@@ -1,4 +1,4 @@
-﻿using AntSimComplexAlgorithms;
+﻿using AntSimComplexAlgorithms.Ants;
 using AntSimComplexAlgorithms.Utilities;
 using AntSimComplexAlgorithms.Utilities.DataStructures;
 using NSubstitute;

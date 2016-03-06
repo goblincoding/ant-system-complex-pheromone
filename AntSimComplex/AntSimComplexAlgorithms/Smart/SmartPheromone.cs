@@ -1,7 +1,8 @@
-﻿using System;
+﻿using AntSimComplexAlgorithms.Ants;
+using System;
 using System.Collections.Generic;
 
-namespace AntSimComplexAlgorithms.Adapted
+namespace AntSimComplexAlgorithms.Smart
 {
   internal class SmartPheromone
   {

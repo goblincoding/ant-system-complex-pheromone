@@ -1,4 +1,4 @@
-﻿using AntSimComplexAlgorithms;
+﻿using AntSimComplexAlgorithms.Ants;
 using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using NSubstitute;
 using NUnit.Framework;

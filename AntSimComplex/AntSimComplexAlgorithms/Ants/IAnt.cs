@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AntSimComplexAlgorithms
+namespace AntSimComplexAlgorithms.Ants
 {
   internal interface IAnt
   {
