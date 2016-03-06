@@ -12,7 +12,7 @@ using TspLibNet.Tours;
 namespace AntSimComplexTests.TspLibManager
 {
   [TestFixture]
-  public class SymmetricTspItemInfoProviderTests
+  internal class SymmetricTspItemInfoProviderTests
   {
     [Test]
     public void CtorNullTspLibItemShouldThrowArgumentNullException()

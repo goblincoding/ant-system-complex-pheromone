@@ -8,11 +8,12 @@ namespace AntSimComplexTests.TspLibManager
   [TestFixture]
   internal class ExtensionMethodTests
   {
-    // Node(weight)NextNearest
-    // 7(1)3(2)8(1)2(2)9(1)1(3)0(4)4(1)6(2)5(3)7
     [Test]
-    public void ProblemGetNearestNeighbourTourLengthGivenMockProblemAndStartNode7ShouldReturn20()
+    public void GetNearestNeighbourTourLengthShouldReturnCorrectValue()
     {
+      // Node(weight)NextNearest
+      // 7(1)3(2)8(1)2(2)9(1)1(3)0(4)4(1)6(2)5(3)7
+
       // arrange
       var problem = new MockProblem();
       var random = Substitute.For<Random>();

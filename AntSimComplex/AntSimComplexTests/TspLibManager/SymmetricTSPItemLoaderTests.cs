@@ -6,15 +6,18 @@ using System.IO;
 
 namespace AntSimComplexTests.TspLibManager
 {
-  public class SymmetricTspItemLoaderTests
+  internal class SymmetricTspItemLoaderTests
   {
+    private readonly SymmetricTspItemLoader _loader = new SymmetricTspItemLoader(Helpers.LibPath);
+
     [TestCase("")]
     [TestCase(" ")]
     [TestCase(null)]
     public void CtorGivenNullOrEmptyPathShouldThrowArgumentOutOfRangeException(string path)
     {
       // assert
-      Assert.Throws<ArgumentOutOfRangeException>(() => ItemLoader(path));
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentOutOfRangeException>(() => new SymmetricTspItemLoader(path));
     }
 
     [Test]
@@ -22,7 +25,8 @@ namespace AntSimComplexTests.TspLibManager
     {
       // assert
       // Select an arbitrary directory.
-      Assert.Throws<ArgumentOutOfRangeException>(() => ItemLoader(Directory.GetCurrentDirectory()));
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentOutOfRangeException>(() => new SymmetricTspItemLoader(Directory.GetCurrentDirectory()));
     }
 
     [TestCase("")]
@@ -31,11 +35,8 @@ namespace AntSimComplexTests.TspLibManager
     [TestCase(null)]
     public void GetItemGivenInvalidProblemNameShouldThrowArgumentOutOfRangeException(string problemName)
     {
-      // arrange
-      var itemLoader = ItemLoader(Helpers.LibPath);
-
       // assert
-      Assert.Throws<ArgumentOutOfRangeException>(() => itemLoader.GetItem(problemName));
+      Assert.Throws<ArgumentOutOfRangeException>(() => _loader.GetItem(problemName));
     }
 
     [TestCase("eil76")]
@@ -43,20 +44,12 @@ namespace AntSimComplexTests.TspLibManager
     [TestCase("berlin52")]
     public void GetItemGivenValidNamesForProblemsShouldReturnCorrectProblemItem(string problemName)
     {
-      // arrange
-      var itemLoader = ItemLoader(Helpers.LibPath);
-
       // act
-      var result = itemLoader.GetItem(problemName);
+      var result = _loader.GetItem(problemName);
 
       // assert
       Assert.IsNotNull(result);
       Assert.AreEqual(problemName, result.Problem.Name);
-    }
-
-    private static SymmetricTspItemLoader ItemLoader(string path)
-    {
-      return new SymmetricTspItemLoader(path);
     }
   }
 }

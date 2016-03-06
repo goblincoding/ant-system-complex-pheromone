@@ -92,7 +92,7 @@ namespace AntSimComplexTests.Backend.Smart
     }
 
     [Test]
-    public void TouchGivenAntWithCurrentNodeNotAVertexShouldThrow()
+    public void TouchGivenAntWithCurrentNodeNotAtVertexShouldThrow()
     {
       // arrange
       var ant = Substitute.For<IAnt>();
@@ -126,7 +126,7 @@ namespace AntSimComplexTests.Backend.Smart
       ant.Id.Returns(antId);
 
       var smart = SmartPheromone();
-      var adjustment = 1 / (ant.TourLength + ArcWeight);
+      var adjustment = 1.0 / (ant.TourLength + ArcWeight);
       var expected = 0.1 * adjustment;
 
       // act

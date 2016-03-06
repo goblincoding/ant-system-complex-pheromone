@@ -10,7 +10,7 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
   internal class RandomSelectorTests
   {
     [Test]
-    public void SelectNextNodeShouldReturnRandomNodeIndex()
+    public void SelectNextNodeShouldReturnRandomUnvisitedNodeIndex()
     {
       // arrange
       const int expected = 3;
