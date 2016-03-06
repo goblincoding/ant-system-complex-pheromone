@@ -99,7 +99,7 @@ namespace AntSimComplexAlgorithms.Smart
       }
 
       // This is an arbitrary calculation that might have to be revisited.
-      var adjustment = 1 / (ant.TourLength + _arcWeight);
+      var adjustment = 1.0 / (ant.TourLength + _arcWeight);
       _densities[ant.Id] *= adjustment;
     }
   }
