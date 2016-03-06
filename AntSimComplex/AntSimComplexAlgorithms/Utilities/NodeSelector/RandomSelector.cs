@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.NodeSelector
 {
@@ -17,13 +17,13 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
     }
 
     /// <summary>
-    /// Randomly selects the index of the next node to visit.
+    /// Randomly selects the index of the next unvisited node to visit.
     /// </summary>
-    /// <param name="notVisited">The indices of the neighbouring nodes that have not been visited.</param>
-    /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
-    public int SelectNextNode(IReadOnlyList<int> notVisited, int currentNode)
+    /// <param name="ant"></param>
+    public int SelectNextNode(IAnt ant)
     {
-      var index = _random.Next(0, notVisited.Count);
+      var notVisited = Enumerable.Range(0, ant.Visited.Count).Where(n => !ant.Visited[n]).ToArray();
+      var index = _random.Next(0, notVisited.Length);
       return notVisited[index];
     }
   }

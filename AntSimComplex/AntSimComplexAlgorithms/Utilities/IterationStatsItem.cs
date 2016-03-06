@@ -4,7 +4,7 @@ namespace AntSimComplexAlgorithms.Utilities
 {
   public struct IterationStatsItem : IComparable<IterationStatsItem>
   {
-    public static string CsvHeader => $"{nameof(_iteration)},{nameof(_timeElapsed)}(ms),{nameof(_averageTourLength)}, {nameof(_bestTourLength)}";
+    public static string CsvHeader => "Iteration, Time Elapsed (ms), Avg Tour, Best Tour";
     public string CsvResult => $"{_iteration},{_timeElapsed},{_averageTourLength}, {_bestTourLength}";
 
     private readonly int _iteration;

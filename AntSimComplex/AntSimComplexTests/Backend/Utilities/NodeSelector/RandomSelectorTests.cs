@@ -1,4 +1,5 @@
-﻿using AntSimComplexAlgorithms.Utilities.NodeSelector;
+﻿using AntSimComplexAlgorithms;
+using AntSimComplexAlgorithms.Utilities.NodeSelector;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -12,14 +13,18 @@ namespace AntSimComplexTests.Backend.Utilities.NodeSelector
     public void SelectNextNodeShouldReturnRandomNodeIndex()
     {
       // arrange
-      const int expected = 1;
+      const int expected = 3;
+
+      var ant = Substitute.For<IAnt>();
+      ant.Visited.Returns(new[] { false, true, false, false });
+
       var random = Substitute.For<Random>();
-      random.Next(0, 4).Returns(2);
+      random.Next(0, 3).Returns(2);
 
       var selector = new RandomSelector(random);
 
       // act
-      var result = selector.SelectNextNode(new[] { 4, 3, 1, 2 }, 5);
+      var result = selector.SelectNextNode(ant);
 
       // assert
       Assert.AreEqual(expected, result);

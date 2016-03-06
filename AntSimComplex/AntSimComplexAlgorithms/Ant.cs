@@ -1,26 +1,20 @@
 ﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.NodeSelector;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AntSimComplexAlgorithms
 {
-  internal class Ant : IComparable<Ant>
+  internal class Ant : IAnt
   {
-    /// <summary>
-    /// Length of the ant's completed tour.
-    /// </summary>
+    public int Id { get; }
+    public int CurrentNode { get; private set; }
     public double TourLength { get; private set; }
-
-    /// <summary>
-    /// The node indices corresponding to the ant's tour.
-    /// </summary>
-    public List<int> Tour { get; } = new List<int>();
+    public IReadOnlyList<int> Tour => _tour.Where(n => n != -1).ToArray();
+    public IReadOnlyList<bool> Visited => _visited;
 
     private int _startNode;
-    private int _currentNode;
-
+    private readonly int[] _tour;
     private readonly bool[] _visited; // the indices of the nodes the Ant has already visited.
     private readonly IProblemData _problemData;
     private readonly INodeSelector _nodeSelector;
@@ -28,12 +22,17 @@ namespace AntSimComplexAlgorithms
     /// <summary>
     /// Ants are implemented predominantly as per "Ant Colony Optimisation" Dorigo and Stutzle (2004), Ch3.8, p103.
     /// </summary>
+    /// <param name="id">The ant's unique integer Id.</param>
     /// <param name="problemData">Provides access to the problem-specific parameters and data matrices.</param>
     /// <param name="nodeSelector">Used to select the next node to move to.</param>
-    public Ant(IProblemData problemData, INodeSelector nodeSelector)
+    public Ant(int id, IProblemData problemData, INodeSelector nodeSelector)
     {
+      Id = id;
       _problemData = problemData;
       _nodeSelector = nodeSelector;
+
+      // Ant ultimately returns to starting node.
+      _tour = new int[_problemData.NodeCount + 1];
       _visited = new bool[_problemData.NodeCount];
     }
 
@@ -44,31 +43,39 @@ namespace AntSimComplexAlgorithms
     public void Initialise(int startNode)
     {
       _startNode = startNode;
-      _currentNode = _startNode;
+      CurrentNode = _startNode;
 
       // Set all nodes to "not visited" except for current (start) node.
       for (var i = 0; i < _visited.Length; i++)
       {
         _visited[i] = false;
+        _tour[i] = -1;
       }
-      _visited[_currentNode] = true;
+      _visited[CurrentNode] = true;
+
+      // This bit of acrobatics is to ensure we reset the "nodecount + 1"
+      // node as well as all the others.
+      _tour[_tour.Length - 1] = -1;
 
       TourLength = 0.0;
-      Tour.Clear();
-      Tour.Add(_currentNode);
+      _tour[0] = CurrentNode;
     }
 
     /// <summary>
     /// Move to the next node selected by the current node selection strategy.
     /// </summary>
-    public void Step()
+    /// <param name="i"></param>
+    public void Step(int i)
     {
-      var selectedNext = SelectedNextNode();
+      // Select the next node to visit ("start" if all nodes have been visited).
+      var selectedNext = _visited.Any(n => !n) ? _nodeSelector.SelectNextNode(this) : _startNode;
 
       // Update tour information before we move to the next node.
-      TourLength += _problemData.Distance(_currentNode, selectedNext);
+      TourLength += _problemData.Distance(CurrentNode, selectedNext);
 
-      MoveNext(selectedNext);
+      CurrentNode = selectedNext;
+      _tour[i] = CurrentNode;
+      _visited[CurrentNode] = true;
     }
 
     /// <summary>
@@ -79,24 +86,6 @@ namespace AntSimComplexAlgorithms
     public int CompareTo(Ant other)
     {
       return other != null ? TourLength.CompareTo(other.TourLength) : 1;
-    }
-
-    private int SelectedNextNode()
-    {
-      // Find the neighbours we haven't visited yet.
-      var neighbours = _problemData.NearestNeighbours(_currentNode);
-      var notVisited = neighbours.Where(n => !_visited[n]).ToArray();
-
-      // Select the next node to visit ("start" if all nodes have been visited).
-      var nextNode = notVisited.Any() ? _nodeSelector.SelectNextNode(notVisited, _currentNode) : _startNode;
-      return nextNode;
-    }
-
-    private void MoveNext(int selectedNext)
-    {
-      _currentNode = selectedNext;
-      Tour.Add(_currentNode);
-      _visited[_currentNode] = true;
     }
   }
 }

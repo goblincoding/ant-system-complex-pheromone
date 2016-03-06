@@ -1,7 +1,6 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
 using NUnit.Framework;
 using System;
-using System.Linq;
 
 namespace AntSimComplexTests.Backend.Utilities
 {

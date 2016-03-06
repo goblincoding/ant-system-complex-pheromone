@@ -1,6 +1,5 @@
 ﻿using AntSimComplexAlgorithms.Utilities.DataStructures;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AntSimComplexAlgorithms.Utilities.NodeSelector
@@ -11,73 +10,62 @@ namespace AntSimComplexAlgorithms.Utilities.NodeSelector
   /// </summary>
   internal class RouletteWheelSelector : INodeSelector
   {
-    // Comparing probability doubles is expensive, rather scale to a relatively big integer range.
-    private const int ProbabilityScaleFactor = 1000000000;
-
     private readonly Random _random;
     private readonly IProblemData _problemData;
+    private readonly double[] _probabilities;
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="problemData">The problem specific <seealso cref="ProblemData"/> object containing distance,
+    /// <param name="problemData">The problem specific <seealso cref="StandardProblemData"/> object containing distance,
     /// pheromone, heuristic and choice info information.</param>
     /// <param name="random">The global random number generator object.</param>
     public RouletteWheelSelector(IProblemData problemData, Random random)
     {
       _problemData = problemData;
       _random = random;
+      _probabilities = new double[problemData.NodeCount];
     }
 
     /// <summary>
     /// Selects the index of the next node based on the "roulette wheel selection" principle.
     /// </summary>
-    /// <param name="notVisited">The indices of the neighbouring nodes that have not been visited.</param>
-    /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
+    /// <param name="ant"></param>
     /// <returns>The index of the next node to visit.</returns>
-    public int SelectNextNode(IReadOnlyList<int> notVisited, int currentNode)
+    public int SelectNextNode(IAnt ant)
     {
-      var selectedProbability = _random.Next(ProbabilityScaleFactor);
-      var probabilities = CalculateProbabilities(notVisited, currentNode);
-
-      var i = 0;
-      var probabilitySum = probabilities[i];
-
-      while (probabilitySum < selectedProbability &&
-             i < probabilities.Length - 1)
-      {
-        i++;
-        probabilitySum += probabilities[i];
-      }
-
-      return notVisited[i];
-    }
-
-    /// <summary>
-    /// Determines the probabilities of selection of the neighbour nodes based on the
-    /// random proportional rule (ACO, Dorigo, 2004 p70).
-    /// </summary>
-    /// <param name="notVisited">An array of node indices to neighbours that have not been visited.</param>
-    /// <param name="currentNode"> The index of the node whose neighbours are being assessed.</param>
-    /// <returns>Probabilities of selection for each not visited node.</returns>
-    private int[] CalculateProbabilities(IReadOnlyList<int> notVisited, int currentNode)
-    {
-      // Denominator is the sum of the choice info values for the feasible neighbourhood.
-      var denominator = notVisited.Sum(n => _problemData.ChoiceInfo(currentNode, n));
-      denominator = denominator.Equals(0.0) ? 1.0 : denominator;
-      var probabilities = new int[notVisited.Count];
+      var choice = _problemData.ChoiceInfo(ant);
+      var sumProbabilities = 0.0;
 
       // LINQ is not viable in this case due to the closure.  Performance
       // is increased significantly by using a basic for loop here instead.
       // ReSharper disable once LoopCanBeConvertedToQuery
-      for (var i = 0; i < notVisited.Count; i++)
+      for (var i = 0; i < _problemData.NodeCount; i++)
       {
-        var numerator = _problemData.ChoiceInfo(currentNode, notVisited[i]);
-        var probability = (int)(ProbabilityScaleFactor * (numerator / denominator));
-        probabilities[i] = probability;
+        var probability = ant.Visited[i] ? 0.0 : choice[ant.CurrentNode][i];
+        _probabilities[i] = probability;
+        sumProbabilities += probability;
       }
 
-      return probabilities;
+      var selectedProbability = _random.NextDouble() * sumProbabilities;
+      var j = 0;
+      var probabilitySum = _probabilities[j];
+
+      // NextDouble returns a value in [0.0, 1.0), deal with the edge
+      // case where it is zero or all probabilities of selection are zero;
+      if (selectedProbability.Equals(0.0))
+      {
+        return Enumerable.Range(0, _probabilities.Length).First(i => !ant.Visited[i]);
+      }
+
+      while (probabilitySum < selectedProbability &&
+             j < _probabilities.Length - 1)
+      {
+        j++;
+        probabilitySum += _probabilities[j];
+      }
+
+      return j;
     }
   }
 }

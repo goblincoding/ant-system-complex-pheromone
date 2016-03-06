@@ -34,7 +34,7 @@ namespace AntSimComplexAlgorithms
     private INodeSelector _nodeSelector;
 
     private int _currentIteration;
-    private Ant[] Ants { get; set; }
+    private IAnt[] Ants { get; set; }
 
     /// <summary>
     /// Constructor.
@@ -46,7 +46,7 @@ namespace AntSimComplexAlgorithms
     public AntSystem(NodeSelectionStrategy strategy, int nodeCount, double nearestNeighbourTourLength, IReadOnlyList<IReadOnlyList<double>> distances)
     {
       var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
-      _problemData = new ProblemData(nodeCount, parameters.InitialPheromone, distances, Random);
+      _problemData = new StandardProblemData(nodeCount, parameters.InitialPheromone, distances);
       _statsAggregator = new StatsAggregator();
 
       CreateNodeSelector(strategy);
@@ -74,12 +74,46 @@ namespace AntSimComplexAlgorithms
       _statsAggregator.StartIteration(_currentIteration++);
       InitialiseAnts();
       ConstructSolutions();
-      UpdatePheromoneTrails();
+      _problemData.UpdatePheromoneTrails(Ants);
       _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
-      var bestAnt = Ants.Min();
+      var bestAnt = Ants.Aggregate((a1, a2) => a1.TourLength < a2.TourLength ? a1 : a2);
       IterationMinTourLength = bestAnt.TourLength;
       BestTours.Add(new BestTour { TourLength = bestAnt.TourLength, Tour = bestAnt.Tour });
+    }
+
+    private void CreateAnts()
+    {
+      var nodeCount = _problemData.NodeCount;
+      Ants = new IAnt[nodeCount];
+      for (var i = 0; i < nodeCount; i++)
+      {
+        var ant = new Ant(i, _problemData, _nodeSelector);
+        Ants[i] = ant;
+      }
+    }
+
+    private void InitialiseAnts()
+    {
+      foreach (var ant in Ants)
+      {
+        // Initialise the ants at random start nodes.
+        var startNode = Random.Next(0, _problemData.NodeCount);
+        ant.Initialise(startNode);
+      }
+    }
+
+    private void ConstructSolutions()
+    {
+      // Iterate through nr of nodes since each ant has to visit each node once.
+      // Start at 1 since Ants have already been initialised on their starting nodes.
+      for (var i = 1; i <= _problemData.NodeCount; i++)
+      {
+        foreach (var ant in Ants)
+        {
+          ant.Step(i);
+        }
+      }
     }
 
     private void CreateNodeSelector(NodeSelectionStrategy strategy)
@@ -101,53 +135,6 @@ namespace AntSimComplexAlgorithms
         default:
           throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
       }
-    }
-
-    private void CreateAnts()
-    {
-      var nodeCount = _problemData.NodeCount;
-      Ants = new Ant[nodeCount];
-      for (var i = 0; i < nodeCount; i++)
-      {
-        var ant = new Ant(_problemData, _nodeSelector);
-        Ants[i] = ant;
-      }
-    }
-
-    private void InitialiseAnts()
-    {
-      foreach (var ant in Ants)
-      {
-        // Initialise the ants at random start nodes.
-        var startNode = Random.Next(0, _problemData.NodeCount);
-        ant.Initialise(startNode);
-      }
-    }
-
-    private void ConstructSolutions()
-    {
-      // Iterate through nr of nodes since each ant has to visit each node once.
-      for (var i = 0; i < _problemData.NodeCount; i++)
-      {
-        foreach (var ant in Ants)
-        {
-          ant.Step();
-        }
-      }
-    }
-
-    private void UpdatePheromoneTrails()
-    {
-      _problemData.EvaporatePheromone();
-
-      foreach (var ant in Ants)
-      {
-        var deposit = 1.0 / ant.TourLength;
-        _problemData.DepositPheromone(ant.Tour, deposit);
-      }
-
-      // Choice info matrix has to be updated AFTER pheromone changes.
-      _problemData.UpdateChoiceInfoMatrix();
     }
   }
 }
