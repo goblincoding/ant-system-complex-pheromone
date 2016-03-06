@@ -1,6 +1,7 @@
 ﻿using AntSimComplexAlgorithms.Utilities;
 using AntSimComplexAlgorithms.Utilities.DataStructures;
 using AntSimComplexAlgorithms.Utilities.NodeSelector;
+using AntSimComplexAlgorithms.Utilities.Stats;
 using System;
 using System.Collections.Generic;
 using System.Linq;

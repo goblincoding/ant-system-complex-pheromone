@@ -81,7 +81,7 @@
     <Compile Include="TspLibManager\ExtensionMethodTests.cs" />
     <Compile Include="Backend\Utilities\ParametersTests.cs" />
     <Compile Include="Backend\Utilities\NodeSelector\RouletteWheelSelectorTests.cs" />
-    <Compile Include="Backend\Utilities\StatsAggregatorTests.cs" />
+    <Compile Include="Backend\Utilities\Stats\StatsAggregatorTests.cs" />
     <Compile Include="GUI\CoordinateTransformerTests.cs" />
     <Compile Include="GUI\Helpers.cs" />
     <Compile Include="GUI\ListViewTourItemTests.cs" />

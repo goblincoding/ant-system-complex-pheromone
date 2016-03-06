@@ -1,8 +1,8 @@
-﻿using AntSimComplexAlgorithms.Utilities;
+﻿using AntSimComplexAlgorithms.Utilities.Stats;
 using NUnit.Framework;
 using System;
 
-namespace AntSimComplexTests.Backend.Utilities
+namespace AntSimComplexTests.Backend.Utilities.Stats
 {
   [TestFixture]
   internal class StatsAggregatorTests

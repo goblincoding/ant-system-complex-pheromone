@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace AntSimComplexAlgorithms.Utilities
+namespace AntSimComplexAlgorithms.Utilities.Stats
 {
   /// <summary>
   /// Keeps track of performance statistics for each execution of the algorithm.

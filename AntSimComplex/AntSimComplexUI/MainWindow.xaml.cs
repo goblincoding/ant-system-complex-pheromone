@@ -1,5 +1,6 @@
 ﻿using AntSimComplexAlgorithms;
 using AntSimComplexAlgorithms.Utilities;
+using AntSimComplexAlgorithms.Utilities.Stats;
 using AntSimComplexTspLibItemManager;
 using AntSimComplexUI.Dialogs;
 using AntSimComplexUI.Utilities;

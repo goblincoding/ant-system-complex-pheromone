@@ -1,6 +1,6 @@
 using System;
 
-namespace AntSimComplexAlgorithms.Utilities
+namespace AntSimComplexAlgorithms.Utilities.Stats
 {
   public struct IterationStatsItem : IComparable<IterationStatsItem>
   {
