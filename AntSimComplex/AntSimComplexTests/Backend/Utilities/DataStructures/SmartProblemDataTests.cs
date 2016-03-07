@@ -129,16 +129,20 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var data = CreateSmartProblemDataFromMockProblem();
       var distance = data.Distance(node1, node2);
       var heuristic = Math.Pow(1.0 / distance, Parameters.Beta);
-      var touch = 1.0 / (tourLength + distance);
+      var touch = 1.0 / (tourLength / distance);
 
       var ant = Substitute.For<IAnt>();
       ant.Id.Returns(_random.Next(0, NodeCount));
+      ant.CurrentNode.Returns(node1);
       ant.Tour.Returns(new List<int> { node1, node2 });
       ant.TourLength.Returns(tourLength);
 
       var ants = new List<IAnt> { ant };
 
-      var expected = Math.Pow(InitialPheromoneDensity * Parameters.EvaporationRate + deposit + touch, Parameters.Alpha) * heuristic;
+      var evaporatedDensity = InitialPheromoneDensity * (1.0 - Parameters.EvaporationRate);
+      var depositedDensity = evaporatedDensity + deposit;
+      var touchedDensity = depositedDensity * touch;
+      var expected = Math.Pow(touchedDensity, Parameters.Alpha) * heuristic;
 
       // act
       data.UpdatePheromoneTrails(ants);
