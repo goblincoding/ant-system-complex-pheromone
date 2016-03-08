@@ -80,7 +80,6 @@
     <Compile Include="Backend\Utilities\NodeSelector\NearestNeighbourSelectorTests.cs" />
     <Compile Include="Backend\Utilities\NodeSelector\RandomSelectorTests.cs" />
     <Compile Include="TspLibManager\ExtensionMethodTests.cs" />
-    <Compile Include="Backend\Utilities\ParametersTests.cs" />
     <Compile Include="Backend\Utilities\NodeSelector\RouletteWheelSelectorTests.cs" />
     <Compile Include="Backend\Utilities\Stats\StatsAggregatorTests.cs" />
     <Compile Include="GUI\CoordinateTransformerTests.cs" />

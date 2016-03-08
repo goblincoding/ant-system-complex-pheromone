@@ -24,17 +24,5 @@
     /// The pheromone evaporation rate for the pheromone update cycle (rho).
     /// </summary>
     public static double EvaporationRate { get; set; } = 0.5;
-
-    /// <summary>
-    /// The pheromone density initialisation value (tau zero or t0 = m / C^nn).
-    /// </summary>
-    public double InitialPheromone { get; }
-
-    /// <param name="numberOfAnts">The number of ants that were spawned (corresponding to nr of nodes).</param>
-    /// <param name="nearestNeighbourTourLength">The tour length constructed through the Nearest Neighbour Heuristic.</param>
-    public Parameters(int numberOfAnts, double nearestNeighbourTourLength)
-    {
-      InitialPheromone = numberOfAnts / nearestNeighbourTourLength;
-    }
   }
 }

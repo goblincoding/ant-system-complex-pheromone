@@ -73,7 +73,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       return _choiceInfo;
     }
 
-    public override void UpdatePheromoneTrails(IEnumerable<IAnt> ants)
+    public override void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants)
     {
       EvaporatePheromone();
 
@@ -85,6 +85,11 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
       // Choice info matrix has to be updated AFTER pheromone changes.
       UpdateChoiceInfoMatrix();
+    }
+
+    public override void UpdateLocalPheromoneTrails(IEnumerable<IAnt> ants)
+    {
+      // No local pheromone updates for standard implementation.
     }
 
     protected override void UpdateChoiceInfoMatrix()
@@ -99,11 +104,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           _choiceInfo[j][i] = choice;
         }
       }
-    }
-
-    private double CalculateChoiceInfo(int i, int j)
-    {
-      return Math.Pow(_pheromone[i][j], Parameters.Alpha) * Heuristic[i][j];
     }
 
     protected override void PopulatePheromoneChoiceStructures()
@@ -124,6 +124,11 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           _choiceInfo[i][j] = CalculateChoiceInfo(i, j);
         }
       }
+    }
+
+    private double CalculateChoiceInfo(int i, int j)
+    {
+      return Math.Pow(_pheromone[i][j], Parameters.Alpha) * Heuristic[i][j];
     }
   }
 }

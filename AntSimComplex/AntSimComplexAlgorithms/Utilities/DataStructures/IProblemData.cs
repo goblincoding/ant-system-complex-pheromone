@@ -45,10 +45,16 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant);
 
     /// <summary>
-    /// Updates all pheromone trails traversed by the ants during their solution construction.
+    /// Updates all pheromone trails traversed by the ants AFTER their solution construction.
     /// </summary>
     /// <param name="ants">A list of active ants.</param>
-    void UpdatePheromoneTrails(IEnumerable<IAnt> ants);
+    void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants);
+
+    /// <summary>
+    /// Updates local pheromone trails traversed by the ants DURING their solution construction.
+    /// </summary>
+    /// <param name="ants">A list of active ants.</param>
+    void UpdateLocalPheromoneTrails(IEnumerable<IAnt> ants);
 
     /// <summary>
     /// Resets all pheromone densities to the initial pheromone density the pheromone

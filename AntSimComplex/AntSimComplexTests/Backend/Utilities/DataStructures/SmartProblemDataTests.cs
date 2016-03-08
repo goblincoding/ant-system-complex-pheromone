@@ -145,7 +145,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var expected = Math.Pow(touchedDensity, Parameters.Alpha) * heuristic;
 
       // act
-      data.UpdatePheromoneTrails(ants);
+      data.UpdateGlobalPheromoneTrails(ants);
       var choiceInfo = data.ChoiceInfo(ant);
       var result = choiceInfo[node1][node2];
 
@@ -173,7 +173,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var ants = new List<IAnt> { ant };
 
       // act
-      data.UpdatePheromoneTrails(ants);
+      data.UpdateGlobalPheromoneTrails(ants);
       data.ResetPheromone();
 
       var choiceInfo = data.ChoiceInfo(ant);

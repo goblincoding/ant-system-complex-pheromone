@@ -59,22 +59,11 @@ namespace AntSimComplexAlgorithms
                      double nearestNeighbourTourLength,
                      IReadOnlyList<IReadOnlyList<double>> distances)
     {
-      var parameters = new Parameters(nodeCount, nearestNeighbourTourLength);
+      // The pheromone density initialisation value (tau zero or t0 = m / C^nn).
+      var initialPheromone = nodeCount / nearestNeighbourTourLength;
       _statsAggregator = new StatsAggregator();
 
-      switch (implementation)
-      {
-        case AntSystemImplementation.Standard:
-          _problemData = new StandardProblemData(nodeCount, parameters.InitialPheromone, distances);
-          break;
-
-        case AntSystemImplementation.Smart:
-          throw new NotImplementedException();
-
-        default:
-          throw new ArgumentOutOfRangeException(nameof(implementation), implementation, null);
-      }
-
+      CreateProblemData(implementation, nodeCount, initialPheromone, distances);
       CreateNodeSelector(strategy);
       CreateAnts();
     }
@@ -100,7 +89,7 @@ namespace AntSimComplexAlgorithms
       _statsAggregator.StartIteration(_currentIteration++);
       InitialiseAnts();
       ConstructSolutions();
-      _problemData.UpdatePheromoneTrails(Ants);
+      _problemData.UpdateGlobalPheromoneTrails(Ants);
       _statsAggregator.StopIteration(Ants.Select(a => a.TourLength));
 
       var bestAnt = Ants.Aggregate((a1, a2) => a1.TourLength < a2.TourLength ? a1 : a2);
@@ -139,6 +128,26 @@ namespace AntSimComplexAlgorithms
         {
           ant.Step(i);
         }
+      }
+    }
+
+    private void CreateProblemData(AntSystemImplementation implementation,
+                                   int nodeCount,
+                                   double initialPheromone,
+                                   IReadOnlyList<IReadOnlyList<double>> distances)
+    {
+      switch (implementation)
+      {
+        case AntSystemImplementation.Standard:
+          _problemData = new StandardProblemData(nodeCount, initialPheromone, distances);
+          break;
+
+        case AntSystemImplementation.Smart:
+          _problemData = new SmartProblemData(nodeCount, initialPheromone, distances);
+          break;
+
+        default:
+          throw new ArgumentOutOfRangeException(nameof(implementation), implementation, null);
       }
     }
 

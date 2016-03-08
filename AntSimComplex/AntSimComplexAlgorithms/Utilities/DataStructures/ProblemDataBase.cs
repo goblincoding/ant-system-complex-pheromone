@@ -89,7 +89,9 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     public abstract void ResetPheromone();
 
-    public abstract void UpdatePheromoneTrails(IEnumerable<IAnt> ants);
+    public abstract void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants);
+
+    public abstract void UpdateLocalPheromoneTrails(IEnumerable<IAnt> ants);
 
     public abstract IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant);
 

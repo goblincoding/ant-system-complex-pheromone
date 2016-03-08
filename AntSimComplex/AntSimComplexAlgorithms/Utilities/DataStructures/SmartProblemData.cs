@@ -43,15 +43,50 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       UpdateChoiceInfoMatrix();
     }
 
-    public override void UpdatePheromoneTrails(IEnumerable<IAnt> ants)
+    public override void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants)
     {
       EvaporatePheromone();
-      var enumerable = ants as IAnt[] ?? ants.ToArray();
-      DepositPheromone(enumerable);
-      TouchPheromone(enumerable);
+      DepositPheromone(ants);
 
       // Choice info matrix has to be updated AFTER pheromone changes.
       UpdateChoiceInfoMatrix();
+    }
+
+    public override void UpdateLocalPheromoneTrails(IEnumerable<IAnt> ants)
+    {
+      foreach (var ant in ants)
+      {
+        for (var i = 0; i < NodeCount; i++)
+        {
+          if (ant.CurrentNode != i && !ant.Visited[i])
+          {
+            _pheromone[ant.CurrentNode][i].Touch(ant);
+          }
+        }
+      }
+
+      //for (var i = 0; i < NodeCount; i++)
+      //{
+      //  // Local variable is required to eliminate capture
+      //  // from closure in LINQ Where below
+      //  var i1 = i;
+      //  for (var j = i; j < NodeCount; j++)
+      //  {
+      //    var j1 = j;
+      //    // Identify the arcs between the ant's current node
+      //    // and those it has not yet visited and inform the
+      //    // SmartPheromone object that it will be evaluated
+      //    // during the next step decision.
+      //    var candidates = ants.Where(a => (a.CurrentNode == i1 || a.CurrentNode == j1) &&
+      //                                     !a.Visited[j1]);
+      //    foreach (var candidate in candidates)
+      //    {
+      //      // Matrix is symmetric, the same SmartPheromone
+      //      // object is referenced by [i][j] and [j][i]
+      //      _pheromone[i][j].Touch(candidate);
+      //    }
+      //  }
+      //}
     }
 
     public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant)
@@ -153,31 +188,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       {
         var deposit = 1.0 / ant.TourLength;
         DepositPheromone(ant.Tour, deposit);
-      }
-    }
-
-    private void TouchPheromone(IAnt[] ants)
-    {
-      for (var i = 0; i < NodeCount; i++)
-      {
-        // Local variable is required to eliminate capture
-        // from closure in LINQ Where below
-        var i1 = i;
-        for (var j = i; j < NodeCount; j++)
-        {
-          var j1 = j;
-          // Identify the arcs between the ant's current node
-          // and those it has not yet visited and inform the
-          // SmartPheromone object that it will be evaluated
-          // during the next step decision.
-          var candidates = ants.Where(a => a.CurrentNode == i1 && !a.Visited[j1]);
-          foreach (var candidate in candidates)
-          {
-            // Matrix is symmetric, the same SmartPheromone
-            // object is referenced by [i][j] and [j][i]
-            _pheromone[i][j].Touch(candidate);
-          }
-        }
       }
     }
 
