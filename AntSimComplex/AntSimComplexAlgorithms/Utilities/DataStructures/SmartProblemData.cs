@@ -58,35 +58,21 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       {
         for (var i = 0; i < NodeCount; i++)
         {
-          if (ant.CurrentNode != i && !ant.Visited[i])
-          {
-            _pheromone[ant.CurrentNode][i].Touch(ant);
-          }
+          // Identify the arcs between the ant's current node
+          // and those it has not yet visited and inform the
+          // SmartPheromone object that it will be evaluated
+          // during the next step decision.
+          if (ant.CurrentNode == i || ant.Visited[i]) continue;
+
+          // Matrix is symmetric, the same SmartPheromone
+          // object is referenced by [i][j] and [j][i]
+          _pheromone[ant.CurrentNode][i].Touch(ant);
+
+          var choice = CalculateChoiceInfo(ant.Id, ant.CurrentNode, i);
+          _choiceInfo[ant.Id][ant.CurrentNode][i] = choice;
+          _choiceInfo[ant.Id][i][ant.CurrentNode] = choice;
         }
       }
-
-      //for (var i = 0; i < NodeCount; i++)
-      //{
-      //  // Local variable is required to eliminate capture
-      //  // from closure in LINQ Where below
-      //  var i1 = i;
-      //  for (var j = i; j < NodeCount; j++)
-      //  {
-      //    var j1 = j;
-      //    // Identify the arcs between the ant's current node
-      //    // and those it has not yet visited and inform the
-      //    // SmartPheromone object that it will be evaluated
-      //    // during the next step decision.
-      //    var candidates = ants.Where(a => (a.CurrentNode == i1 || a.CurrentNode == j1) &&
-      //                                     !a.Visited[j1]);
-      //    foreach (var candidate in candidates)
-      //    {
-      //      // Matrix is symmetric, the same SmartPheromone
-      //      // object is referenced by [i][j] and [j][i]
-      //      _pheromone[i][j].Touch(candidate);
-      //    }
-      //  }
-      //}
     }
 
     public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant)

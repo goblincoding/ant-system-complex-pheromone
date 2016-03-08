@@ -128,6 +128,8 @@ namespace AntSimComplexAlgorithms
         {
           ant.Step(i);
         }
+
+        _problemData.UpdateLocalPheromoneTrails(Ants);
       }
     }
 

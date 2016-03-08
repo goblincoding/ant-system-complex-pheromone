@@ -115,8 +115,10 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
     [TestCase(1, 5, 11.9)]
     [TestCase(4, 5, 12.5)]
     [TestCase(0, 9, 0.5)]
+    [TestCase(3, 7, 0.67)]
     [TestCase(1, 1, 9.0)]
-    public void UpdatePheromoneTrailsShouldWorkCorrectly(int node1, int node2, double tourLength)
+    [TestCase(0, 9, 7.9)]
+    public void UpdateGlobalPheromoneTrailsShouldWorkCorrectly(int node1, int node2, double tourLength)
     {
       // arrange
       var deposit = 1.0 / tourLength;
@@ -133,6 +135,34 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       // act
       data.UpdateGlobalPheromoneTrails(ants);
+      var choiceInfo = data.ChoiceInfo(ant);
+      var result = choiceInfo[node1][node2];
+
+      // assert
+      Assert.AreEqual(expected, result);
+    }
+
+    [TestCase(1, 5, 11.9)]
+    [TestCase(4, 5, 12.5)]
+    [TestCase(0, 9, 0.5)]
+    [TestCase(3, 7, 0.67)]
+    [TestCase(1, 1, 9.0)]
+    [TestCase(0, 9, 7.9)]
+    public void UpdateLocalPheromoneTrailsShouldDoNothing(int node1, int node2, double tourLength)
+    {
+      // arrange
+      var data = CreateStandardProblemDataFromMockProblem();
+      var distance = data.Distance(node1, node2);
+      var heuristic = Math.Pow(1.0 / distance, Parameters.Beta);
+      var expected = Math.Pow(InitialPheromoneDensity, Parameters.Alpha) * heuristic;
+
+      var ant = Substitute.For<IAnt>();
+      ant.Tour.Returns(new List<int> { node1, node2 });
+      ant.TourLength.Returns(tourLength);
+      var ants = new List<IAnt> { ant };
+
+      // act
+      data.UpdateLocalPheromoneTrails(ants);
       var choiceInfo = data.ChoiceInfo(ant);
       var result = choiceInfo[node1][node2];
 
