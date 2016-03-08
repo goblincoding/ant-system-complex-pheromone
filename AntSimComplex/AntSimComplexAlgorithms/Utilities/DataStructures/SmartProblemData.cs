@@ -140,7 +140,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
         for (var j = 0; j < NodeCount; j++)
         {
-          _pheromone[i][j] = new SmartPheromone(i, j, Distance(i, j), NodeCount, InitialPheromoneDensity);
+          _pheromone[i][j] = new SmartPheromone(i, j, Distance(i, j), InitialPheromoneDensity);
         }
       }
     }
