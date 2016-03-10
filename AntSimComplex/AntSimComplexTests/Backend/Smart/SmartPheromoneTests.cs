@@ -30,6 +30,14 @@ namespace AntSimComplexTests.Backend.Smart
     }
 
     [Test]
+    public void CtorGivenIdenticalNode1And2ShouldThrow()
+    {
+      // assert
+      // ReSharper disable once ObjectCreationAsStatement
+      Assert.Throws<ArgumentOutOfRangeException>(() => new SmartPheromone(0, 0, ArcWeight, InitialPheromoneDensity));
+    }
+
+    [Test]
     public void DensityGivenInvalidAntIdShouldThrow()
     {
       // arrange

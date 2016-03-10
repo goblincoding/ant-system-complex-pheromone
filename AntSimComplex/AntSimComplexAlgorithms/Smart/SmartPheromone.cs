@@ -20,8 +20,14 @@ namespace AntSimComplexAlgorithms.Smart
     /// <param name="node2">The index of one of the vertices of the pheromone's arc</param>
     /// <param name="arcWeight">The weight of the arc (distance between the nodes) that the pheromone is on</param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if two node ID's are the same.</exception>
     public SmartPheromone(int node1, int node2, double arcWeight, double initialPheromoneDensity)
     {
+      if (node1 == node2)
+      {
+        throw new ArgumentOutOfRangeException($"{nameof(node1)} and {nameof(node2)} cannot be the same.");
+      }
+
       _densities = new Dictionary<int, double>
       {
         { node1, initialPheromoneDensity },
