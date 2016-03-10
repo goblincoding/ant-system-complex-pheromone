@@ -122,21 +122,49 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     protected override void PopulatePheromoneChoiceStructures()
     {
+      PopulatePheromoneStructures();
+      PopulateChoiceStructures();
+    }
+
+    private void PopulateChoiceStructures()
+    {
       // Initialise rows.
-      _pheromone = new SmartPheromone[NodeCount][];
       _choiceInfo = new double[NodeCount][];
 
       for (var i = 0; i < NodeCount; i++)
       {
         // Initialise columns.
-        _pheromone[i] = new SmartPheromone[NodeCount];
         _choiceInfo[i] = new double[NodeCount];
 
         for (var j = 0; j < NodeCount; j++)
         {
           if (i == j) continue;
-          _pheromone[i][j] = new SmartPheromone(i, j, Distance(i, j), InitialPheromoneDensity);
           _choiceInfo[i][j] = CalculateChoiceInfo(i, j);
+        }
+      }
+    }
+
+    private void PopulatePheromoneStructures()
+    {
+      // Initialise rows.
+      _pheromone = new SmartPheromone[NodeCount][];
+
+      for (var i = 0; i < NodeCount; i++)
+      {
+        // Initialise columns.
+        _pheromone[i] = new SmartPheromone[NodeCount];
+      }
+
+      for (var i = 0; i < NodeCount; i++)
+      {
+        for (var j = i; j < NodeCount; j++)
+        {
+          // Matrix is symmetric, the same SmartPheromone
+          // object is referenced by [i][j] and [j][i]
+          if (i == j) continue;
+          var smart = new SmartPheromone(i, j, Distance(i, j), InitialPheromoneDensity);
+          _pheromone[i][j] = smart;
+          _pheromone[j][i] = smart;
         }
       }
     }
