@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AntSimComplexAlgorithms.Smart
 {
-  internal class SmartPheromone
+  internal class SmartPheromone : ISmartPheromone
   {
     // Key = node, Value = density representation
     private readonly Dictionary<int, double> _densities;
@@ -99,8 +99,8 @@ namespace AntSimComplexAlgorithms.Smart
       }
 
       // This is an arbitrary calculation that might have to be revisited.
-      var adjustment = 1.0 / (ant.TourLength / _arcWeight);
-      _densities[ant.CurrentNode] *= adjustment;
+      var adjustment = 1.0 / (ant.TourLength + _arcWeight);
+      _densities[ant.CurrentNode] += adjustment;
     }
   }
 }

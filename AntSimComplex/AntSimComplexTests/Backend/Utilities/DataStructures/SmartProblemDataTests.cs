@@ -163,7 +163,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
       var data = CreateSmartProblemDataFromMockProblem();
       var distance = data.Distance(node1, node2);
       var heuristic = Math.Pow(1.0 / distance, Parameters.Beta);
-      var touch = 1.0 / (tourLength / distance);
+      var touch = 1.0 / (tourLength + distance);
 
       var ant = Substitute.For<IAnt>();
       ant.Id.Returns(_random.Next(0, NodeCount));
@@ -173,7 +173,7 @@ namespace AntSimComplexTests.Backend.Utilities.DataStructures
 
       var ants = new List<IAnt> { ant };
 
-      var touchedDensity = InitialPheromoneDensity * touch;
+      var touchedDensity = InitialPheromoneDensity + touch;
       var expected = Math.Pow(touchedDensity, Parameters.Alpha) * heuristic;
 
       // act

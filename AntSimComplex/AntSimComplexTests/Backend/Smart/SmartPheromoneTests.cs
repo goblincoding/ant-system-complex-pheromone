@@ -119,8 +119,8 @@ namespace AntSimComplexTests.Backend.Smart
       ant.CurrentNode.Returns(Node1);
 
       var smart = SmartPheromone();
-      var adjustment = 1.0 / (ant.TourLength / ArcWeight);
-      var expected = 0.1 * adjustment;
+      var adjustment = 1.0 / (ant.TourLength + ArcWeight);
+      var expected = 0.1 + adjustment;
 
       // act
       smart.Touch(ant);

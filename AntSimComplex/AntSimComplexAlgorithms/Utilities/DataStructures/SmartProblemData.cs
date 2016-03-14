@@ -13,7 +13,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// for the adapted Ant System implementation. Pheromone is frequently updated
     /// during the evaporation and deposit steps.
     /// </summary>
-    private SmartPheromone[][] _pheromone;
+    private ISmartPheromone[][] _pheromone;
 
     /// <summary>
     /// Represents the [t_ij]^A [n_ij]^B heuristic values for each edge [i][j] where
@@ -36,7 +36,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         {
           // Matrix is symmetric, the same SmartPheromone
           // object is referenced by [i][j] and [j][i]
-          if (j == i) continue;
           _pheromone[i][j].Reset();
         }
       }
@@ -63,7 +62,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           // and those it has not yet visited and inform the
           // SmartPheromone object that it will be evaluated
           // during the next step decision.
-          if (ant.CurrentNode == i || ant.Visited[i]) continue;
+          if (ant.Visited[i]) continue;
 
           // Matrix is symmetric, the same SmartPheromone
           // object is referenced by [i][j] and [j][i]
@@ -86,7 +85,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       {
         for (var j = 0; j < NodeCount; j++)
         {
-          if (j == i) continue;
           _choiceInfo[i][j] = CalculateChoiceInfo(i, j);
         }
       }
@@ -100,7 +98,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         {
           // Matrix is symmetric, the same SmartPheromone
           // object is referenced by [i][j] and [j][i]
-          if (j == i) continue;
           _pheromone[i][j].Evaporate(Parameters.EvaporationRate);
         }
       }
@@ -115,7 +112,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         var l = tourArray[i + 1];
         // Matrix is symmetric, the same SmartPheromone
         // object is referenced by [i][j] and [j][i]
-        if (j == l) continue;
         _pheromone[j][l].Deposit(deposit);
       }
     }
@@ -138,7 +134,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
         for (var j = 0; j < NodeCount; j++)
         {
-          if (i == j) continue;
           _choiceInfo[i][j] = CalculateChoiceInfo(i, j);
         }
       }
@@ -147,22 +142,33 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     private void PopulatePheromoneStructures()
     {
       // Initialise rows.
-      _pheromone = new SmartPheromone[NodeCount][];
+      _pheromone = new ISmartPheromone[NodeCount][];
 
       for (var i = 0; i < NodeCount; i++)
       {
         // Initialise columns.
-        _pheromone[i] = new SmartPheromone[NodeCount];
+        _pheromone[i] = new ISmartPheromone[NodeCount];
       }
 
       for (var i = 0; i < NodeCount; i++)
       {
         for (var j = i; j < NodeCount; j++)
         {
+          ISmartPheromone smart;
+
+          // Ensure that we have smart pheromones on the diagonal
+          // that always return max density.
+          if (i == j)
+          {
+            smart = new SmartPheromoneConstant();
+          }
+          else
+          {
+            smart = new SmartPheromone(i, j, Distance(i, j), InitialPheromoneDensity);
+          }
+
           // Matrix is symmetric, the same SmartPheromone
           // object is referenced by [i][j] and [j][i]
-          if (i == j) continue;
-          var smart = new SmartPheromone(i, j, Distance(i, j), InitialPheromoneDensity);
           _pheromone[i][j] = smart;
           _pheromone[j][i] = smart;
         }
