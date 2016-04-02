@@ -8,43 +8,57 @@ namespace AntSimComplexAlgorithms.Smart
   internal class SmartPheromone : ISmartPheromone
   {
     // Key = node, Value = density representation
-    private readonly Dictionary<int, double> _densities;
+    private readonly Dictionary<int, double[]> _densities;
 
     private readonly double _arcWeight;
     private readonly double _initialPheromoneDensity;
+    private readonly int _node1;
+    private readonly int _node2;
+    private readonly int _nodeCount;
 
     /// <summary>
     /// Constructor.
     /// </summary>
     /// <param name="node1">The index of one of the vertices of the pheromone's arc</param>
     /// <param name="node2">The index of one of the vertices of the pheromone's arc</param>
+    /// <param name="nodeCount"></param>
     /// <param name="arcWeight">The weight of the arc (distance between the nodes) that the pheromone is on</param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if two node ID's are the same.</exception>
-    public SmartPheromone(int node1, int node2, double arcWeight, double initialPheromoneDensity)
+    public SmartPheromone(int node1, int node2, int nodeCount, double arcWeight, double initialPheromoneDensity)
     {
       if (node1 == node2)
       {
         throw new ArgumentOutOfRangeException($"{nameof(node1)} and {nameof(node2)} cannot be the same.");
       }
 
-      _densities = new Dictionary<int, double>
-      {
-        { node1, initialPheromoneDensity },
-        { node2, initialPheromoneDensity }
-      };
-
+      _node1 = node1;
+      _node2 = node2;
+      _nodeCount = nodeCount;
       _arcWeight = arcWeight;
       _initialPheromoneDensity = initialPheromoneDensity;
+
+      _densities = new Dictionary<int, double[]>
+      {
+        { _node1, new double[nodeCount] },
+        { _node2, new double[nodeCount] }
+      };
+
+      for (var i = 0; i < nodeCount; i++)
+      {
+        _densities[_node1][i] = _initialPheromoneDensity;
+        _densities[_node2][i] = _initialPheromoneDensity;
+      }
     }
 
     /// <returns>The adapted density representation dependent on the direction of travel
     /// across the pheromone edge's vertices.</returns>
     /// <param name="fromNode">The node (vertex) for which the density is requested</param>
+    /// <param name="stepCount">Current global "step"</param>
     /// <exception cref="KeyNotFoundException">Thrown if fromNode is invalid</exception>
-    public double Density(int fromNode)
+    public double Density(int fromNode, int stepCount)
     {
-      return _densities[fromNode];
+      return _densities[fromNode].ElementAt(stepCount);
     }
 
     /// <summary>
@@ -52,10 +66,10 @@ namespace AntSimComplexAlgorithms.Smart
     /// </summary>
     public void Reset()
     {
-      var ants = _densities.Keys.ToArray();
-      foreach (var ant in ants)
+      for (var i = 0; i < _nodeCount; i++)
       {
-        _densities[ant] = _initialPheromoneDensity;
+        _densities[_node1][i] = _initialPheromoneDensity;
+        _densities[_node2][i] = _initialPheromoneDensity;
       }
     }
 
@@ -64,10 +78,10 @@ namespace AntSimComplexAlgorithms.Smart
     /// </summary>
     public void Evaporate(double evaporationRate)
     {
-      var ants = _densities.Keys.ToArray();
-      foreach (var ant in ants)
+      for (var i = 0; i < _nodeCount; i++)
       {
-        _densities[ant] *= (1.0 - evaporationRate);
+        _densities[_node1][i] *= 1.0 - evaporationRate;
+        _densities[_node2][i] *= 1.0 - evaporationRate;
       }
     }
 
@@ -76,10 +90,10 @@ namespace AntSimComplexAlgorithms.Smart
     /// </summary>
     public void Deposit(double amount)
     {
-      var ants = _densities.Keys.ToArray();
-      foreach (var ant in ants)
+      for (var i = 0; i < _nodeCount; i++)
       {
-        _densities[ant] += amount;
+        _densities[_node1][i] += amount;
+        _densities[_node2][i] += amount;
       }
     }
 
@@ -100,7 +114,7 @@ namespace AntSimComplexAlgorithms.Smart
 
       // This is an arbitrary calculation that might have to be revisited.
       var adjustment = 1.0 / (ant.TourLength + _arcWeight);
-      _densities[ant.CurrentNode] += adjustment;
+      _densities[ant.CurrentNode][ant.StepCount] += adjustment;
     }
   }
 }

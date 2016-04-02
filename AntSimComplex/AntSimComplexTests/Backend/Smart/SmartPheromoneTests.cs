@@ -20,10 +20,11 @@ namespace AntSimComplexTests.Backend.Smart
     public void CtorShouldInitialiseDensitiesToInitialPheromone()
     {
       // arrange
+      const int stepCount = 0;
       var smart = SmartPheromone();
 
       // act
-      var density = smart.Density(Node1);
+      var density = smart.Density(Node1, stepCount);
 
       // assert
       Assert.AreEqual(InitialPheromoneDensity, density);
@@ -34,23 +35,25 @@ namespace AntSimComplexTests.Backend.Smart
     {
       // assert
       // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new SmartPheromone(0, 0, ArcWeight, InitialPheromoneDensity));
+      Assert.Throws<ArgumentOutOfRangeException>(() => new SmartPheromone(0, 0, 10, ArcWeight, InitialPheromoneDensity));
     }
 
     [Test]
     public void DensityGivenInvalidAntIdShouldThrow()
     {
       // arrange
+      const int stepCount = 0;
       var smart = SmartPheromone();
 
       // assert
-      Assert.Throws<KeyNotFoundException>(() => smart.Density(2));
+      Assert.Throws<KeyNotFoundException>(() => smart.Density(2, stepCount));
     }
 
     [Test]
     public void ResetShouldReturnAllDensitiesToInitialValue()
     {
       // arrange
+      const int stepCount = 0;
       const double deposit = 0.56;
       var nodeId = _random.Next(0, 1);
       var smart = SmartPheromone();
@@ -60,13 +63,14 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Reset();
 
       // assert
-      Assert.AreEqual(InitialPheromoneDensity, smart.Density(nodeId));
+      Assert.AreEqual(InitialPheromoneDensity, smart.Density(nodeId, stepCount));
     }
 
     [Test]
     public void EvaporateShouldReduceDensitiesWithCorrectAmount()
     {
       // arrange
+      const int stepCount = 0;
       const double deposit = 0.00012;
       const double evaporationRate = 0.25;
       const double expected = (InitialPheromoneDensity + deposit) * (1.0 - evaporationRate);
@@ -78,13 +82,14 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Evaporate(evaporationRate);
 
       // assert
-      Assert.AreEqual(expected, smart.Density(nodeId));
+      Assert.AreEqual(expected, smart.Density(nodeId, stepCount));
     }
 
     [Test]
     public void DepositShouldIncreaseDensitiesWithCorrectAmount()
     {
       // arrange
+      const int stepCount = 0;
       const double deposit = 0.99999999;
       const double expected = InitialPheromoneDensity + deposit;
       var nodeId = _random.Next(0, 1);
@@ -94,7 +99,7 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Deposit(deposit);
 
       // assert
-      Assert.AreEqual(expected, smart.Density(nodeId));
+      Assert.AreEqual(expected, smart.Density(nodeId, stepCount));
     }
 
     [Test]
@@ -113,6 +118,7 @@ namespace AntSimComplexTests.Backend.Smart
     public void TouchGivenAntWithCurrentNodeOnVertexShouldUpdateDensityCorrectly()
     {
       // arrange
+      const int stepCount = 0;
       var nodeId = _random.Next(0, 1);
 
       var ant = Substitute.For<IAnt>();
@@ -126,12 +132,12 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Touch(ant);
 
       // assert
-      Assert.AreEqual(expected, smart.Density(nodeId));
+      Assert.AreEqual(expected, smart.Density(nodeId, stepCount));
     }
 
     private static SmartPheromone SmartPheromone()
     {
-      var pheromone = new SmartPheromone(Node1, Node2, ArcWeight, InitialPheromoneDensity);
+      var pheromone = new SmartPheromone(Node1, Node2, 10, ArcWeight, InitialPheromoneDensity);
       return pheromone;
     }
   }
