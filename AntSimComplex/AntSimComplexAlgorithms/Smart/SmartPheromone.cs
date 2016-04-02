@@ -1,7 +1,6 @@
 ﻿using AntSimComplexAlgorithms.Ants;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AntSimComplexAlgorithms.Smart
 {
@@ -58,7 +57,7 @@ namespace AntSimComplexAlgorithms.Smart
     /// <exception cref="KeyNotFoundException">Thrown if fromNode is invalid</exception>
     public double Density(int fromNode, int stepCount)
     {
-      return _densities[fromNode].ElementAt(stepCount);
+      return _densities[fromNode][stepCount];
     }
 
     /// <summary>
