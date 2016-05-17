@@ -71,7 +71,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           _pheromone[currentNode][i].Touch(ant);
 
           _choiceInfo[stepCount][currentNode][i] = CalculateChoiceInfo(stepCount, currentNode, i);
-          _choiceInfo[stepCount][i][currentNode] = CalculateChoiceInfo(stepCount, i, currentNode);
+          _choiceInfo[stepCount][i][currentNode] = _choiceInfo[stepCount][currentNode][i];
         }
       }
     }
@@ -83,13 +83,17 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     protected override void UpdateChoiceInfoMatrix()
     {
+      // step count
       for (var i = 0; i < NodeCount; i++)
       {
+        // "from" node
         for (var j = 0; j < NodeCount; j++)
         {
-          for (var k = 0; k < NodeCount; k++)
+          // "to" node
+          for (var k = j; k < NodeCount; k++)
           {
             _choiceInfo[i][j][k] = CalculateChoiceInfo(i, j, k);
+            _choiceInfo[i][k][j] = _choiceInfo[i][j][k];
           }
         }
       }
@@ -174,7 +178,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           }
           else
           {
-            smart = new SmartPheromone(i, j, NodeCount, Distance(i, j), InitialPheromoneDensity);
+            smart = new SmartPheromone(NodeCount, InitialPheromoneDensity);
           }
 
           // Matrix is symmetric, the same SmartPheromone
@@ -196,7 +200,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
 
     private double CalculateChoiceInfo(int stepCount, int i, int j)
     {
-      return Math.Pow(_pheromone[i][j].Density(i, stepCount), Parameters.Alpha) * Heuristic[i][j];
+      return Math.Pow(_pheromone[i][j].Density(stepCount), Parameters.Alpha) * Heuristic[i][j];
     }
   }
 }

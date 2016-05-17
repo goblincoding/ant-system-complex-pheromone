@@ -4,7 +4,7 @@ namespace AntSimComplexAlgorithms.Smart
 {
   internal interface ISmartPheromone
   {
-    double Density(int fromNode, int stepCount);
+    double Density(int stepCount);
 
     void Deposit(double amount);
 
