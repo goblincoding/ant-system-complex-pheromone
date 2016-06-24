@@ -1,27 +1,36 @@
 ﻿using AntSimComplexAlgorithms.Ants;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AntSimComplexAlgorithms.Smart
 {
   internal class SmartPheromone : ISmartPheromone
   {
-    // Provides a different density representation dependant
-    // on the pheromone's position within the tour's construction.
-    // In other words, it attempts to present a preferred position
-    // within the graph based on the different densities.
+    private readonly int _node1;
+    private readonly int _node2;
+    private readonly ISmartPheromone[][] _smartPheromones;
     private readonly double[] _densities;
-
     private readonly double _initialPheromoneDensity;
-    private readonly int _nodeCount;
+    private double _graphDensity;
 
     /// <summary>
     /// Constructor.
     /// </summary>
+    /// <param name="node1"></param>
+    /// <param name="node2"></param>
     /// <param name="nodeCount"></param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
-    public SmartPheromone(int nodeCount, double initialPheromoneDensity)
+    /// <param name="smartPheromones"></param>
+    public SmartPheromone(int node1, int node2,
+      int nodeCount,
+      double initialPheromoneDensity,
+      ISmartPheromone[][] smartPheromones)
     {
-      _nodeCount = nodeCount;
+      _node1 = node1;
+      _node2 = node2;
+      _smartPheromones = smartPheromones;
       _initialPheromoneDensity = initialPheromoneDensity;
+      _graphDensity = _initialPheromoneDensity;
 
       _densities = new double[nodeCount];
 
@@ -31,10 +40,15 @@ namespace AntSimComplexAlgorithms.Smart
       }
     }
 
-    /// <param name="stepCount">Current global "step"</param>
-    public double Density(int stepCount)
+    /// <param name="antId"></param>
+    public double PresentedDensity(int antId)
     {
-      return _densities[stepCount];
+      return _densities[antId];
+    }
+
+    public double GraphDensity()
+    {
+      return _graphDensity;
     }
 
     /// <summary>
@@ -42,10 +56,7 @@ namespace AntSimComplexAlgorithms.Smart
     /// </summary>
     public void Reset()
     {
-      for (var i = 0; i < _nodeCount; i++)
-      {
-        _densities[i] = _initialPheromoneDensity;
-      }
+      _graphDensity = _initialPheromoneDensity;
     }
 
     /// <summary>
@@ -53,10 +64,7 @@ namespace AntSimComplexAlgorithms.Smart
     /// </summary>
     public void Evaporate(double evaporationRate)
     {
-      for (var i = 0; i < _nodeCount; i++)
-      {
-        _densities[i] *= 1.0 - evaporationRate;
-      }
+      _graphDensity *= 1.0 - evaporationRate;
     }
 
     /// <summary>
@@ -64,22 +72,24 @@ namespace AntSimComplexAlgorithms.Smart
     /// </summary>
     public void Deposit(double amount)
     {
-      for (var i = 0; i < _nodeCount; i++)
-      {
-        _densities[i] += amount;
-      }
+      _graphDensity += amount;
     }
 
     /// <summary>
-    /// Updates the density that will be presented to "ant" if it should consider
-    /// stepping to one of the pheromone's vertices from the other.
     /// </summary>
     /// <param name="ant">The ant currently on one of the pheromone's vertices</param>
     public void Touch(IAnt ant)
     {
-      // This is an arbitrary calculation that might have to be revisited.
-      var adjustment = 1.0 / ant.TourLength;
-      _densities[ant.StepCount] += adjustment;
+      var directionNode = ant.CurrentNode == _node1 ? _node1 : _node2;
+      var pherLookAhead = new List<ISmartPheromone>();
+      for (var i = 0; i < ant.Visited.Count; i++)
+      {
+        if (ant.Visited[i]) continue;
+        pherLookAhead.Add(_smartPheromones[directionNode][i]);
+      }
+
+      var greatestNeighbourDensity = pherLookAhead.Select(p => p.GraphDensity()).Max();
+      _densities[ant.Id] = _graphDensity + greatestNeighbourDensity;
     }
   }
 }

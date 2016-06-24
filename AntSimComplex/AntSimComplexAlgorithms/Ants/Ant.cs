@@ -9,7 +9,6 @@ namespace AntSimComplexAlgorithms.Ants
   {
     public int Id { get; }
     public int CurrentNode { get; private set; }
-    public int StepCount { get; private set; }
     public double TourLength { get; private set; }
     public IReadOnlyList<int> Tour => _tour.Where(n => n != -1).ToArray();
     public IReadOnlyList<bool> Visited => _visited;
@@ -68,8 +67,6 @@ namespace AntSimComplexAlgorithms.Ants
     /// <param name="i"></param>
     public void Step(int i)
     {
-      StepCount = i;
-
       // Select the next node to visit ("start" if all nodes have been visited).
       var selectedNext = _visited.Any(n => !n) ? _nodeSelector.SelectNextNode(this) : _startNode;
 

@@ -4,7 +4,12 @@ namespace AntSimComplexAlgorithms.Smart
 {
   internal class SmartPheromoneConstant : ISmartPheromone
   {
-    public double Density(int stepCount)
+    public double PresentedDensity(int antId)
+    {
+      return double.MaxValue;
+    }
+
+    public double GraphDensity()
     {
       return double.MaxValue;
     }

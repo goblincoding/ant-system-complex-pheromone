@@ -24,18 +24,10 @@ namespace AntSimComplexTests.Backend.Smart
       var smart = SmartPheromone();
 
       // act
-      var density = smart.Density(stepCount);
+      var density = smart.PresentedDensity(stepCount);
 
       // assert
       Assert.AreEqual(InitialPheromoneDensity, density);
-    }
-
-    [Test]
-    public void CtorGivenIdenticalNode1And2ShouldThrow()
-    {
-      // assert
-      // ReSharper disable once ObjectCreationAsStatement
-      Assert.Throws<ArgumentOutOfRangeException>(() => new SmartPheromone(10, InitialPheromoneDensity));
     }
 
     [Test]
@@ -46,7 +38,7 @@ namespace AntSimComplexTests.Backend.Smart
       var smart = SmartPheromone();
 
       // assert
-      Assert.Throws<KeyNotFoundException>(() => smart.Density(stepCount));
+      Assert.Throws<KeyNotFoundException>(() => smart.PresentedDensity(stepCount));
     }
 
     [Test]
@@ -63,7 +55,7 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Reset();
 
       // assert
-      Assert.AreEqual(InitialPheromoneDensity, smart.Density(stepCount));
+      Assert.AreEqual(InitialPheromoneDensity, smart.PresentedDensity(stepCount));
     }
 
     [Test]
@@ -82,7 +74,7 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Evaporate(evaporationRate);
 
       // assert
-      Assert.AreEqual(expected, smart.Density(stepCount));
+      Assert.AreEqual(expected, smart.PresentedDensity(stepCount));
     }
 
     [Test]
@@ -99,7 +91,7 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Deposit(deposit);
 
       // assert
-      Assert.AreEqual(expected, smart.Density(stepCount));
+      Assert.AreEqual(expected, smart.PresentedDensity(stepCount));
     }
 
     [Test]
@@ -132,12 +124,12 @@ namespace AntSimComplexTests.Backend.Smart
       smart.Touch(ant);
 
       // assert
-      Assert.AreEqual(expected, smart.Density(stepCount));
+      Assert.AreEqual(expected, smart.PresentedDensity(stepCount));
     }
 
     private static SmartPheromone SmartPheromone()
     {
-      var pheromone = new SmartPheromone(10, InitialPheromoneDensity);
+      var pheromone = new SmartPheromone(2, 4, 10, InitialPheromoneDensity, new ISmartPheromone[][] { });
       return pheromone;
     }
   }

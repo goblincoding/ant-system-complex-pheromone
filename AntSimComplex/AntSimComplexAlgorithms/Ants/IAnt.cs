@@ -17,11 +17,6 @@ namespace AntSimComplexAlgorithms.Ants
     int CurrentNode { get; }
 
     /// <summary>
-    /// The global current step count.
-    /// </summary>
-    int StepCount { get; }
-
-    /// <summary>
     /// Length of the ant's completed tour.
     /// </summary>
     double TourLength { get; }
