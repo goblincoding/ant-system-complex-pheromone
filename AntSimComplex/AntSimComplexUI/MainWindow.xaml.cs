@@ -173,7 +173,7 @@ namespace AntSimComplexUI
     {
       var logMessages = new List<string>
       {
-        $"{_tspLibItemManager.ProblemName}, {_antSystemImplementation}, {_selectionStrategy}",
+        $"{_tspLibItemManager.ProblemName}; {_antSystemImplementation}; {_selectionStrategy}",
         IterationStatsItem.CsvHeader
       };
 

@@ -4,6 +4,13 @@ namespace AntSimComplexAlgorithms.Smart
 {
   internal interface ISmartPheromone
   {
+    int Node1 { get; }
+    int Node2 { get; }
+
+    void UpdatePresentedDensity(IAnt ant);
+
+    void UpdatePheromoneGraphSnapshot();
+
     double PresentedDensity(int antId);
 
     double GraphDensity();
@@ -13,7 +20,5 @@ namespace AntSimComplexAlgorithms.Smart
     void Evaporate(double evaporationRate);
 
     void Reset();
-
-    void Touch(IAnt ant);
   }
 }

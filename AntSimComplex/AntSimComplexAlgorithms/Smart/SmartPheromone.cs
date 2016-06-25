@@ -6,12 +6,16 @@ namespace AntSimComplexAlgorithms.Smart
 {
   internal class SmartPheromone : ISmartPheromone
   {
-    private readonly int _node1;
-    private readonly int _node2;
-    private readonly ISmartPheromone[][] _smartPheromones;
-    private readonly double[] _densities;
-    private readonly double _initialPheromoneDensity;
+    public static List<ISmartPheromone> AllSmartPheromones = new List<ISmartPheromone>();
+
+    public int Node1 { get; }
+    public int Node2 { get; }
+
+    private List<ISmartPheromone> _orderedNeighbours;
     private double _graphDensity;
+
+    private readonly double[] _presentedDensities;
+    private readonly double _initialPheromoneDensity;
 
     /// <summary>
     /// Constructor.
@@ -20,30 +24,63 @@ namespace AntSimComplexAlgorithms.Smart
     /// <param name="node2"></param>
     /// <param name="nodeCount"></param>
     /// <param name="initialPheromoneDensity">Pheromone amount with which to initialise pheromone density</param>
-    /// <param name="smartPheromones"></param>
-    public SmartPheromone(int node1, int node2,
-      int nodeCount,
-      double initialPheromoneDensity,
-      ISmartPheromone[][] smartPheromones)
+    public SmartPheromone(int node1, int node2, int nodeCount, double initialPheromoneDensity)
     {
-      _node1 = node1;
-      _node2 = node2;
-      _smartPheromones = smartPheromones;
+      Node1 = node1;
+      Node2 = node2;
+
       _initialPheromoneDensity = initialPheromoneDensity;
       _graphDensity = _initialPheromoneDensity;
-
-      _densities = new double[nodeCount];
+      _presentedDensities = new double[nodeCount];
 
       for (var i = 0; i < nodeCount; i++)
       {
-        _densities[i] = _initialPheromoneDensity;
+        _presentedDensities[i] = _initialPheromoneDensity;
+      }
+
+      _orderedNeighbours = new List<ISmartPheromone>();
+    }
+
+    public void UpdatePheromoneGraphSnapshot()
+    {
+      if (!_orderedNeighbours.Any())
+      {
+        foreach (var smartPheromone in AllSmartPheromones)
+        {
+          if (smartPheromone != this &&
+              (smartPheromone.Node1 == Node1 ||
+               smartPheromone.Node1 == Node2 ||
+               smartPheromone.Node2 == Node1 ||
+               smartPheromone.Node2 == Node2))
+          {
+            _orderedNeighbours.Add(smartPheromone);
+          }
+        }
+      }
+
+      _orderedNeighbours = _orderedNeighbours.OrderByDescending(s => s.GraphDensity()).ToList();
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="ant">The ant currently on one of the pheromone's vertices</param>
+    public void UpdatePresentedDensity(IAnt ant)
+    {
+      foreach (var orderedNeighbour in _orderedNeighbours)
+      {
+        if (!ant.Visited[orderedNeighbour.Node1] ||
+            !ant.Visited[orderedNeighbour.Node2])
+        {
+          _presentedDensities[ant.Id] = _graphDensity + orderedNeighbour.GraphDensity();
+          break;
+        }
       }
     }
 
     /// <param name="antId"></param>
     public double PresentedDensity(int antId)
     {
-      return _densities[antId];
+      return _presentedDensities[antId];
     }
 
     public double GraphDensity()
@@ -73,23 +110,6 @@ namespace AntSimComplexAlgorithms.Smart
     public void Deposit(double amount)
     {
       _graphDensity += amount;
-    }
-
-    /// <summary>
-    /// </summary>
-    /// <param name="ant">The ant currently on one of the pheromone's vertices</param>
-    public void Touch(IAnt ant)
-    {
-      var directionNode = ant.CurrentNode == _node1 ? _node1 : _node2;
-      var pherLookAhead = new List<ISmartPheromone>();
-      for (var i = 0; i < ant.Visited.Count; i++)
-      {
-        if (ant.Visited[i]) continue;
-        pherLookAhead.Add(_smartPheromones[directionNode][i]);
-      }
-
-      var greatestNeighbourDensity = pherLookAhead.Select(p => p.GraphDensity()).Max();
-      _densities[ant.Id] = _graphDensity + greatestNeighbourDensity;
     }
   }
 }

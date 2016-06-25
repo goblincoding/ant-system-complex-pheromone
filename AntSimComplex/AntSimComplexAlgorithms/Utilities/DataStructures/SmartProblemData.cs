@@ -23,30 +23,23 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     /// </summary>
     private Dictionary<int, double[][]> _choiceInfo;
 
-    public SmartProblemData(int nodeCount, double initialPheromoneDensity, IReadOnlyList<IReadOnlyList<double>> distances)
+    public SmartProblemData(int nodeCount,
+                            double initialPheromoneDensity,
+                            IReadOnlyList<IReadOnlyList<double>> distances)
       : base(nodeCount, initialPheromoneDensity, distances)
     {
     }
 
-    public override void ResetPheromone()
+    public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant)
     {
-      for (var i = 0; i < NodeCount; i++)
-      {
-        for (var j = i; j < NodeCount; j++)
-        {
-          // Matrix is symmetric, the same SmartPheromone
-          // object is referenced by [i][j] and [j][i]
-          _pheromone[i][j].Reset();
-        }
-      }
-
-      UpdateChoiceInfoMatrix();
+      return _choiceInfo[ant.Id];
     }
 
     public override void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants)
     {
       EvaporatePheromone();
       DepositPheromone(ants);
+      DoGlobalUpdate();
 
       // Choice info matrix has to be updated AFTER pheromone changes.
       UpdateChoiceInfoMatrix();
@@ -68,7 +61,7 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           // object is referenced by [i][j] and [j][i]
           var currentNode = ant.CurrentNode;
           var antId = ant.Id;
-          _pheromone[currentNode][i].Touch(ant);
+          _pheromone[currentNode][i].UpdatePresentedDensity(ant);
 
           _choiceInfo[antId][currentNode][i] = CalculateChoiceInfo(antId, currentNode, i);
           _choiceInfo[antId][i][currentNode] = _choiceInfo[antId][currentNode][i];
@@ -76,27 +69,19 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       }
     }
 
-    public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant)
+    public override void ResetPheromone()
     {
-      return _choiceInfo[ant.Id];
-    }
-
-    protected override void UpdateChoiceInfoMatrix()
-    {
-      // step count
       for (var i = 0; i < NodeCount; i++)
       {
-        // "from" node
-        for (var j = 0; j < NodeCount; j++)
+        for (var j = i; j < NodeCount; j++)
         {
-          // "to" node
-          for (var k = j; k < NodeCount; k++)
-          {
-            _choiceInfo[i][j][k] = CalculateChoiceInfo(i, j, k);
-            _choiceInfo[i][k][j] = _choiceInfo[i][j][k];
-          }
+          // Matrix is symmetric, the same SmartPheromone
+          // object is referenced by [i][j] and [j][i]
+          _pheromone[i][j].Reset();
         }
       }
+
+      UpdateChoiceInfoMatrix();
     }
 
     protected override void EvaporatePheromone()
@@ -122,6 +107,24 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         // Matrix is symmetric, the same SmartPheromone
         // object is referenced by [i][j] and [j][i]
         _pheromone[j][l].Deposit(deposit);
+      }
+    }
+
+    protected override void UpdateChoiceInfoMatrix()
+    {
+      // Ant ID
+      for (var antId = 0; antId < NodeCount; antId++)
+      {
+        // Matrix is symmetric
+        for (var j = 0; j < NodeCount; j++)
+        {
+          for (var k = j; k < NodeCount; k++)
+          {
+            var choice = CalculateChoiceInfo(antId, j, k);
+            _choiceInfo[antId][j][k] = choice;
+            _choiceInfo[antId][k][j] = choice;
+          }
+        }
       }
     }
 
@@ -174,11 +177,12 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
           // that always return max density.
           if (i == j)
           {
-            smart = new SmartPheromoneConstant();
+            smart = new SmartPheromoneConstant(i, j);
           }
           else
           {
-            smart = new SmartPheromone(i, j, NodeCount, InitialPheromoneDensity, _pheromone);
+            smart = new SmartPheromone(i, j, NodeCount, InitialPheromoneDensity);
+            SmartPheromone.AllSmartPheromones.Add(smart);
           }
 
           // Matrix is symmetric, the same SmartPheromone
@@ -195,6 +199,19 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
       {
         var deposit = 1.0 / ant.TourLength;
         DepositPheromone(ant.Tour, deposit);
+      }
+    }
+
+    private void DoGlobalUpdate()
+    {
+      for (var i = 0; i < NodeCount; i++)
+      {
+        for (var j = i; j < NodeCount; j++)
+        {
+          // Matrix is symmetric, the same SmartPheromone
+          // object is referenced by [i][j] and [j][i]
+          _pheromone[i][j].UpdatePheromoneGraphSnapshot();
+        }
       }
     }
 

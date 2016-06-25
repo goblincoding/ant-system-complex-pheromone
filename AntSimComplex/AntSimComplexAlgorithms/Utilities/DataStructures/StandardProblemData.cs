@@ -28,6 +28,30 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
     {
     }
 
+    public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant)
+    {
+      return _choiceInfo;
+    }
+
+    public override void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants)
+    {
+      EvaporatePheromone();
+
+      foreach (var ant in ants)
+      {
+        var deposit = 1.0 / ant.TourLength;
+        DepositPheromone(ant.Tour, deposit);
+      }
+
+      // Choice info matrix has to be updated AFTER pheromone changes.
+      UpdateChoiceInfoMatrix();
+    }
+
+    public override void UpdateLocalPheromoneTrails(IEnumerable<IAnt> ants)
+    {
+      // No local pheromone updates for standard implementation.
+    }
+
     public override void ResetPheromone()
     {
       for (var i = 0; i < NodeCount; i++)
@@ -66,30 +90,6 @@ namespace AntSimComplexAlgorithms.Utilities.DataStructures
         _pheromone[j][l] = pher;  // matrix is symmetric
         _pheromone[l][j] = pher;
       }
-    }
-
-    public override IReadOnlyList<IReadOnlyList<double>> ChoiceInfo(IAnt ant)
-    {
-      return _choiceInfo;
-    }
-
-    public override void UpdateGlobalPheromoneTrails(IEnumerable<IAnt> ants)
-    {
-      EvaporatePheromone();
-
-      foreach (var ant in ants)
-      {
-        var deposit = 1.0 / ant.TourLength;
-        DepositPheromone(ant.Tour, deposit);
-      }
-
-      // Choice info matrix has to be updated AFTER pheromone changes.
-      UpdateChoiceInfoMatrix();
-    }
-
-    public override void UpdateLocalPheromoneTrails(IEnumerable<IAnt> ants)
-    {
-      // No local pheromone updates for standard implementation.
     }
 
     protected override void UpdateChoiceInfoMatrix()

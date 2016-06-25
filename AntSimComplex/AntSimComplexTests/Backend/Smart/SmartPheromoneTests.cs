@@ -103,7 +103,7 @@ namespace AntSimComplexTests.Backend.Smart
       var smart = SmartPheromone();
 
       // assert
-      Assert.Throws<ArgumentOutOfRangeException>(() => smart.Touch(ant));
+      Assert.Throws<ArgumentOutOfRangeException>(() => smart.UpdatePresentedDensity(ant));
     }
 
     [Test]
@@ -121,7 +121,7 @@ namespace AntSimComplexTests.Backend.Smart
       var expected = 0.1 + adjustment;
 
       // act
-      smart.Touch(ant);
+      smart.UpdatePresentedDensity(ant);
 
       // assert
       Assert.AreEqual(expected, smart.PresentedDensity(stepCount));
@@ -129,7 +129,7 @@ namespace AntSimComplexTests.Backend.Smart
 
     private static SmartPheromone SmartPheromone()
     {
-      var pheromone = new SmartPheromone(2, 4, 10, InitialPheromoneDensity, new ISmartPheromone[][] { });
+      var pheromone = new SmartPheromone(2, 4, 10, InitialPheromoneDensity);
       return pheromone;
     }
   }
